@@ -7,7 +7,7 @@
 <link href="images/favicon.png" rel="icon" />
 <title>{{env('APP_NAME')}} - Recharge & Bill Payment, Booking App</title>
 <meta name="description" content="{{env('APP_NAME')}} - Recharge & Bill Payment">
-<meta name="author" content="www.go4shop.online">
+<meta name="author" content="Pradeep Kumar|go4shoponline@gmail.com">
 
 <!-- Web Fonts
 ============================================= -->
@@ -19,6 +19,9 @@
 <link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/vendor/font-awesome/css/all.min.css" />
 <link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/vendor/owl.carousel/assets/owl.carousel.min.css" />
 <link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/vendor/owl.carousel/assets/owl.theme.default.min.css" />
+<link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/vendor/jquery-ui/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/vendor/daterangepicker/daterangepicker.css" />
+
 <link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/css/stylesheet.css" />
 </head>
 <body>
@@ -73,5 +76,56 @@
 <script src="{{config('global.THEME_PATH')}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> 
 <script src="{{config('global.THEME_PATH')}}/vendor/owl.carousel/owl.carousel.min.js"></script> 
 <script src="{{config('global.THEME_PATH')}}/js/theme.js"></script>
+<script src="{{config('global.THEME_PATH')}}/vendor/daterangepicker/moment.min.js"></script> 
+<script src="{{config('global.THEME_PATH')}}/vendor/daterangepicker/daterangepicker.js"></script> 
+
+<script type="text/javascript">
+
+  /*
+   * Script For Choose Payment Mode While "Upload Wallet Balance For Distributor"
+   */
+  $(document).ready(function(){
+    $("#paymentMode").click(function(){
+      	var id = $(this).val();
+      	$(".paymentmode").hide();
+      	$("#paymentmode"+id).fadeIn();
+    });
+
+
+    //Datepicker
+
+  // Hotels Check Out Date
+  $('#payment_date').daterangepicker({
+    singleDatePicker: true,
+    minDate: moment(),
+    autoUpdateInput: false,
+    }, function(chosen_date) {
+      $('#payment_date').val(chosen_date.format('DD-MM-YYYY'));
+  });
+
+
+  $('#transfer_date').daterangepicker({
+    singleDatePicker: true,
+    minDate: moment(),
+    autoUpdateInput: false,
+    }, function(chosen_date) {
+      $('#transfer_date').val(chosen_date.format('DD-MM-YYYY'));
+  });
+
+
+
+   $('#neft_transfer_date').daterangepicker({
+    singleDatePicker: true,
+    minDate: moment(),
+    autoUpdateInput: false,
+    }, function(chosen_date) {
+      $('#neft_transfer_date').val(chosen_date.format('DD-MM-YYYY'));
+  });
+
+
+
+
+  });
+</script>
 </body>
 </html>

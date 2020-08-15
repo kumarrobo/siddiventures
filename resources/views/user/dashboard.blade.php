@@ -10,7 +10,7 @@
     <div class="bg-light shadow-md rounded p-4"> 
       <!--User Profile Section
       ============================================= -->
-      @include('user.Distributor.userProfile')
+      @include('user.Distributor.Dashboard')
       <!-- Personal Information end --> 
     </div>
   </div>
@@ -20,4 +20,3 @@
 
 <!-- Document Wrapper end --> 
 @endsection
-

@@ -15,33 +15,36 @@
             {{GeneralHelper::isActiveMenu('personaldetails')}} 
             {{GeneralHelper::isActiveMenu('documentproof')}} 
             {{GeneralHelper::isActiveMenu('viewrodetails')}} 
+            {{GeneralHelper::isActiveMenu('allretailerlist')}} 
+            {{GeneralHelper::isActiveMenu('roprofile')}} 
+            {{GeneralHelper::isActiveMenu('rocompanyprofile')}} 
             {{GeneralHelper::isActiveMenu('retailercompany')}}" 
 
             href="{{route('addretailer')}}">
-              <span><i class="fas fa-users"></i></span>Retailer</a> 
+              <span><i class="fas fa-users"></i></span>RO</a> 
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="recharge-bill-datacard.html">
+            <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="{{route('dashboard')}}">
               <span><i class="fas fa-chart-line"></i></span>My Report</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="recharge-bill-datacard.html">
-              <span><i class="fas fa-retweet"></i></span>Money Transfer</a>
+            <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="{{route('dashboard')}}">
+              <span><i class="fas fa-retweet"></i></span>Push Balance-RO</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('settalemnt')}}" href="recharge-bill-broadband.html">
+            <a class="nav-link {{GeneralHelper::isActiveMenu('settalemnt')}}" href="{{route('dashboard')}}">
               <span><i class="fas fa-university"></i></span>Bank Settalment</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('wallet')}}" href="recharge-bill-landline.html">
-              <span><i class="fas fa-wallet"></i></span> Wallet</a> 
+            <a class="nav-link {{GeneralHelper::isActiveMenu('wallet')}} {{GeneralHelper::isActiveMenu('balancerequest')}}" href="{{route('balancerequest')}}">
+              <span><i class="fas fa-wallet"></i></span> Wallet Recharge</a> 
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('writeus')}}" href="recharge-bill-gas.html">
+            <a class="nav-link {{GeneralHelper::isActiveMenu('writeus')}}" href="{{route('dashboard')}}">
               <span><i class="fas fa-envelope"></i></span> Write Us</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('help')}}" href="recharge-bill-water.html">
+            <a class="nav-link {{GeneralHelper::isActiveMenu('help')}}" href="{{route('dashboard')}}">
               <span><i class="fas fa-life-ring"></i></span> Help</a> 
           </li>
         </ul>

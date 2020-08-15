@@ -83,25 +83,34 @@ Route::prefix('RO')->namespace('RO')->group(function(){
 
 Route::prefix('user')->namespace('User')->group(function(){
 	Route::get('dashboard', 			'DashboardController@index')->name('dashboard');
+	
 	Route::get('addretailer', 			'DashboardController@addretailer')->name('addretailer');
+	Route::any('allretailerlist', 		'DashboardController@allROList')->name('allretailerlist');
 	Route::post('addretailer', 			'DashboardController@postAddRetailer')->name('addretailer');
 	Route::any('retaileraddress/{id}', 	'DashboardController@retaileraddress')->name('retaileraddress');
 	Route::any('retailercompany/{id}', 	'DashboardController@retailerCompanyProof')->name('retailercompany');
+	Route::any('roprofile/{id}', 		'DashboardController@retailerProfile')->name('roprofile');
+	Route::any('rocompanyprofile/{id}', 'DashboardController@ROCompanyProfile')->name('rocompanyprofile');
+	
 	Route::any('personaldetails/{id}',	'DashboardController@retailerPersonalDetails')->name('personaldetails');
 	Route::any('documentproof/{id}', 	'DashboardController@retailerDocumentProof')->name('documentproof');
 	Route::any('viewrodetails/{id}', 	'DashboardController@viewrodetails')->name('viewrodetails');
+	
+	//Generate Balance Request By Distributor
+	Route::any('balancerequest', 		'WalletController@newBalanceRequest')->name('balancerequest');
+	Route::any('allbalancerequest', 	'WalletController@allbalancerequest')->name('allbalancerequest');
 });
 
 
 Route::get('verifyOTP/{id}/{password}', 'Auth\User\LoginController@showOTPLoginForm')->name('verifyOTP');
-Route::post('verifyotp', 'Auth\User\LoginController@verifyOTPAndLogin')->name('user.verifyotp');
+Route::post('verifyotp', 				'Auth\User\LoginController@verifyOTPAndLogin')->name('user.verifyotp');
 
-Route::get('register', 'Auth\User\RegisterController@showRegistrationForm')->name('register');
-Route::post('register', 'Auth\User\RegisterController@register')->name('register');
+Route::get('register', 					'Auth\User\RegisterController@showRegistrationForm')->name('register');
+Route::post('register', 				'Auth\User\RegisterController@register')->name('register');
 
-Route::get('login', 'Auth\User\LoginController@showLoginForm')->name('login');
-Route::post('login', 'Auth\User\LoginController@login');
-Route::post('logout', 'Auth\User\LoginController@logout')->name('logout');
+Route::get('login', 					'Auth\User\LoginController@showLoginForm')->name('login');
+Route::post('login', 					'Auth\User\LoginController@login');
+Route::post('logout', 					'Auth\User\LoginController@logout')->name('logout');
 
 
 //Reset Password

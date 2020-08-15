@@ -210,6 +210,51 @@ class DashboardController extends Controller
     }
 
 
+
+    /**
+     * View Retailer Profile 
+     * @param \Illuminate\Http\Request;
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function retailerProfile(Request $request, $id)
+    {   
+        $RODetails = User::with('UserDetail')->where('parent_user_id','=',$this->getAuthUserID())->find($id);
+        // dd($RODetails);
+        return view('user.ROProfile',array(
+            'RODetails'=>$RODetails
+        ));
+    }
+
+    
+    /**
+     * View Retailer Profile 
+     * @param \Illuminate\Http\Request;
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function ROCompanyProfile(Request $request, $id)
+    {   
+        $RODetails = User::with('UserDetail')->where('parent_user_id','=',$this->getAuthUserID())->find($id);
+        return view('user.ROCompanyProfile',array(
+            'RODetails'=>$RODetails
+        ));
+    }
+
+
+
+    /**
+     * Add New Retailer By the Distributor
+     * @param \Illuminate\Http\Request;
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function allROList(Request $request)
+    {
+        $userId = $this->getAuthUserID();
+        $ROList = User::with('UserDetail')->where('role_id','=',3)->where('parent_user_id','=',$userId)->paginate(15);
+        // dd($ROList);
+        return view('user.allRetailerList',array('ROList'=>$ROList));
+    }
+
+
     /**
      * Add New Retailer By the Distributor
      * @param \Illuminate\Http\Request;
@@ -445,6 +490,7 @@ class DashboardController extends Controller
                 'mobile'        => $data['mobile'],
                 'password'      => Hash::make($data['password']),
                 'role_id'       => 3,
+                'parent_user_id'=> $this->getAuthUserID(),
         ]);
 
 

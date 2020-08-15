@@ -7,8 +7,8 @@
           ============================================= -->
           <ul class="nav nav-pills alternate flex-lg-column sticky-top">
             <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('addretailer')}}" href="profile.html"><i class="fas fa-user"></i>{{ __('Add New Retailer') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="profile-favourites.html"><i class="fas fa-bookmark"></i>{{ __('View All Retailers')}}</a></li>
-            <li class="nav-item"><a class="nav-link" href="profile-notifications.html"><i class="fas fa-bell"></i>{{ __('Retailers Report')}}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{route('allretailerlist')}}"><i class="fas fa-users"></i>{{ __('View All RO')}}</a></li>
+       
           </ul>
           <!-- Nav Link end --> 
           <!--  <div class="bg-light-2 p-3">
@@ -20,7 +20,10 @@
                 </div> -->
         </div>
        
-              <div class="col-lg-6">
+              <div class="col-lg-6" style="border: solid 1px #eee;padding:20px; 
+              -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
+              -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
+              box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75); ">
 
                 <h4 class="mb-4">{{ __('Add New Retailer') }}</h4>
                  <p>
