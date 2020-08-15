@@ -65,7 +65,7 @@
                   <div class="form-group ">
                     <div class="row">
                       <div class="col-md-12">
-                        <center><h4>Comming Soon</h4></center>
+                       @include('user.Distributor.ReportChart')
                       </div>
                    </div>
                   </div>
