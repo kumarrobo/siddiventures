@@ -243,14 +243,15 @@ class Helper {
      * @return string
      */
     public static function getCompanyTypeList($type=1){
+
         $paymentMode = array(
             '1'=>'Comapny Type-1',
             '2'=>'Comapny Type-2',
             '3'=>'Comapny Type-3',
         );
-
-     
-        return $paymentMode[$type];
+        if($type>0){
+            return $paymentMode[$type];
+        }
     }
 
 
