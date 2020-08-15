@@ -218,8 +218,9 @@ class Helper {
             '3'=>'Servcice Type-3',
         );
 
-     
-        return $paymentMode[$type];
+        if($type>0){
+            return $paymentMode[$type];
+        }
     }
 
 
@@ -233,8 +234,9 @@ class Helper {
             '3'=>'Zone Type-3',
         );
 
-     
-        return $paymentMode[$type];
+        if($type>0){
+            return $paymentMode[$type];
+        }
     }
 
     
