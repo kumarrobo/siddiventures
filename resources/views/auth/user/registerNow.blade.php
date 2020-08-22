@@ -52,9 +52,10 @@
                         @csrf
 
                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('First Name') }}</label>
+                            
 
                             <div class="col-md-6">
+                              <label for="name" class=" col-form-label text-md-right">{{ __('First Name') }}</label>
                                 <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
 
                                 @error('name')
@@ -63,12 +64,9 @@
                                     </span>
                                 @enderror
                             </div>
-                        </div>
+                               <div class="col-md-6">
+                              <label for="name" class=" col-form-label text-md-right">{{ __('Last Name') }}</label>
 
-                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
-
-                            <div class="col-md-6">
                                 <input id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}" required autocomplete="last_name" autofocus>
 
                                 @error('last_name')
@@ -79,10 +77,13 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                        
 
+                        <div class="form-group row">
+                            
                             <div class="col-md-6">
+                              <label for="email" class=" col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
 
                                 @error('email')
@@ -91,11 +92,11 @@
                                     </span>
                                 @enderror
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('Mobile Number') }}</label>
+
 
                             <div class="col-md-6">
+                               <label for="email" class=" col-form-label text-md-right">{{ __('Mobile Number') }}</label>
+
                                 <input id="mobile" type="number" class="form-control @error('mobile') is-invalid @enderror" name="mobile" value="{{ old('mobile') }}" required autocomplete="mobile">
 
                                 @error('email')
@@ -104,16 +105,20 @@
                                     </span>
                                 @enderror
                             </div>
-                           
+
+
                         </div>
+                      
 
                       
 
 
                         <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
-
+                           
                             <div class="col-md-6">
+
+                               <label for="password" class="col-form-label text-md-right">{{ __('Password') }}</label>
+
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
 
                                 @error('password')
@@ -122,16 +127,40 @@
                                     </span>
                                 @enderror
                             </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
+                              <div class="col-md-6">
+                                <label for="password-confirm" class=" col-form-label text-md-right">{{ __('Confirm Password') }}</label>
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
+                        <hr/>
+                         <div class="form-group row">
+                           
+                            <div class="col-md-6">
 
+                               <label for="password" class="col-form-label text-md-right">{{ __('Upload Photo') }}</label>
+                                <input id="photo" type="file" class="form-control alert-info" name="photo" required>
+                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
+                            </div>
+                              <div class="col-md-6">
+                                <label for="password" class="col-form-label text-md-right">{{ __('Upload Pancard') }}</label>
+                                <input id="pancard" type="file" class="form-control alert-info" name="pancard" required>
+                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                           
+                            <div class="col-md-6">
+
+                               <label for="password" class="col-form-label text-md-right">{{ __('Aadhar Front') }}</label>
+                                <input id="aadhar_front" type="file" class="form-control alert-info" name="aadhar_front" required>
+                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
+                            </div>
+                              <div class="col-md-6">
+                                <label for="password" class="col-form-label text-md-right">{{ __('Aadhar Back') }}</label>
+                                <input id="aadhar_back" type="file" class="form-control alert-info" name="aadhar_back" required>
+                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
+                            </div>
+                        </div>
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
