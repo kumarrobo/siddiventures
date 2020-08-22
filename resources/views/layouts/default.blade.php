@@ -42,6 +42,7 @@
 
 <!-- Modal Dialog - Login/Signup
 ============================================= -->
+@include('dialog')
 <!-- Modal Dialog - Login/Signup end --> 
 
 <!-- Script --> 
