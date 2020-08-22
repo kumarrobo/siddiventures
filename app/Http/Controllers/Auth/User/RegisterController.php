@@ -53,6 +53,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'mobile' => ['required', 'string',  'max:10', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -69,10 +70,14 @@ class RegisterController extends Controller
     {   
 
         return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'mobile' => $data['mobile'],
-            'password' => Hash::make($data['password']),
+            'name'      => $data['name'],
+            'first_name'=> $data['name'],
+            'last_name' => $data['last_name'],
+            'email'     => $data['email'],
+            'mobile'    => $data['mobile'],
+            'status'    => 0,
+            'role_id'   => 3,
+            'password'  => Hash::make($data['password']),
         ]);
     }
 
@@ -85,7 +90,7 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
-        return view('auth.user.register');
+        return view('auth.user.registerNow');
     }
 
     /**
@@ -110,7 +115,7 @@ class RegisterController extends Controller
             //dd($request->all());
             $user = $this->create($request->all())->toArray();
             Log::channel('newuser')->info('Request', array('Name'=>$user['name'],'Date'=>$user['created_at'])); 
-            return redirect('login')->with('message', 'We sent a comfirmation email to your email, please click on link inside before login');
+            return redirect('/register')->with('status', 'You registred successfully, waiting for approval from administrator.');
         }
         
     }

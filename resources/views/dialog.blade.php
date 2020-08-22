@@ -9,12 +9,27 @@
         </ul>
         <div class="tab-content pt-4">
           <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-            <form id="loginForm" method="post">
+            <form method="POST"  id="loginForm" action="{{ route('login') }}">
+             @csrf
               <div class="form-group">
-                <input type="email" class="form-control" id="loginMobile" required placeholder="Mobile or Email ID">
+                <label for="loginMobile">Mobile Number</label>
+                <input id="mobile" type="phone" class="form-control @error('mobile') is-invalid @enderror" name="mobile" value="{{ old('mobile') }}" required autocomplete="mobile" autofocus>
+                @error('mobile')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
               </div>
+
               <div class="form-group">
-                <input type="password" class="form-control" id="loginPassword" required placeholder="Password">
+                <label for="loginPassword">Password</label>
+                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+
+                @error('password')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
               </div>
               <div class="row mb-4">
                 <div class="col-sm">

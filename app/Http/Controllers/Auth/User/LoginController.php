@@ -10,6 +10,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\User;
+use Hash;
 use Session;
 use App\LoginOtp;
 use Illuminate\Support\Facades\Crypt;
@@ -57,7 +58,7 @@ class LoginController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         return view('welcome');
     }
@@ -234,8 +235,18 @@ class LoginController extends Controller
                 return redirect('/login')->with(['status'=>'Sorry ! Invalid Input.']);
         }
         //dd($validation);
-        $user = User::where($this->username(),$request->get('mobile'))->first();
-        // dd($user);
+        $password = $request->get('password');
+        //echo $password = Hash::check($password, Hash::make($password));
+        $user = User::where('mobile','=',$request->get('mobile'))->first();
+        $isPasswordCorrect = Hash::check($password, $user['password']);
+        if(!$isPasswordCorrect){
+             $error ='Error: Invalid Credentials';
+             Session::flash('status', $error);
+             Session::save();
+             return redirect('/login?err=invalid')->with(['status'=>'Sorry ! Invalid Credentials.']);
+        }
+
+
         if($user AND $user->role_id != 2){
             //dd("ok");
             return redirect('/login')->with(['status'=>'Sorry ! Invalid Credentials.']);

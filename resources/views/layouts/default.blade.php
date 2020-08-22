@@ -50,5 +50,43 @@
 <script src="{{config('global.THEME_PATH')}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> 
 <script src="{{config('global.THEME_PATH')}}/vendor/owl.carousel/owl.carousel.min.js"></script> 
 <script src="{{config('global.THEME_PATH')}}/js/theme.js"></script>
+
+<script type="text/javascript">
+
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+   
+    $("#verifyOTP").click(function(e){
+        $("#verifyOTP").html("Please wait...");
+        $("#verifyOTP").attr("disabled","disabled");
+        e.preventDefault();
+        var OTP       = $("input[name=OTP]").val();
+        $.ajax({
+           type:'POST',
+           url:"{{ route('verifyotp') }}",
+           data:{otp:OTP},
+           success:function(data){
+              if(data.status === true){
+                $("#oldSuccessDiv").hide();
+                $("#errorDiv").hide();
+                $("#successDiv").show();
+                $("#successDiv").html(data.message);
+                $("#otp").val('');
+                $("#personalInformation").submit();
+              }else{
+                $("#oldSuccessDiv").hide();
+                $("#errorDiv").show();
+                $("#errorDiv").html(data.message);
+                $("#verifyOTP").html("Verify & Submit");
+                $("#verifyOTP").removeAttr("disabled");
+              }
+           }
+        });
+  });
+</script>
 </body>
 </html>

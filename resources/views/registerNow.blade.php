@@ -18,12 +18,12 @@
       <div class="container">
         <div class="row align-items-center">
           <div class="col-md-8">
-            <h1>LOGIN</h1>
+            <h1>Register</h1>
           </div>
           <div class="col-md-4">
             <ul class="breadcrumb justify-content-start justify-content-md-end mb-0">
-              <li><a href="index.html">Home</a></li>
-              <li class="active">Login</li>
+              <li><a href="{{route('home')}}">Home</a></li>
+              <li class="active">Register</li>
             </ul>
           </div>
         </div>
@@ -81,7 +81,7 @@
               <button class="btn btn-primary btn-block" type="submit">Login</button>
 
             </form>
-            
+
           </div>
          
        
