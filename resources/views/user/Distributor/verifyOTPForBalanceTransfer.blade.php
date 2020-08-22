@@ -52,7 +52,7 @@
                   </div>
                   </div>
                   <input type="hidden" name="remarks" value="{{$requestData['remarks']}}">
-                  <input type="hidden" name="amount" value="{{$requestData['amount']}}">
+                  <input type="hidden" name="amount" value="{{$amount}}">
 
                   <div class="form-group ">
                      <div class="row">

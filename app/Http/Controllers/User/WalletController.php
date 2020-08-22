@@ -478,7 +478,7 @@ class WalletController extends Controller
 
             //Get Agent Details
             if($tdayDate == date('Ymd')){
-                $amount = $amountRequest;
+                $amount = Crypt::decryptString($amountRequest);
                 //get Balance of the User
                 $totalBalance = $this->getWalletBalance();
                 if($totalBalance>=$amount){
@@ -489,7 +489,7 @@ class WalletController extends Controller
 
                     //Push the Requested Amount to User Wallets
                     $requestData  = $request->all();
-                    $lastBalacePush = $this->pushCreditRequestedBalanceAmount($user_id,$amountRequest,$requestData);
+                    $lastBalacePush = $this->pushCreditRequestedBalanceAmount($user_id,$amount,$requestData);
                     if($lastBalacePush){
                     $lastId = $lastBalacePush['id'];
                     $enId   = Crypt::encryptString($lastId);
@@ -759,6 +759,8 @@ class WalletController extends Controller
             $amount         = $requestData['amount'];
             $remarks        = $requestData['remarks'];
 
+            $enAmountString = Crypt::encryptString($amount);
+
             //Generate OTP and Save
             $OTPDetails     = $this->SMSController->getNewSMSOTP(Auth::user()->id, $mobile);
             $OTPNumber      = $OTPDetails['OTP'];
@@ -781,7 +783,7 @@ class WalletController extends Controller
                     'id'         => $id,
                     'tday'       => $tday,
                     'mobile'     => $mobileNumber,
-                    'amount'     => $amount,
+                    'amount'     => $enAmountString,
                     'remarks'    => $remarks
         ]);
     }
