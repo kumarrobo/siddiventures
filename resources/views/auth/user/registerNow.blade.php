@@ -107,22 +107,7 @@
                            
                         </div>
 
-                         <div class="form-group row" id="verification" style="display: none">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('') }}</label>
-
-                            <div class="col-md-3">
-                                <input id="mobile" type="number" class="form-control @error('mobile') is-invalid @enderror" name="mobile" value="{{ old('mobile') }}" required autocomplete="mobile" placeholder="Enter OTP">
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="col-md-2" style="padding-left: 5px;">
-                              <input type="button" class="btn btn-success" name="verify" value="&nbsp;&nbsp;&nbsp;&nbsp;Verified&nbsp;&nbsp;">
-                            </div>
-                        </div>
+                      
 
 
                         <div class="form-group row">
