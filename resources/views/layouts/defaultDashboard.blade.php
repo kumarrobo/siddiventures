@@ -127,5 +127,40 @@
 
   });
 </script>
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+   
+    $("#verifyOTP").click(function(e){
+        $("#verifyOTP").html("Please wait...");
+        $("#verifyOTP").attr("disabled","disabled");
+        e.preventDefault();
+        var OTP       = $("input[name=OTP]").val();
+        $.ajax({
+           type:'POST',
+           url:"{{ route('verifyotp') }}",
+           data:{otp:OTP},
+           success:function(data){
+              if(data.status === true){
+                $("#oldSuccessDiv").hide();
+                $("#errorDiv").hide();
+                $("#successDiv").show();
+                $("#successDiv").html(data.message);
+                $("#otp").val('');
+                $("#personalInformation").submit();
+              }else{
+                $("#oldSuccessDiv").hide();
+                $("#errorDiv").show();
+                $("#errorDiv").html(data.message);
+                $("#verifyOTP").html("Verify & Submit");
+                $("#verifyOTP").removeAttr("disabled");
+              }
+           }
+        });
+  });
+</script>
 </body>
 </html>

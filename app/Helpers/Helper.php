@@ -8,6 +8,7 @@ use App\DocumentType;
 use App\Country;
 use App\State;
 use App\City;
+use App\PaymentWallet;
 
 class Helper {
 	
@@ -100,13 +101,31 @@ class Helper {
     public static function getWalletBalance() {
 
         if(Auth::guard('user')->check()){
-            return number_format(25000,2);   
+            $user_id = Auth::user()->id;
+            $PaymentWallet = PaymentWallet::where('user_id','=',$user_id)->first();
+            if(!empty($PaymentWallet)){
+                return $PaymentWallet['total_balance'];
+            }else{
+                return '0.00';    
+            }
         }
 
         if(Auth::guard('ro')->check()){
             return number_format(15000,2);   
         }
     
+              
+    }
+
+
+
+    /**
+     * @param  string
+     * @return string
+     */
+    public static function getAmount($number) {
+      
+            return 'Rs '.number_format($number,2);   
               
     }
 
@@ -300,6 +319,69 @@ class Helper {
 
 
 
+
+
+    /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public static function getPaymentWalletDetails($user_id){
+        $paymentWalletDetails = array();
+        if($user_id>0){
+            $paymentWalletDetails = PaymentWallet::where('status','=',1)->where('user_id','=',$user_id)->first();
+            return $paymentWalletDetails;
+        }else{
+            return $paymentWalletDetails;
+        }
+    }
+
+
+
+
+
+
+    /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public static function isValidPaymentWallet($user_id){
+        $paymentWalletDetails = array();
+        if($user_id>0){
+            if (PaymentWallet::where('status','=',1)->where('user_id','=',$user_id)->count()) {
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+
+
+
+
+
+     /**
+     * Get Agent Name
+     * Pramas as user array
+     * @param array
+     * @return string
+     */
+    public static function getUserProfileName($userArr){
+        $userName = "";
+        if(!empty($userArr)){
+            return $userArr['name'].'-'.$userArr['AgentCode'];
+        }
+    }
+
+
+
+    
 
     
 

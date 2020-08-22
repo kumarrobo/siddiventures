@@ -14,7 +14,9 @@ return [
     * Theme files Path
     */
     'THEME_PATH'     =>  $public_url.'/public/'.THEME_PATH,
-    'FILE_PATH'     =>  $public_url.'/public/storage/uploads/RO/',
+    'FILE_PATH'      =>  $public_url.'/public/storage/uploads/RO/',
+    'SMS_USERNAME'	 =>	 'Siddhient',
+    'SMS_KEY'	 	 =>	 '2f67b0dccfXX',
 
     
 ];

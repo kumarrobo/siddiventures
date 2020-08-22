@@ -99,6 +99,12 @@ Route::prefix('user')->namespace('User')->group(function(){
 	//Generate Balance Request By Distributor
 	Route::any('balancerequest', 		'WalletController@newBalanceRequest')->name('balancerequest');
 	Route::any('allbalancerequest', 	'WalletController@allbalancerequest')->name('allbalancerequest');
+	Route::any('pushbalance', 			'WalletController@pushBalanceRequest')->name('pushbalance');
+	Route::any('pushbalancenow/{id}/{tday}', 'WalletController@TransferBalanceToUser')->name('pushbalancenow');
+	Route::any('transfertouserwallet/{id}/{tday}','WalletController@TransferBalanceToUserWallet')->name('transfertouserwallet');
+	Route::any('verifytransfer/{id}/{tday}','WalletController@verifyOTPForBalanceTransfer')->name('verifytransfer');
+	Route::any('verifyotp','SMSController@isValidOTP')->name('verifyotp');
+	Route::any('txncreditsuccess/{id}/{lastid}','WalletController@balanceTransferSuccessfully')->name('txncreditsuccess');
 });
 
 

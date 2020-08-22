@@ -36,7 +36,7 @@
                     <tr>
                       <td class="align-middle">{{$count}}</td>
                       <td class="align-middle" nowrap="nowrap">{{$value['payment_date']}}</td>
-                      <td class="align-middle">{{$value['requested_amount']}}</td>
+                      <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getAmount($value['requested_amount'])}}</td>
                       <td class="align-middle">{{GeneralHelper::getPaymentModeName($value['payment_mode_type_id'])}}</td>
                       <td class="align-middle" nowrap="nowrap">{{$value['depositer_name']}}</td>
                       <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getCompanyBankName($value['company_bank_id'])}}</td>
