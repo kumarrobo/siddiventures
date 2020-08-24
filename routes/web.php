@@ -113,6 +113,7 @@ Route::post('verifyotp', 				'Auth\User\LoginController@verifyOTPAndLogin')->nam
 
 Route::get('register', 					'Auth\User\RegisterController@showRegistrationForm')->name('register');
 Route::post('register', 				'Auth\User\RegisterController@register')->name('register');
+Route::any('uploaddocument/{id}', 'Auth\User\RegisterController@registerUploadDocument')->name('uploaddocument');
 
 Route::get('login', 					'Auth\User\LoginController@showLoginForm')->name('login');
 Route::post('login', 					'Auth\User\LoginController@login');

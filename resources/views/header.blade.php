@@ -25,7 +25,7 @@
                 <li class="dropdown active"> <a class="dropdown-toggle" href="#">FEATURES</a></li>
                 <li class="dropdown active"> <a class="dropdown-toggle" href="#">CONTACT US</a></li>
                 <li class="dropdown active"> <a class="dropdown-toggle" href="{{route('ro.login')}}">RO LOGIN</a></li>
-                <li class="dropdown active"> <a class="dropdown-toggle" href="{{route('register')}}">Register Now</a></li>
+                <li class="dropdown active"> <a class="dropdown-toggle" href="{{route('register')}}">REGISTER</a></li>
 
                 <li class="login-signup ml-lg-2"><a class="pl-lg-4 pr-0" data-toggle="modal" data-target="#login-signup" href="#">Welcome, Guest<span class="d-none d-lg-inline-block"><i class="fas fa-user"></i></span></a></li>
               </ul>

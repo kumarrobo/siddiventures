@@ -42,8 +42,8 @@
           <div class="col-lg-8 mb-4 mb-lg-0">
             <h2 class="text-4 mb-3">New Registration</h2>
             <hr/>
-            @if (Session::has('status'))
-            <div class="card-header alert-success">{{ __(Session::get('status')) }}</div>
+            @if (Session::has('message'))
+            <div class="card-header alert-success">{{ __(Session::get('message')) }}</div>
             @endif
           <div class="tab-content pt-4">
           <div class="tab-pane fade show active" id="loginPage" role="tabpanel" aria-labelledby="login-page-tab">
@@ -132,35 +132,7 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
-                        <hr/>
-                         <div class="form-group row">
-                           
-                            <div class="col-md-6">
-
-                               <label for="password" class="col-form-label text-md-right">{{ __('Upload Photo') }}</label>
-                                <input id="photo" type="file" class="form-control alert-info" name="photo" required>
-                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
-                            </div>
-                              <div class="col-md-6">
-                                <label for="password" class="col-form-label text-md-right">{{ __('Upload Pancard') }}</label>
-                                <input id="pancard" type="file" class="form-control alert-info" name="pancard" required>
-                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                           
-                            <div class="col-md-6">
-
-                               <label for="password" class="col-form-label text-md-right">{{ __('Aadhar Front') }}</label>
-                                <input id="aadhar_front" type="file" class="form-control alert-info" name="aadhar_front" required>
-                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
-                            </div>
-                              <div class="col-md-6">
-                                <label for="password" class="col-form-label text-md-right">{{ __('Aadhar Back') }}</label>
-                                <input id="aadhar_back" type="file" class="form-control alert-info" name="aadhar_back" required>
-                                <small>Please choose .jpeg, .jpg, .pdf file extension only</small>
-                            </div>
-                        </div>
+                      
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
