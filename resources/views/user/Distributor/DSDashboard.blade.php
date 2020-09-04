@@ -59,7 +59,7 @@
                        <div class="col-1">
                         <p style="font-weight: bold;">{{__(':')}}</p>
                       </div>
-                      <div class="col-md-7" style="font-weight: bold;">
+                      <div class="col-md-7" style="font-weight: bold;"><i class="fas fa-sack"></i>
                         {{GeneralHelper::getWalletBalance()}}
                       </div>
                       </div>

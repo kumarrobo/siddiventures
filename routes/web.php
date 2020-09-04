@@ -105,7 +105,22 @@ Route::prefix('user')->namespace('User')->group(function(){
 	Route::any('verifytransfer/{id}/{tday}','WalletController@verifyOTPForBalanceTransfer')->name('verifytransfer');
 	Route::any('verifyotp','SMSController@isValidOTP')->name('verifyotp');
 	Route::any('txncreditsuccess/{id}/{lastid}','WalletController@balanceTransferSuccessfully')->name('txncreditsuccess');
+	Route::any('tatrechargeesybuz/{id}','WalletController@tatkalWalletRechargeEaseBuzz')->name('tatrechargeesybuz');
+	Route::any('tatrechargeesybuz','WalletController@tatkalWalletRechargeEaseBuzz')->name('tatrechargeesybuz');
+	Route::any('confirmrecharge','WalletController@confirmRechargeTatkalWalletRechargeEaseBuzz')->name('confirmrecharge');
+	Route::post('confirmationorder','WalletController@confirmationOrderPage')->name('confirmationorder');
+	Route::any('rechargesuccess','WalletController@walletRechargeSuccess')->name('rechargesuccess');
+	Route::any('rechargefailed','WalletController@walletRechargeFailed')->name('rechargefailed');
+	Route::any('walletcredited/{id}','WalletController@walletCredited')->name('walletcredited');
+	
+	
 });
+
+
+
+Route::any('rechargesuccess','User\WalletController@walletRechargeSuccess')->name('rechargesuccess');
+Route::any('rechargefailed','User\WalletController@walletRechargeFailed')->name('rechargefailed');
+Route::any('walletcredited/{id}','User\WalletController@walletCredited')->name('walletcredited');
 
 
 Route::get('verifyOTP/{id}/{password}', 'Auth\User\LoginController@showOTPLoginForm')->name('verifyOTP');

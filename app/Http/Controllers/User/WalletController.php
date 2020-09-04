@@ -5,11 +5,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\User\SMSController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Session;
 use Log;
 use Hash;
-use Auth;
 use DB;
+use App\Helpers\Helper;
 use App\User;
 use App\State;
 use App\City;
@@ -20,6 +21,9 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\PaymentWalletTransaction;
 use App\PaymentWallet;
+use App\TransactionType;
+use App\AgentCommission;
+use App\WalletRechargePayment;
 
 
 class WalletController extends Controller
@@ -35,7 +39,7 @@ class WalletController extends Controller
     public function __construct()
     {
         $this->SMSController = new SMSController();
-        $this->middleware('auth:user');
+        $this->middleware('auth:user',['except' => ['walletRechargeSuccess', 'walletRechargeFailed','walletCredited']]);
     }
 
 
@@ -793,6 +797,467 @@ class WalletController extends Controller
 
 
 
-   
+   /**
+    * @param  \Illuminate\Http\Request  $request
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+   public function tatkalWalletRechargeEaseBuzz(Request $request,$id=null){
+    $credit_amount      ='';
+    $transaction_number ='';
+    if(isset($id)){
+        try{
+              $id     = Crypt::decryptString($id);
+              $WalletRechargePayment = WalletRechargePayment::with('User')->find($id);
+              if($WalletRechargePayment){
+              //Get Payment Wallet Id 
+
+                $payment_wallet_id = Helper::getPaymentWalletID($this->getUserId());
+                $PaymentWalletTransaction =PaymentWalletTransaction::where('user_id','=',$this->getUserId())
+                ->where('payment_wallet_id','=',$payment_wallet_id)
+                ->where('wallet_recharge_payment_id','=',$id)
+                ->first();
+                //dd($PaymentWalletTransaction);
+                if($PaymentWalletTransaction){
+                    $credit_amount      = $this->getAmount($PaymentWalletTransaction['credit_amount']);
+                    $transaction_number = $PaymentWalletTransaction['transaction_number'];
+                }
+              }
+        } catch (DecryptException $e) {
+            Session::flash('error', ["Invalid Request, Please Try After Sometime."]);
+            //return redirect('user/pushbalancenow/'.$id.'/'.$tday)->with(['error'=>['Sorry ! Invalid Url.']]);
+        }
+    }
+    $user_id = Auth::user()->id;
+    $userDetails = User::find($user_id);
+    //dd($userDetails );
+    //Get the Payment Type Lisst
+    $TransactionType = TransactionType::where('status','=',1)->get(); 
+
+    //Get AgentCommission
+    $AgentCommission = AgentCommission::with('TransactionType')
+    ->where('user_id','=',$user_id)
+    ->where('status','=',1)
+    ->get();
+    //dd($AgentCommission);
+    return view('user.TatkalWalletRechargeEaseBuzz',array(
+        'TransactionType'       =>  $TransactionType,
+        'AgentCommission'       =>  $AgentCommission,
+        'userDetails'           =>  $userDetails,
+        'transaction_number'    =>  $transaction_number,
+        'credit_amount'         =>  $credit_amount
+    ));
+   }
+
+
+
+
+   /**
+    * @param  \Illuminate\Http\Request  $request
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+   public function confirmRechargeTatkalWalletRechargeEaseBuzz(Request $request){
+     //dd($request->all());
+     if ($request->isMethod('post')) {
+            $validator = $this->validatorForm($request->all());
+            if($validator->fails()) {
+                $error=$validator->errors()->all();
+                Session::flash('error', $error);
+                foreach($request->all() as $k=>$value){
+                    Session::flash($k, $request->get($k));
+                }
+                return redirect()->back()->withErrors($validator)->withInput();
+             }else{
+                //dd($request->all());
+                $userDetails        = User::find(Auth::user()->id);
+                $agency_name        = $request->get('agency_name');
+                $acurrent_balance   = $request->get('acurrent_balance');
+                $request_name       = $request->get('request_name');
+                $request_amount     = Helper::getAmount($request->get('request_amount'));
+                $payment_mode       = Helper::getTransactionType($request->get('payment_mode'));
+                $email_address      = $request->get('email_address');
+                $mobile             = $request->get('mobile');
+                $remarks            = $request->get('remarks');
+
+                //Encrypt Amount 
+                $requestAmount      = $request->get('request_amount').'.00';
+                $paymentMode        = $request->get('payment_mode');
+                $enRequestAmount    = Crypt::encryptString($requestAmount);
+                $enEmailAddress     = Crypt::encryptString($email_address);
+                $enMobile           = Crypt::encryptString($mobile);
+                $enUserID           = Crypt::encryptString($userDetails['id']);
+
+                $txnid              = date('Ymd').$userDetails['id'].time();
+                $amount             = $request_amount;
+                $firstname          = $userDetails['first_name'];
+                $email              = $email_address;
+                $phone              = $mobile;
+                $productinfo        = $remarks;
+                $paymentMethod      = Helper::getTransactionType($payment_mode);
+             }
+    }
+     return view('user.ConfirmTatkalWalletRechargeEaseBuzz',array(
+        'userDetails'   => $userDetails,
+        'request_amount'=> $request_amount,
+        'request_name'  => $request_name,
+        'payment_mode'  => $payment_mode,
+        'email_address' => $email_address,
+        'mobile'        => $mobile,
+        'productinfo'   => $productinfo,
+        'enRequestAmount'=>$enRequestAmount,
+        'enEmailAddress'=> $enEmailAddress,
+        'enMobile'      => $enMobile,
+        'enUserID'      => $enUserID,
+        'paymentMode'   => $paymentMode
+
+    ));
+    
+   }
+
+
+
+
+
+     /**
+     * Validate the user login request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function validatorForm(array $data)
+    {
+        return Validator::make($data, [
+            'request_amount'        => ['required'],
+            'request_name'          => ['required'],
+            'payment_mode'          => ['required'],
+            'email_address'         => ['required'],
+            'mobile'                => ['required'],
+            'remarks'               => ['required'],
+            
+        ],[
+            'request_amount.required'       => 'Min 100.00 ruppes request amount required..', // custom message
+            'request_name.required'         => 'Enter Requested by name', // custom message
+            'payment_mode.required'         => 'Choose payemnt mode', // custom message
+            'email_address.required'        => 'Email address required', // custom message
+            'mobile.required'               => 'Mobile number required', // custom message
+            'remarks3.required'             => 'Please Enter remarks' // custom message
+           ]
+       );
+       
+    }
+
+
+
+
+    /**
+    * @param Confirmation Order
+    * Post the Payment Page
+    * Verify all the post valuse here
+    */
+    public function confirmationOrderPage(Request $request){
+         $paymentFormData = [];
+         try {
+                $paymentMode          = $request->get('paymentMode');
+                $enRequestAmount      = $request->get('enRequestAmount');
+                $enMobile             = $request->get('enMobile');
+                $enEmailAddress       = $request->get('enEmailAddress');
+                $enUserID             = $request->get('enUserID');
+                $requestedByName      = $request->get('request_name');
+                //dd($request->all());
+                $requestAmount        = Crypt::decryptString($enRequestAmount);
+                $Mobile               = Crypt::decryptString($enMobile);
+                $emailAddress         = Crypt::decryptString($enEmailAddress);
+                $userID               = Crypt::decryptString($enUserID);
+                $enAuthMobile         = Auth::user()->mobile; 
+                $enAuthEmail          = Auth::user()->email;
+
+                if($userID == Auth::user()->id){
+                    $userDetails = User::find($enUserID);
+                    $paymentFormData = array();
+                    $paymentFormData['txnid']     = date('Ymd').$userID.time();
+                    $paymentFormData['amount']    = $requestAmount;
+                    $paymentFormData['firstname'] = $requestedByName;
+                    $paymentFormData['email']     = $emailAddress;
+                    $paymentFormData['phone']     = $Mobile;
+                    $paymentFormData['productinfo'] = 'Wallet Recharge';
+                    $paymentFormData['surl']        = url('user/rechargesuccess');
+                    $paymentFormData['furl']        = url('user/rechargefailed');
+                    $paymentFormData['udf1']        = '';
+                    $paymentFormData['udf2']        = $enAuthMobile;
+                    $paymentFormData['udf3']        = $enAuthEmail;
+                    $paymentFormData['udf4']        = $paymentMode;
+                    $paymentFormData['udf5']        = '';
+                    $paymentFormData['address1']    = '';
+                    $paymentFormData['address2']    = '';
+                    $paymentFormData['city']        = '';
+                    $paymentFormData['state']       = '';
+                    $paymentFormData['country']     = '';
+                    $paymentFormData['zipcode']     = '';
+                    $paymentFormData['sub_merchant_id'] = '';
+                    $paymentFormData['unique_id']   = '';
+                    $paymentFormData['split_payments']   = '';
+                    $paymentFormData['show_payment_mode']   = '';
+
+                    //Create new order For this 
+                    $lastId = $this->CreatePaymentWalletTransactions($paymentFormData);
+                    $paymentFormData['udf5']        = $lastId;
+
+                }else{
+                    Session::flash('error', ["Invalid Session Request, Please Try After Sometime."]);
+                    return redirect()->back()->withErrors($validator)->withInput();
+                }
+            } catch (DecryptException $e) {
+                Session::flash('error', ["Invalid Request, Please Try After Sometime."]);
+                return redirect('user/pushbalancenow/'.$id.'/'.$tday)->with(['error'=>['Sorry ! Invalid Url.']]);
+            }
+        
+
+
+            return view('user.Distributor.TatkalRecharge.paymentPreProcess',array(
+                    'userDetails'   => $userDetails,
+                    'paymentFormData' => $paymentFormData
+            ));
+    }
+
+
+    /**
+    * @param PaymentForm array
+    * @return Integer Id of the Payment Wallet Transactions
+    */
+    private function CreatePaymentWalletTransactions($paymentFormData){
+        if(!empty($paymentFormData)){
+            $WalletRechargePaymentObj = new WalletRechargePayment();
+            $WalletRechargePaymentObj['user_id']    = Auth::user()->id;   
+            $WalletRechargePaymentObj['txnid']      = $paymentFormData['txnid'];   
+            $WalletRechargePaymentObj['amount']     = $paymentFormData['amount'];   
+            $WalletRechargePaymentObj['firstname']  = $paymentFormData['firstname'];   
+            $WalletRechargePaymentObj['email']      = $paymentFormData['email'];   
+            $WalletRechargePaymentObj['phone']      = $paymentFormData['phone'];   
+            $WalletRechargePaymentObj['productinfo']= $paymentFormData['productinfo'];   
+            $WalletRechargePaymentObj['payment_mode']= $paymentFormData['udf4'];   
+            $WalletRechargePaymentObj['payment_date']= $this->getNow();   
+            $WalletRechargePaymentObj['created_at'] = $this->getNow();
+            if($WalletRechargePaymentObj->save()){
+                return $WalletRechargePaymentObj->id;
+            }   
+        }
+    }
+
+
+    public function walletRechargeSuccess(Request $request){
+        if ($request->isMethod('post')) {
+            // dd($request->all());
+            $payment_mode       = $request->get('udf4');
+            $paymentId          = $request->get('udf5');
+            $net_amount_credit  = $request->get('net_amount_debit');
+            $payment_source     = $request->get('payment_source');
+            $phone              = $request->get('phone');
+            $payment_ref_key    = $request->get('key');
+            $cash_back_percentage= $request->get('cash_back_percentage');
+            $status             = $request->get('status');
+            $txnid              = $request->get('txnid');
+            $card_type          = $request->get('card_type');
+            $cardnum            = $request->get('cardnum');
+            $issuing_bank       = $request->get('issuing_bank');
+            $cardCategory       = $request->get('cardCategory');
+            $amount             = $request->get('amount');
+            $error_Message      = $request->get('error_Message');
+            $deduction_percentage = $request->get('deduction_percentage');
+
+            if($paymentId>0){
+                $paymentObj = WalletRechargePayment::find($paymentId);
+                $paymentObj->net_amount_credit  = $net_amount_credit;
+                $paymentObj->payment_source     = $payment_source;
+                $paymentObj->error_Message      = $error_Message;
+                $paymentObj->phone              = $phone;
+                $paymentObj->payment_ref_key    = $payment_ref_key;
+                $paymentObj->cash_back_percentage= $cash_back_percentage;
+                $paymentObj->status             = $status;
+                $paymentObj->txnid              = $txnid;
+                $paymentObj->card_type          = $card_type;
+                $paymentObj->cardnum            = $cardnum;
+                $paymentObj->issuing_bank       = $issuing_bank;
+                $paymentObj->cardCategory       = $cardCategory;
+                $paymentObj->amount             = $amount;
+                $paymentObj->deduction_percentage = $deduction_percentage;
+                $paymentObj->more_details = json_encode($request->all());
+                if($paymentObj->save()){
+
+                    //Save Balance to DS Wallet
+                    if($this->savePaymentWalletTransactionsForDS($paymentObj->id)){
+                        Session::flash('message', "Wallet Credited Successfully!!");
+                        $message ="Wallet Credited Successfully!!";
+                        $id        = Crypt::encryptString($paymentObj->id);
+                        $this->loginNow($request,$id);
+                        return redirect('user/tatrechargeesybuz/'.$id)->with(['message'=>$message]);
+                    }else{
+                        $this->loginNow($request,$id);
+                        Session::flash('error', ["Somthing Went Wrong, Please contact administrator."]);
+                        return redirect('user/tatrechargeesybuz/')->with(['error'=>['Sorry ! Invalid Url.']]);
+                    }
+
+                }
+
+            }else{
+                Session::flash('error', ["Payment is in progress, Please contact administrator."]);
+            }
+        }
+    }
+
+
+    private function savePaymentWalletTransactionsForDS($last_payment_id){
+        $rechargePaymentId     = WalletRechargePayment::find($last_payment_id);
+        //dd($rechargePaymentId);
+        $userId                = $rechargePaymentId->user_id; 
+        $net_amount_credit     = $rechargePaymentId->net_amount_credit;
+        $deduction_percentage  = $rechargePaymentId->deduction_percentage;
+        $payment_ref_key       = $rechargePaymentId->payment_ref_key;
+        $status                = $rechargePaymentId->status;
+        $productinfo           = $rechargePaymentId->productinfo;
+        $payment_mode          = $rechargePaymentId->payment_mode;
+        // dd($this->getNow());
+        //Calculate the Amount After Deduction of Percentage
+        $netCreditAmount        = $net_amount_credit;
+        $commissionValue        = Helper::getDSAgentCommissions($userId,$payment_mode);
+        $transactionType        = Helper::getTransactionCommissionType($payment_mode);
+        //dd($commissionValue); 
+        $adminCommissionValue   = Helper::getDefaultTransactionCommission($payment_mode);
+
+        if($transactionType=='Percentage'){
+            //Get Admin Wallet Amount
+            $adminNetCreditAmount   = Helper::getCommissionDebitedAmount($netCreditAmount,$adminCommissionValue);
+            
+            //Get DS Wallet Amount
+            $netCreditAmount        = Helper::getCommissionDebitedAmount($netCreditAmount,$commissionValue);
+
+             //Get Admin Wallet Amount
+            $adminWalletAmount      = $adminNetCreditAmount -  $netCreditAmount;
+            //dd($adminNetCreditAmount.'-'.$netCreditAmount.'-'.$adminWalletAmount);
+            
+            /*Save DS Payment Wallet Transaction For Credit Amount into Wallet */
+            $payWTObj               = new PaymentWalletTransaction();
+            $payment_wallet_id      = Helper::getPaymentWalletID($userId);
+            $payWTObj['payment_wallet_id']          = $payment_wallet_id;
+            $payWTObj['debit_amount']               = '0.00';
+            $payWTObj['credit_amount']              = $netCreditAmount;
+            $payWTObj['transaction_number']         = $payment_ref_key;
+            $payWTObj['transaction_date']           = $this->getNow();
+            $payWTObj['user_id']                    = $userId;
+            $payWTObj['status']                     = 'Success';
+            $payWTObj['ds_wallet_balance_request_id'] = '0';
+            $payWTObj['remarks']                    = $productinfo;
+            $payWTObj['wallet_recharge_payment_id'] = $last_payment_id;
+            if($payWTObj->save()){
+                $paymentWallet = PaymentWallet::find($payment_wallet_id);
+                $paymentWallet->total_balance = $paymentWallet->total_balance + $netCreditAmount;
+                if($paymentWallet->save()){
+                    //Save Credit Wallet Amount For Admin as well
+                    $payment_wallet_id = Helper::getPaymentWalletID(1);
+                    $adminPaymentWallet = PaymentWallet::find($payment_wallet_id);
+                    $adminPaymentWallet->total_balance = $adminPaymentWallet->total_balance +  $adminWalletAmount;
+                    if($adminPaymentWallet->save()){
+                        //Save Payment Wallet Trasction Credit Amount
+                         $payAWTObj               = new PaymentWalletTransaction();
+                         $payment_wallet_id      = Helper::getPaymentWalletID(1);
+                         $payAWTObj['payment_wallet_id']          = $payment_wallet_id;
+                         $payAWTObj['debit_amount']               = '0.00';
+                         $payAWTObj['credit_amount']              = $adminWalletAmount;
+                         $payAWTObj['transaction_number']         = time();
+                         $payAWTObj['transaction_date']           = $this->getNow();
+                         $payAWTObj['user_id']                    = $userId;
+                         $payAWTObj['status']                     = 'Success';
+                         $payAWTObj['ds_wallet_balance_request_id'] = '0';
+                         $payAWTObj['remarks']                    = $productinfo;
+                         $payAWTObj['wallet_recharge_payment_id'] = $last_payment_id;
+                         if($payAWTObj->save()){
+                                return true;
+                         }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    public function walletCredited(Request $request,$id){
+        $last_payemnt_id = Crypt::decryptString($id);
+        return view('user.WalletCreditedSuccess',array(
+                        
+        ));
+    }
+
+
+    /**
+     * Handle an authentication attempt.
+     *
+     * @param  \Illuminate\Http\Request $request
+     *
+     * @return Response
+     */
+    public function loginNow(Request $request, $id){
+        $id = Crypt::decryptString($id);
+        $WalletRechargePayment = WalletRechargePayment::with('User')->find($id);
+        $user = $WalletRechargePayment['User'];        
+        if($user)  {
+            if(Auth::guard('user')->login($user)){
+                return true;
+            }
+        }
+    }
+
+
+
+
+
+    /**
+     * Handle an authentication attempt.
+     *
+     * @param  \Illuminate\Http\Request $request
+     *
+     * @return Response
+     */
+    public function loginNowForFailed(Request $request){
+       $email = $request->get('udf3'); 
+       $mobile = $request->get('udf2'); 
+       $user = User::where('email','=',$email)->where('mobile','=',$mobile)->first();       
+        if($user)  {
+            if(Auth::guard('user')->login($user)){
+                return true;
+            }
+        }
+    }
+
+
+
+    //If Payment is Failed
+    public function walletRechargeFailed(Request $request){
+        //dd($request->all());
+        $status = $request->get('status');
+        $this->loginNowForFailed($request);
+        return redirect('user/tatrechargeesybuz/')->with(['error'=>['Sorry '.$status.' ! Payment not processed successfully.']]);
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

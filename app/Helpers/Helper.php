@@ -9,6 +9,8 @@ use App\Country;
 use App\State;
 use App\City;
 use App\PaymentWallet;
+use App\TransactionType;
+use App\AgentCommission;
 
 class Helper {
 	
@@ -92,6 +94,30 @@ class Helper {
 
 
 
+
+
+    /**
+     * @param  string
+     * @return string
+     */
+    public static function getDebitBalance() {
+
+        if(Auth::guard('user')->check()){
+            $user_id = Auth::user()->id;
+            $PaymentWallet = PaymentWallet::where('user_id','=',$user_id)->first();
+            if(!empty($PaymentWallet)){
+                return self::getAmount($PaymentWallet['total_balance']);
+            }else{
+                return '0.00';    
+            }
+        }
+
+        if(Auth::guard('ro')->check()){
+            return number_format(15000,2);   
+        }
+    
+              
+    }
 
 
     /**
@@ -340,6 +366,74 @@ class Helper {
 
 
 
+    /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public static function getPaymentWalletID($user_id){
+        $paymentWalletDetails = array();
+
+        if($user_id>0){
+            $paymentWalletDetails = PaymentWallet::where('status','=',1)->where('user_id','=',$user_id)->first();
+            return $paymentWalletDetails['id'];
+        }else{
+            return $paymentWalletDetails;
+        }
+    }
+
+
+
+    /**
+     * Get the Tranaction Type
+     * @param integer
+     * @return integer
+     */
+    public static function getTransactionType($id){
+        $paymentMethod = '';
+        if($id>0){
+            $TransactionType = TransactionType::where('status','=',1)->where('id','=',$id)->first();
+            return $TransactionType['transaction_type'];
+        }
+    }
+
+
+
+
+    /**
+     * Get the Tranaction Type
+     * @param integer
+     * @return integer
+     */
+    public static function getTransactionCommissionType($id){
+        $paymentMethod = '';
+        if($id>0){
+            $TransactionType = TransactionType::where('status','=',1)->where('id','=',$id)->first();
+            return $TransactionType['commission_type'];
+        }
+    }
+
+
+
+
+
+    /**
+     * Get the Tranaction Type
+     * @param integer
+     * @return integer
+     */
+    public static function getDefaultTransactionCommission($id){
+        $paymentMethod = '';
+        if($id>0){
+            $TransactionType = TransactionType::where('status','=',1)->where('id','=',$id)->first();
+            return $TransactionType['value'];
+        }
+    }
+
+
+
+
 
 
     /**
@@ -364,6 +458,34 @@ class Helper {
 
 
 
+     /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public static function getDSAgentCommissions($user_id,$TransactionType){
+        $paymentWalletDetails = array();
+        if($user_id>0 && $TransactionType>0){
+               $AgentCommissionDetails = AgentCommission::where('user_id','=',$user_id)
+                ->where('role_id','=',2)
+                ->where('transaction_type_id','=',$TransactionType)
+                ->first();
+                //dd($AgentCommissionDetails);
+                if(!empty($AgentCommissionDetails)){
+                    return $AgentCommissionDetails['commission'];
+                }else{
+                    return '0.00';
+                }
+        }else{
+            return '0.00';
+        }
+    }
+
+
+
+
+
 
 
      /**
@@ -377,6 +499,20 @@ class Helper {
         if(!empty($userArr)){
             return $userArr['name'].'-'.$userArr['AgentCode'];
         }
+    }
+
+
+
+   /**
+     * Get Agent Name
+     * Pramas as user array
+     * @param array
+     * @return string
+     */
+    public static function getCommissionDebitedAmount($netCreditAmount,$commissionValue){
+        $netAmount = "";
+        $netCreditAmount =$netCreditAmount - (($netCreditAmount * $commissionValue) / 100);
+        return  $netCreditAmount;
     }
 
 

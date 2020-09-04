@@ -55,9 +55,10 @@ class Controller extends BaseController
         $username       = "Siddhient";
         $key            = "2f67b0dccfXX";
         $mobileNumber   = $mobile;
-        $message        = "You OTP for login for Siddi Venture is ".$randomid. ". Please do not share it with anyone.";
+        $message        = "New OTP for login for Siddi Venture is ".$randomid. ". Please do not share it with anyone.";
         $senderId       = "INFOTP";
-        $url ="http://mobicomm.dove-sms.com//submitsms.jsp?user=".$username."&key=".$key."&mobile=+91".$mobileNumber."&message=".$message."&senderid=".$senderId."&accusage=1";
+        //return $randomid; 
+        $url ="http://mobicomm.dove-sms.com//submitsms.jsp?user=".$username."&key=".$key."&mobile=+91".$mobileNumber."&message=".$message."&senderid=".$senderId."&accusage=1"; 
         if($this->sendSMS($url)){
             return $randomid; 
         }
@@ -157,6 +158,21 @@ class Controller extends BaseController
             return false;
         }
     }
+
+
+
+
+   /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public  function getUserId(){
+        return Auth::user()->id;
+    }
+
+   
 
 
 

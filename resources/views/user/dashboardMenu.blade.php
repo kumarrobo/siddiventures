@@ -48,8 +48,8 @@
               <span><i class="fas fa-wallet"></i></span> Wallet Recharge</a> 
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('writeus')}}" href="{{route('dashboard')}}">
-              <span><i class="fas fa-envelope"></i></span> Write Us</a>
+            <a class="nav-link {{GeneralHelper::isActiveMenu('tatrechargeesybuz')}}" href="{{route('tatrechargeesybuz')}}">
+              <span><i class="fas fa-rupee-sign"></i></span> Tatkal Recharge</a>
           </li>
           <li class="nav-item"> 
             <a class="nav-link {{GeneralHelper::isActiveMenu('help')}}" href="{{route('dashboard')}}">
