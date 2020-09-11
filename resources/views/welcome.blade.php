@@ -98,8 +98,22 @@
           ============================================= -->
           <div class="col-lg-8">
             <div class="owl-carousel owl-theme single-slider" data-animateout="fadeOut" data-animatein="fadeIn" data-autoplay="true" data-loop="true" data-autoheight="true" data-nav="true" data-items="1">
-              <div class="item"><a href="#"><img class="img-fluid" src="{{config('global.THEME_PATH')}}/images/slider/banner-1.jpg" alt="banner 1" /></a></div>
-              <div class="item"><a href="#"><img class="img-fluid" src="{{config('global.THEME_PATH')}}/images/slider/banner-2.jpg" alt="banner 2" /></a></div>
+              <div class="item">
+                <a href="#">
+                  <img class="img-fluid" src="{{config('global.THEME_PATH')}}/images/slider/banner-3.jpg" alt="banner 1" />
+                </a>
+              </div>
+              <div class="item">
+                <a href="#">
+                  <img class="img-fluid" src="{{config('global.THEME_PATH')}}/images/slider/banner-6.jpg" alt="banner 2" />
+                </a>
+              </div>
+              <div class="item">
+                <a href="#">
+                  <img class="img-fluid" src="{{config('global.THEME_PATH')}}/images/slider/banner-11.jpg" alt="banner 2" />
+                </a>
+              </div>
+
             </div>
           </div>
           <!-- Slideshow end --> 
@@ -113,23 +127,42 @@
    <div class="section py-4">
       <div class="container">
         <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
-          <li class="nav-item"> <a class="nav-link active" id="mobile-recharge-tab" data-toggle="tab" href="#mobile-recharge" role="tab" aria-controls="mobile-recharge" aria-selected="true">Mobile Recharge</a> </li>
-          <li class="nav-item"> <a class="nav-link" id="billpayment-tab" data-toggle="tab" href="#billpayment" role="tab" aria-controls="billpayment" aria-selected="false">Bill Payment</a> </li>
-          <li class="nav-item"> <a class="nav-link" id="why-quickai-tab" data-toggle="tab" href="#why-quickai" role="tab" aria-controls="why-quickai" aria-selected="false">Why Quickai</a> </li>
+          <li class="nav-item"> <a class="nav-link active" id="mobile-recharge-tab" data-toggle="tab" href="#mobile-recharge" role="tab" aria-controls="mobile-recharge" aria-selected="true">About Us</a> </li>
+          <li class="nav-item"> <a class="nav-link" id="billpayment-tab" data-toggle="tab" href="#billpayment" role="tab" aria-controls="billpayment" aria-selected="false">Service</a> </li>
+          <li class="nav-item"> <a class="nav-link" id="why-quickai-tab" data-toggle="tab" href="#why-quickai" role="tab" aria-controls="why-quickai" aria-selected="false">Refund Policy</a> </li>
         </ul>
         <div class="tab-content my-3" id="myTabContent">
           <div class="tab-pane fade active show" id="mobile-recharge" role="tabpanel" aria-labelledby="mobile-recharge-tab">
-            <p>Instant Online mobile recharge Iisque persius interesset his et, in quot quidam persequeris vim, ad mea essent possim iriure. Mutat tacimates id sit. Ridens mediocritatem ius an, eu nec magna imperdiet. Mediocrem qualisque in has. Enim utroque perfecto id mei, ad eam tritani labores facilisis, ullum sensibus no cum. Eius eleifend in quo. At mei alia iriure propriae.</p>
-            <p>Partiendo voluptatibus ex cum, sed erat fuisset ne, cum ex meis volumus mentitum. Alienum pertinacia maiestatis ne eum, verear persequeris et vim. Mea cu dicit voluptua efficiantur, nullam labitur veritus sit cu. Eum denique omittantur te, in justo epicurei his, eu mei aeque populo. Cu pro facer sententiae, ne brute graece scripta duo. No placerat quaerendum nec, pri alia ceteros adipiscing ut. Quo in nobis nostrum intellegebat. Ius hinc decore erroribus eu, in case prima exerci pri. Id eum prima adipisci. Ius cu minim theophrastus, legendos pertinacia an nam. <a href="#">Read Terms</a></p>
+            <p>We offers you Online and Offline recharge facility for Mobile Recharge, DTH Recharge, Datacard Recharge, Postpaid Bill, Landline Bill, Gas Bill, Electricity and Insurance Premium Payment all over in India. We also provide you with Flight Booking services. It is like a value added service for the businesses. We believe in friendly business because we provide services by themselves is your place.
+
+We set up your own multi level commission structure, Configure forwarding API, Bill Payment etc. using our ready made Recharge framework. <a href="{{url('contactus')}}">Read More</a></p>
           </div>
           <div class="tab-pane fade" id="billpayment" role="tabpanel" aria-labelledby="billpayment-tab">
-            <p>Partiendo voluptatibus ex cum, sed erat fuisset ne, cum ex meis volumus mentitum. Alienum pertinacia maiestatis ne eum, verear persequeris et vim. Mea cu dicit voluptua efficiantur, nullam labitur veritus sit cu. Eum denique omittantur te, in justo epicurei his, eu mei aeque populo. Cu pro facer sententiae, ne brute graece scripta duo. No placerat quaerendum nec, pri alia ceteros adipiscing ut. Quo in nobis nostrum intellegebat. Ius hinc decore erroribus eu, in case prima exerci pri. Id eum prima adipisci. Ius cu minim theophrastus, legendos pertinacia an nam.</p>
-            <p>Instant Online mobile recharge Iisque persius interesset his et, in quot quidam persequeris vim, ad mea essent possim iriure. Mutat tacimates id sit. Ridens mediocritatem ius an, eu nec magna imperdiet. Mediocrem qualisque in has. Enim utroque perfecto id mei, ad eam tritani labores facilisis, ullum sensibus no cum. Eius eleifend in quo. At mei alia iriure propriae.</p>
+            <p>
+              What We Offer In Service?
+              RechargeOnline
+              Recharge gives you the liberty to recharge your mobile phone number anytime and from anywhere.
+
+              DTH Recharge
+              We provide Online DTH Recharge Services for all major operators for SD connection & HD Connections.
+
+              Travel Booking
+              Now do Travel Booking using our app anytime and anywhere.
+
+              Bill Payment
+              Instant, secure, fast BillPayment Services. [Coming Soon]
+
+              Tickets Booking
+              Online bus tickets booking option is a great way and also promotes hassle-free bus travel across the India.
+
+              Easy Payment
+              Safe, Quick and Easy payment! Choose any electricity bill payment using credit card or dedit card.
+            </p>
           </div>
           <div class="tab-pane fade" id="why-quickai" role="tabpanel" aria-labelledby="why-quickai-tab">
-            <p>Cu pro facer sententiae, ne brute graece scripta duo. No placerat quaerendum nec, pri alia ceteros adipiscing ut. Quo in nobis nostrum intellegebat. Ius hinc decore erroribus eu, in case prima exerci pri. Id eum prima adipisci. Ius cu minim theophrastus, legendos pertinacia an nam.</p>
-            <p>Partiendo voluptatibus ex cum, sed erat fuisset ne, cum ex meis volumus mentitum. Alienum pertinacia maiestatis ne eum, verear persequeris et vim. Mea cu dicit voluptua efficiantur, nullam labitur veritus sit cu. Eum denique omittantur te, in justo epicurei his, eu mei aeque populo.</p>
-            <p>Instant Online mobile recharge Iisque persius interesset his et, in quot quidam persequeris vim, ad mea essent possim iriure. Mutat tacimates id sit. Ridens mediocritatem ius an, eu nec magna imperdiet. Mediocrem qualisque in has. Enim utroque perfecto id mei, ad eam tritani labores facilisis, ullum sensibus no cum. Eius eleifend in quo. At mei alia iriure propriae.</p>
+            <p>We at www.siddhiventures.com describe the procedure we follow to handle your personal information. It refers to the information that is being collected within www.siddhiventures.com. By accepting the privacy policy you acknowledge the practices and policies outlined within this policy and hereby give your approval that we will use, collect and share your information in the following ways.
+
+We have strong return policy, if any issue with service, we have guarantee of full refund within 10 days.</p>
           </div>
         </div>
       </div>
@@ -141,13 +174,13 @@
     <section class="section bg-light shadow-md">
       <div class="container">
         <h2 class="text-9 font-weight-600 text-center">Refer &amp; Earn</h2>
-        <p class="lead text-center mb-5">Refer your friends and earn up to $20.</p>
+        <p class="lead text-center mb-5">Refer your friends and earn up to ₹20*.</p>
         <div class="row">
           <div class="col-sm-4">
             <div class="featured-box style-4">
               <div class="featured-box-icon bg-primary text-light rounded-circle"> <i class="fas fa-bullhorn"></i> </div>
               <h3>You Refer Friends</h3>
-              <p class="text-3">Share your referral link with friends. They get $10.</p>
+              <p class="text-3">Share your referral link with friends. They get ₹10*.</p>
             </div>
           </div>
           <div class="col-sm-4">
@@ -161,11 +194,11 @@
             <div class="featured-box style-4">
               <div class="featured-box-icon bg-primary text-light rounded-circle"> <i class="fas fa-dollar-sign"></i> </div>
               <h3>Earn You</h3>
-              <p class="text-3">You get $20. You can use these credits to take recharge.</p>
+              <p class="text-3">You get ₹20*. You can use these credits to take recharge.</p>
             </div>
           </div>
         </div>
-        <div class="text-center pt-4"> <a href="#" class="btn btn-outline-primary">Get Started Earn</a> </div>  
+        <div class="text-center pt-4"> <a href="{{url('register')}}" class="btn  btn-danger">Get Started Earn</a> </div>  
     </div>
     </section>
     <!-- Refer & Earn end --> 
