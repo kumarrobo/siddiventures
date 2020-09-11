@@ -29,4 +29,10 @@ class MasterBank extends Model
         }
         return $bankArr;
     }
+
+
+    public function VerifyBankAccount() {
+         return $this->hasMany('App\VerifyBankAccount', 'master_bank_id', 'id' );
+    }
+
 }

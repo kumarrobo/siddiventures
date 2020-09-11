@@ -161,6 +161,30 @@
            }
         });
   });
+
+
+
+  //Add Bank Account
+   $("#addAccountBtn").click(function(e){
+      var account_no      = $("#account_no").val();
+      var master_bank_id  = $("#master_bank_id").val();
+      var IFSCCode        = $("#IFSCCode").val();
+      var hiddenid        = $("#hiddenid").val();
+      e.preventDefault();
+       $.ajax({
+           type:'POST',
+           url:"{{ route('addaccountrequest') }}",
+           data:{account_no:account_no,master_bank_id:master_bank_id,IFSCCode:IFSCCode,id:hiddenid},
+           success:function(data){
+            console.log(data);
+              if(data.status === true){
+                alert("ok");
+              }else{
+                alert("dasd");
+              }
+           }
+        });
+   });
 </script>
 </body>
 </html>

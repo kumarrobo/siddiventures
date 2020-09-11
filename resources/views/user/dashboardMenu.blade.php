@@ -37,8 +37,8 @@
               <span><i class="fas fa-retweet"></i></span>Push Balance-RO</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('settalemnt')}}" href="{{route('dashboard')}}">
-              <span><i class="fas fa-university"></i></span>Bank Settalment</a>
+            <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="{{route('moneytransfer')}}">
+              <span><i class="fas fa-university"></i></span>Money Transfer</a>
           </li>
           <li class="nav-item"> 
             <a class="nav-link 

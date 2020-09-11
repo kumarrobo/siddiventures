@@ -172,6 +172,19 @@ class Controller extends BaseController
         return Auth::user()->id;
     }
 
+
+
+
+   /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public  function getTransferLimitPerMonth(){
+        return '25000';
+    }
+
    
 
 

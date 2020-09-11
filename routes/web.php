@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'Auth\User\LoginController@showLoginForm')->name('home');
 
 
+
 Route::prefix('admin')->namespace('Auth\Admin')->group(function(){
 
 Route::get('login', 'LoginController@showLoginForm')->name('admin.login');
@@ -113,7 +114,11 @@ Route::prefix('user')->namespace('User')->group(function(){
 	Route::any('rechargefailed','WalletController@walletRechargeFailed')->name('rechargefailed');
 	Route::any('walletcredited/{id}','WalletController@walletCredited')->name('walletcredited');
 	
-	
+	//Money Transfer To Bank from Wallet
+	Route::any('moneytransfer'			,	'MoneyTransferController@moneyTransfer')->name('moneytransfer');
+	Route::any('bankaccountlist/{mdstr}',	'MoneyTransferController@bankAccountList')->name('bankaccountlist');
+	Route::any('addaccount/{id}'		,	'MoneyTransferController@addAccountNumber')->name('addaccount');
+	Route::any('addaccountrequest'	,	'MoneyTransferController@addAccountRequest')->name('addaccountrequest');
 });
 
 
@@ -149,3 +154,5 @@ Route::get('email/verify', 'Auth\User\VerificationController@show')->name('verif
 Route::get('email/verify/{id}/{hash}', 'Auth\User\VerificationController@verify')->name('verification.verify');
 Route::post('email/resend', 'Auth\User\VerificationController@resend')->name('verification.resend');
 
+//Static Pages
+Route::get('{page_slug}', 'PageController@pageDetails')->name('pagedetails');

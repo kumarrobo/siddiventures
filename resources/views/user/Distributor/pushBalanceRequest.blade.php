@@ -1,9 +1,6 @@
-
             <!-- Personal Information
           ============================================= -->
             <div class="row">
-            
-       
               <div class="col-lg-6" style="border: solid 1px #eee;padding:20px; 
               -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
               -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);

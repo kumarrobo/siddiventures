@@ -49,7 +49,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-4 mb-3 mb-md-0">
-          <p>Payment</p>
+          <p>Payment Accept</p>
           <ul class="payments-types">
             <li><a href="#" target="_blank"> <img data-toggle="tooltip" src="{{config('global.THEME_PATH')}}/images/payment/visa.png" alt="visa" title="" data-original-title="Visa" aria-describedby="tooltip727181"></a></li>
             <li><a href="#" target="_blank"> <img data-toggle="tooltip" src="{{config('global.THEME_PATH')}}/images/payment/discover.png" alt="discover" title="" data-original-title="Discover"></a></li>
@@ -82,14 +82,15 @@
     <div class="container">
       <div class="footer-copyright">
         <ul class="nav justify-content-center">
-          <li class="nav-item"> <a class="nav-link active" href="#">About Us</a> </li>
+          {!!GeneralHelper::getFooterMenu()!!}
+<!--           <li class="nav-item"> <a class="nav-link active" href="#">About Us</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">Faq</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">Contact</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="#">Support</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Service</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">Terms of Use</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">Privacy Policy</a> </li>
-        </ul>
-        <p class="copyright-text">Copyright © 2018 <a href="#">Quickai</a>. All Rights Reserved.</p>
+ -->        </ul>
+        <p class="copyright-text">Copyright © 2020 <a href="#">SiddiVentures</a>. All Rights Reserved.</p>
       </div>
     </div>
   </footer>

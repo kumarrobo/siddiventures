@@ -19,14 +19,7 @@
           <nav class="primary-menu navbar navbar-expand-lg">
             <div id="header-nav" class="collapse navbar-collapse">
               <ul class="navbar-nav">
-                <li class="dropdown active"> <a class="dropdown-toggle" href="#">HOME</a></li>
-                <li class="dropdown active"> <a class="dropdown-toggle" href="#">ABOUT US</a></li>
-                <li class="dropdown active"> <a class="dropdown-toggle" href="#">SERVICE</a></li>
-                <li class="dropdown active"> <a class="dropdown-toggle" href="#">FEATURES</a></li>
-                <li class="dropdown active"> <a class="dropdown-toggle" href="#">CONTACT US</a></li>
-                <li class="dropdown active"> <a class="dropdown-toggle" href="{{route('ro.login')}}">RO LOGIN</a></li>
-                <li class="dropdown active"> <a class="dropdown-toggle" href="{{route('register')}}">REGISTER</a></li>
-
+                {!!GeneralHelper::getMenu()!!}
                 <li class="login-signup ml-lg-2"><a class="pl-lg-4 pr-0" data-toggle="modal" data-target="#login-signup" href="#">Welcome, Guest<span class="d-none d-lg-inline-block"><i class="fas fa-user"></i></span></a></li>
               </ul>
             </div>

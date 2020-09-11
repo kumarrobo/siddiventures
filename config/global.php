@@ -17,6 +17,8 @@ return [
     'FILE_PATH'      =>  $public_url.'/public/storage/uploads/RO/',
     'SMS_USERNAME'	 =>	 'Siddhient',
     'SMS_KEY'	 	 =>	 '2f67b0dccfXX',
+    'MERCHANT_KEY'   =>	 "2PBP7IABZ2",
+    'SALT' 			 =>  "DAH88E3UWQ"
 
     
 ];

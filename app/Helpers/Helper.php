@@ -22,9 +22,112 @@ class Helper {
     }
 
 
+    /****************************API CALL For Frontend**********************/
+
+    public static function getMenu(){
+        $apiUrl  = env('API_URL');
+        $menuUrl = $apiUrl.'gethomepage';
+        $result  = self::getCurlData($menuUrl);
+        $resultArr = json_decode($result,true);
+        $menuStr = '';
+        if(!empty($resultArr['result']['Menu'])){
+            foreach($resultArr['result']['Menu'] as $item){
+                if(isset($item['pageSlug'])){
+                if($item['orderNo']<6){
+                //dd($item);
+                    $menuStr.="<li class='dropdown active'> <a class='dropdown-toggle' href='".url($item['pageSlug'])."''>".$item['title']."</a></li>";
+                    }
+                }
+            }
+        }
+        return $menuStr;
+
+    }
+
+
+    public static function getFooterMenu(){
+        $apiUrl  = env('API_URL');
+        $menuUrl = $apiUrl.'gethomepage';
+        $result  = self::getCurlData($menuUrl);
+        $resultArr = json_decode($result,true);
+        $menuStr = '';
+        if(!empty($resultArr['result']['Menu'])){
+            foreach($resultArr['result']['Menu'] as $item){
+                if(isset($item['pageSlug'])){
+                //dd($item);
+                $menuStr.="<li class='nav-item'> <a class='nav-link' href='".url($item['pageSlug'])."''>".$item['title']."</a></li>";
+                }
+            }
+        }
+        return $menuStr;
+
+    }
 
 
 
+    public static function getCurlData($url){
+        $payload = "";
+        // Prepare new cURL resource
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_POST, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+         
+        // Set HTTP Header for POST request 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($payload))
+        );
+         
+        // Submit the POST request
+        $result = curl_exec($ch);
+         
+        // Close cURL session handle
+        curl_close($ch);
+        return $result; 
+    }
+  
+
+
+    //Get Title Of the Page
+    public static function getTitleOfPage($pageDetails){
+        if(!empty($pageDetails)){
+            return $pageDetails['MainBody']['Title'];
+        }
+    }
+
+
+    //Get Description Of the Page
+    public static function getPageDescription($pageDetails){
+        if(!empty($pageDetails)){
+            return $pageDetails['MainBody']['Description'];
+        }
+    }
+
+
+     //Get Description Of the Page
+    public static function getPageBanner($pageDetails,$class=null,$width='100%',$height=null){
+        if(!empty($pageDetails)){
+            $imgStr = "<img src='".$pageDetails['Banner']['Image']."' class='".$class."' width='".$width."' height='".$height."'>";
+            return $imgStr;
+        }
+    }  
+
+
+    //Get Description Of the Page
+    public static function getSettingValue($setting,$type){
+        if(!empty($setting)){
+            foreach($setting as $item){
+                if($item['type']==$type){
+                    return $item['value'];
+                }
+            }
+        }
+    }
+
+
+    /****************************API CALL For Frontend Ends Here**********************/
 
     /**
      * @return string
