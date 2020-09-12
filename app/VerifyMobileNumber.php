@@ -30,5 +30,13 @@ class VerifyMobileNumber extends Model
         'user_id','mobile','otp_number','transfer_limit','is_verified','status','created_at'
     ];
     
+
+
+
+    
+    public function AgentCommission() {
+         return $this->hasMany('App\AgentCommission', 'transaction_type_id', 'id' );
+    }
+
    
 }

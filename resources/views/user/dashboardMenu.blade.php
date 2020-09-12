@@ -33,11 +33,15 @@
             {{GeneralHelper::isActiveMenu('pushbalancenow')}}
             {{GeneralHelper::isActiveMenu('pushbalance')}}
             {{GeneralHelper::isActiveMenu('txncreditsuccess')}}
+           
             " href="{{route('pushbalance')}}">
               <span><i class="fas fa-retweet"></i></span>Push Balance-RO</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="{{route('moneytransfer')}}">
+            <a class="nav-link 
+            {{GeneralHelper::isActiveMenu('moneytransfer')}}
+            {{GeneralHelper::isActiveMenu('bankaccountlist')}}
+            " href="{{route('moneytransfer')}}">
               <span><i class="fas fa-university"></i></span>Money Transfer</a>
           </li>
           <li class="nav-item"> 

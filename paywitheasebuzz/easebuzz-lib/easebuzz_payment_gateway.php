@@ -5,9 +5,9 @@
 
     class Easebuzz{
 
-        private $MERCHANT_KEY = "2PBP7IABZ2";
-        private $SALT = "DAH88E3UWQ";
-        private $ENV = "test";
+        private $MERCHANT_KEY = "";
+        private $SALT = "";
+        private $ENV = "prod";
 
         /*
         * initialised private variable for setup easebuzz payment gateway.

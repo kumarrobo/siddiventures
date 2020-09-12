@@ -185,14 +185,14 @@ We have strong return policy, if any issue with service, we have guarantee of fu
           </div>
           <div class="col-sm-4">
             <div class="featured-box style-4">
-              <div class="featured-box-icon bg-primary text-light rounded-circle"> <i class="fas fa-sign-in-alt"></i> </div>
+              <div class="featured-box-icon bg-primary text-light rounded-circle"> <i class="fas fa-share"></i> </div>
               <h3>Your Friends Register</h3>
               <p class="text-3">Your friends Register with using your referral link.</p>
             </div>
           </div>
           <div class="col-sm-4">
             <div class="featured-box style-4">
-              <div class="featured-box-icon bg-primary text-light rounded-circle"> <i class="fas fa-dollar-sign"></i> </div>
+              <div class="featured-box-icon bg-primary text-light rounded-circle"> <i class="fas fa-rupee-sign"></i> </div>
               <h3>Earn You</h3>
               <p class="text-3">You get ₹20*. You can use these credits to take recharge.</p>
             </div>

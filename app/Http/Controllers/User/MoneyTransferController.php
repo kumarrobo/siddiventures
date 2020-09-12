@@ -159,7 +159,10 @@ class MoneyTransferController extends Controller
                     ->where('verify_mobile_number_id','=',$verifyMID)
                     ->get();
                     $bankList   =  $bankAccountList;
-                    //dd($bankList);
+                    $mobileTransactionBalanceAmount = Helper::getMonthlyBalanceAmount($verifyMID);
+                    $monthlyLimit   = Helper::getUserMonthlyBalance();
+                    $utilized       = $monthlyLimit -  $mobileTransactionBalanceAmount;
+                    //dd($mobileTransactionBalance);
                 }else{
                      Session::flash('error', ["No Records Found"]);
                      return redirect('user/moneytransfer/')->with(['error'=>['Sorry ! Invalid Url.']]);
@@ -173,9 +176,9 @@ class MoneyTransferController extends Controller
             'mobileNumber'=> $mobile,
             'senderName'  => $senderName,
             'address'     => $address,
-            'monthlyLimit'=> '25000',
-            'utilized'    => '10000',
-            'balance'     => '15000',
+            'monthlyLimit'=> $monthlyLimit,
+            'utilized'    => $utilized,
+            'balance'     => $mobileTransactionBalanceAmount,
             'bankList'    => $bankList,
             'id'          => Crypt::encryptString($verifyMID)
         ));

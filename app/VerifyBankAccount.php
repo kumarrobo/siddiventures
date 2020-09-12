@@ -32,6 +32,11 @@ class VerifyBankAccount extends Model
 
 
 
+    public function VerifiedMobileMonthlyTransaction() {
+         return $this->hasMany('App\VerifiedMobileMonthlyTransaction', 'verify_mobile_number_id', 'id' );
+    }
+
+
     public function MasterBank() {
          return $this->belongsTo('App\MasterBank', 'master_bank_id', 'id' );
     }

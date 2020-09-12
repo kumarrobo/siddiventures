@@ -11,6 +11,7 @@ use App\City;
 use App\PaymentWallet;
 use App\TransactionType;
 use App\AgentCommission;
+use App\VerifiedMobileMonthlyTransaction;
 
 class Helper {
 	
@@ -620,6 +621,56 @@ class Helper {
 
 
 
+
+
+   /**
+     * Get Tranaction List On Per Mobiile 
+     * Pramas verified mobile id 
+     * @param verified_mobile_id
+     * @return double integer
+     */
+    public static function getMonthlyBalanceAmount($verify_mobile_number_id){
+        $verify_mobile_number_id = $verify_mobile_number_id;
+        $user_id = Auth::user()->id;
+        $month   = strtoupper(date('M')); 
+        $year    = date('Y'); 
+        $monthlyTranaction = VerifiedMobileMonthlyTransaction::where('user_id','=',$user_id)
+        ->where('verify_mobile_number_id','=',$verify_mobile_number_id)
+        ->where('month','=',$month)
+        ->where('year','=',$year)
+        ->where('transaction_status','=',1)
+        ->get();
+        $balanceAmount = 0;
+        if($monthlyTranaction->count()){
+            $usedArr = []; 
+            foreach($monthlyTranaction as $item){
+                $usedArr[] = $item['used'];
+            }
+            $perMobileMonthlyLimit = Auth::user()->per_mobile_monthly_limit;
+            $totalUsed = array_sum($usedArr);
+            $balanceAmount = $perMobileMonthlyLimit - $totalUsed; 
+        }
+        return  $balanceAmount;
+    }
+
+
+
+
+
+
+      /**
+     * Get Balance Per Mobiile for User 
+     * @return integer
+     */
+    public static function getUserMonthlyBalance(){
+        return   Auth::user()->per_mobile_monthly_limit;;
+    }
+
+
+
+    
+
+    
     
 
     
