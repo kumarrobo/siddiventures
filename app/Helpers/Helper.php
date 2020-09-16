@@ -241,7 +241,13 @@ class Helper {
         }
 
         if(Auth::guard('ro')->check()){
-            return number_format(15000,2);   
+            $user_id = Auth::user()->id;
+            $PaymentWallet = PaymentWallet::where('user_id','=',$user_id)->first();
+            if(!empty($PaymentWallet)){
+                return number_format($PaymentWallet['total_balance'],2);
+            }else{
+                return '0.00';    
+            }  
         }
     
               
@@ -254,9 +260,12 @@ class Helper {
      * @return string
      */
     public static function getAmount($number) {
-      
+        if($number>0){
+            $number = str_replace(',', '',$number);
             return 'Rs '.number_format($number,2);   
-              
+        }else{
+            return 'Rs '.'0.00';
+        }
     }
 
 
@@ -266,7 +275,7 @@ class Helper {
      * @return string
      */
     public static function isActiveMenu($rountName) {
-        
+      
         if(self::getRouteName() == $rountName){
             return 'active';
         }         
@@ -573,6 +582,32 @@ class Helper {
         if($user_id>0 && $TransactionType>0){
                $AgentCommissionDetails = AgentCommission::where('user_id','=',$user_id)
                 ->where('role_id','=',2)
+                ->where('transaction_type_id','=',$TransactionType)
+                ->first();
+                //dd($AgentCommissionDetails);
+                if(!empty($AgentCommissionDetails)){
+                    return $AgentCommissionDetails['commission'];
+                }else{
+                    return '0.00';
+                }
+        }else{
+            return '0.00';
+        }
+    }
+
+
+
+     /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public static function getROAgentCommissions($user_id,$TransactionType){
+        $paymentWalletDetails = array();
+        if($user_id>0 && $TransactionType>0){
+               $AgentCommissionDetails = AgentCommission::where('user_id','=',$user_id)
+                ->where('role_id','=',3)
                 ->where('transaction_type_id','=',$TransactionType)
                 ->first();
                 //dd($AgentCommissionDetails);

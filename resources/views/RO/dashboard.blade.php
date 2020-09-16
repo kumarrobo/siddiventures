@@ -5,21 +5,100 @@
 
 <section class="containers">
 <div class="bg-light shadow-md rounded p-4">
-  <div class="row"> 
-    <div class="col-lg-12">
-    <div class="bg-light shadow-md rounded p-4"> 
-      <!--User Profile Section
-      ============================================= -->
-      <h2> Welcome Back, {{Auth::user()->first_name}} {{Auth::user()->last_name}}!</h2>
-      <!-- Personal Information end --> 
-    </div>
-  </div>
-  </div>
+
+
+            <!-- Personal Information
+          ============================================= -->
+            <div class="row">
+              
+       
+              <div class="col-lg-6" style="padding: 20px;">
+
+                <h4 class="mb-4">{{ __('Welcome Back,') }}&nbsp;{{ Auth::user()->name }}</h4>
+                
+               
+                  <div class="form-group ">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <ul class="nav secondary-nav">
+
+                            <li class="nav-item"> 
+                          <a class="nav-link 
+                          {{GeneralHelper::isActiveMenu('romoneytransfer')}}
+                          {{GeneralHelper::isActiveMenu('roaddaccount')}}
+                          " href="{{route('romoneytransfer')}}">
+                            <span><i class="fas fa-rupee-sign"></i></span>Money Transfer</a>
+                        </li>
+                        <li class="nav-item"> 
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('wallet')}}" href="{{route('robalancerequest')}}">
+                            <span><i class="fas fa-university"></i></span> Add Bank A/C</a> 
+                        </li>
+                        
+                      
+                        <li class="nav-item"> 
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="{{route('ropushbalance')}}">
+                            <span><i class="fas fa-retweet"></i></span>Push Balance</a>
+                        </li>
+
+                      
+                         <li class="nav-item"> 
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('tatrechargeesybuz')}}" href="{{route('rotatrechargeesybuz')}}">
+                            <span><i class="fas fa-wallet"></i></span> Tatkal Recharge</a>
+                        </li>
+                    
+                        </ul>
+                           <ul class="nav secondary-nav">
+                         <li class="nav-item"> 
+                            <a class="nav-link"  href="{{route('allbalancerequest')}}">
+                              <span><i class="fas fa-gavel"></i></span>Balance Request</a> 
+                          </li>
+                         <li class="nav-item"> 
+                          <a class="nav-link 
+                          {{GeneralHelper::isActiveMenu('myreport')}}
+                          " href="recharge-bill-datacard.html">
+                            <span><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>Commission</a>
+                        </li>
+                        <li class="nav-item"> 
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('rorechargesreport')}}" href="{{route('rorechargesreport')}}">
+                            <span><i class="fas fa-unlink"></i></span>Recharge Status</a>
+                        </li>
+                        <li class="nav-item"> 
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="recharge-bill-datacard.html">
+                            <span><i class="fas fa-chart-line"></i></span>My Report</a>
+                        </li>
+
+                    
+                        </ul>
+
+
+                      </div>
+                   </div>
+                  </div>
+              </div>
+               <div class="col-lg-6" style="border: solid 1px #eee;padding: 20px;">
+
+                <h4 class="mb-4">{{ __('Report') }}</h4>
+                
+               
+                  <div class="form-group ">
+                    <div class="row">
+                      <div class="col-md-12">
+                       @include('user.Distributor.ReportChart')
+                      </div>
+                   </div>
+                  </div>
+              </div>
+
+
+            </div>
 </div>
+
+
 </section>
 
 <section class="containers section pb-4">
   <div class="bg-light shadow-md rounded p-4">
+  
   <div class="row"> 
     <div class="col-lg-12">
 

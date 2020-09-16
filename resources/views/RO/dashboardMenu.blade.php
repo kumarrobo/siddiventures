@@ -5,31 +5,51 @@
       <div class="container">
         <ul class="nav secondary-nav">
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('dashboard')}}" href="{{route('dashboard')}}">
+            <a class="nav-link {{GeneralHelper::isActiveMenu('rodashboard')}}" href="{{route('rodashboard')}}">
               <span><i class="fas fa-home"></i></span> Dashboard</a> 
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="recharge-bill-datacard.html">
+            <a class="nav-link 
+            {{GeneralHelper::isActiveMenu('myreport')}}
+            {{GeneralHelper::isActiveMenu('rorechargesreport')}}
+
+            " href="{{route('myreport')}}">
               <span><i class="fas fa-chart-line"></i></span>My Report</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="recharge-bill-datacard.html">
-              <span><i class="fas fa-retweet"></i></span>Money Transfer</a>
+            <a class="nav-link 
+            {{GeneralHelper::isActiveMenu('robankaccountlist')}}
+            {{GeneralHelper::isActiveMenu('romoneytransfer')}}
+            {{GeneralHelper::isActiveMenu('roaddaccount')}}
+         
+            " href="{{route('romoneytransfer')}}">
+              <span><i class="fas fa-rupee-sign"></i></span>Money Transfer</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('settalemnt')}}" href="recharge-bill-broadband.html">
-              <span><i class="fas fa-university"></i></span>Bank Settalment</a>
+            <a class="nav-link {{GeneralHelper::isActiveMenu('addbankaccount')}}" href="{{route('addbankaccount')}}">
+              <span><i class="fas fa-university"></i></span>Add Bank A/C</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('wallet')}}" href="recharge-bill-landline.html">
-              <span><i class="fas fa-wallet"></i></span> Wallet</a> 
+            <a class="nav-link 
+            {{GeneralHelper::isActiveMenu('ropushbalance')}}
+            {{GeneralHelper::isActiveMenu('rotxncreditsuccess')}}
+            " href="{{route('ropushbalance')}}">
+              <span><i class="fas fa-retweet"></i></span>Push Balance</a> 
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('writeus')}}" href="recharge-bill-gas.html">
+            <a class="nav-link 
+            {{GeneralHelper::isActiveMenu('wallet')}}
+            {{GeneralHelper::isActiveMenu('rotatrechargeesybuz')}}
+            {{GeneralHelper::isActiveMenu('roconfirmrecharge')}}
+            " href="{{route('rotatrechargeesybuz')}}">
+              <span><i class="fas fa-wallet"></i></span>Tatkal Recharge</a> 
+          </li>
+          <li class="nav-item"> 
+            <a class="nav-link {{GeneralHelper::isActiveMenu('writeus')}}" href="{{route('writeus')}}">
               <span><i class="fas fa-envelope"></i></span> Write Us</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('help')}}" href="recharge-bill-water.html">
+            <a class="nav-link {{GeneralHelper::isActiveMenu('help')}}" href="{{route('help')}}">
               <span><i class="fas fa-life-ring"></i></span> Help</a> 
           </li>
          <!--  <li class="nav-item pull-right" style="float:right; margin-left:80px; color: #FFF"> 

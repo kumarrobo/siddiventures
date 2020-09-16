@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ro;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Auth;
 
 class DashboardController extends Controller
 {
@@ -16,7 +17,8 @@ class DashboardController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:ro');
+       
+       $this->middleware('auth:ro');
     }
 
 
@@ -27,7 +29,6 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        
         return view('RO.dashboard');
     }
 

@@ -27,6 +27,16 @@ class Controller extends BaseController
 
 
     /**
+     * @return integer
+     */
+    public function getPageItem() {
+      
+            return 10;   
+              
+    }
+
+
+    /**
      * @param  string
      * @return string
      */
@@ -42,8 +52,14 @@ class Controller extends BaseController
             }
         }
 
-        if(Auth::guard('ro')->check()){
-            return number_format(15000,2);   
+         if(Auth::guard('ro')->check()){
+            $user_id = Auth::user()->id;
+            $PaymentWallet = PaymentWallet::where('user_id','=',$user_id)->first();
+            if(!empty($PaymentWallet)){
+                return $PaymentWallet['total_balance'];
+            }else{
+                return '0.00';    
+            }  
         }
     
               

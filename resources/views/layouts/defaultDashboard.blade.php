@@ -166,6 +166,7 @@
 
   //Add Bank Account
    $("#addAccountBtn").click(function(e){
+      alert("dasd");
       var account_no      = $("#account_no").val();
       var master_bank_id  = $("#master_bank_id").val();
       var IFSCCode        = $("#IFSCCode").val();

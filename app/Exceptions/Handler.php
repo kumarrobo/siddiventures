@@ -79,6 +79,8 @@ class Handler extends ExceptionHandler
         }
         else if($guard == 'user'){
             $route = '/login';
+        }else if($guard == 'ro'){
+            $route = 'RO/login';
         }
         return redirect($route);
     }

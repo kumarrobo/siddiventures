@@ -110,11 +110,15 @@ class MoneyTransferController extends Controller
 
 
 
+   
+
+
     private function isValidOTP(Request $request){
             $mobile      = $request->get('mobile'); 
             $sender_name = $request->get('sender_name'); 
             $email       = $request->get('email'); 
             $mobile_otp  = $request->get('mobile_otp'); 
+            $address     = $request->get('address'); 
             $verifyMobileNumberObj = VerifyMobileNumber::where('user_id','=',$this->getUserId())
                 ->where('mobile','=',$mobile)->where('is_verified','=',0)->first();
             if($verifyMobileNumberObj){
@@ -122,8 +126,18 @@ class MoneyTransferController extends Controller
                 $verifyMobileNumberObj = VerifyMobileNumber::where('user_id','=',$this->getUserId())
                 ->where('mobile','=',$mobile)->where('is_verified','=',0)->where('otp_number','=',$mobile_otp)->first();
                 if($verifyMobileNumberObj){
-                    $verifyMobileNumberObj->is_verified =1;
+                    //Call the wire API for Add Contact Details and get the response, Once response will
+                    //Success, then move ahead.
+                    $result     =   $this->addWireContactAPI($request);
+                    //dd($result['success']);
+                    $verifyMobileNumberObj->sender_name     =   $sender_name;
+                    $verifyMobileNumberObj->email_address   =   $email;
+                    $verifyMobileNumberObj->address         =   $address;
+                    $verifyMobileNumberObj->is_verified     =   1;
+                    $verifyMobileNumberObj->wireApiContactID=   1;
+                    //dd($verifyMobileNumberObj);
                     if($verifyMobileNumberObj->save()){
+                        //dd($result);
                         Session::flash('message', "Mobile Number is Verified Now !!");
                         return true;
                     }else{
@@ -139,6 +153,8 @@ class MoneyTransferController extends Controller
             }
 
     }
+
+
 
 
 
@@ -214,8 +230,8 @@ class MoneyTransferController extends Controller
             $IFSCCode       = $request->get('IFSCCode');
             $hiddenid       = $request->get('hiddenid');
             //echo "<pre>";
-            $merchentKey = config('global.MERCHANT_KEY');
-            $salt        = config('global.SALT');
+            $merchentKey = config('global.MONEY_MERCHANT_KEY');
+            $salt        = config('global.MONEY_SALT');
             $keyStr      = $merchentKey.'|'.$account_no.'|'.$IFSCCode.'|'.$salt; 
             $hash = hash('sha512', $keyStr);
              $data = array(
@@ -236,13 +252,13 @@ class MoneyTransferController extends Controller
 
 
 
-    private function postCurlData($data){
+    private function postCurlData1($data){
         $payload = json_encode($data);
         // Prepare new cURL resource
         $ch = curl_init('https://wire.easebuzz.in/api/v1/beneficiaries/bank_account/verify/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
          
         // Set HTTP Header for POST request 
@@ -250,14 +266,82 @@ class MoneyTransferController extends Controller
             'Content-Type: application/json',
             'Content-Length: ' . strlen($payload))
         );
-         
-        // Submit the POST request
         $result = curl_exec($ch);
-         
-        // Close cURL session handle
         curl_close($ch);
         return $result; 
     }
+
+
+
+
+    /*****************************************WIRE API START HERE**********************/
+    private function getMerchentKey(){
+        return config('global.MONEY_MERCHANT_KEY');
+    }
+
+    private function getMerchentSalt(){
+        return config('global.MONEY_SALT');
+    }
+
+    private function getAddContctAPIURL(){
+        return config('global.ADD_CONTACT_API');
+    }
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * @return void    *
+    */
+    public function addWireContactAPI(Request $request){
+         if ($request->isMethod('post')) {
+            $mobile         = $request->get('mobile');
+            $sender_name    = $request->get('sender_name');
+            $email          = $request->get('email');
+
+            $merchentKey    = $this->getMerchentKey();
+            $salt           = $this->getMerchentSalt();
+            //SHA-512 hash of string in the format of “[key]|[name]|[email]|[phone]|[salt]”
+            $keyStr             = $merchentKey.'|'.$sender_name.'|'.$email.'|'.$mobile.'|'.$salt; 
+            $AuthorizationKey   = hash('sha512', $keyStr);
+            $url                = $this->getAddContctAPIURL();
+             $data = array(
+                'key'        => $merchentKey,
+                'name'       => $sender_name,
+                'email'      => $email,
+                'phone'      => $mobile
+            );
+            $result = $this->postCurlData($data,$url,$AuthorizationKey);
+            return $result;
+         }
+    }
+
+
+
+    private function postCurlData($data,$url,$AuthorizationKey){
+        $payload = json_encode($data); 
+        $ch = curl_init($url);
+        $headr = array();
+        $headr[] = 'Content-type: application/json';
+        $headr[] = 'Authorization: '.$AuthorizationKey;
+        curl_setopt($ch, CURLOPT_HTTPHEADER,$headr);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+        $result = curl_exec($ch);
+        // if ($result === false)
+        // {
+        //     // throw new Exception('Curl error: ' . curl_error($crl));
+        //     print_r('Curl error: ' . curl_error($ch));
+        // }
+        curl_close($ch);
+        return $result; 
+    }
+
+
+
+    /*****************************************WIRE API ENDS HERE***********************/
 
 
     //  /**

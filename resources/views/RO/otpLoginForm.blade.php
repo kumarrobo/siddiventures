@@ -1,5 +1,5 @@
 
-@extends('layouts.default')
+@extends('layouts.ROdefault')
 
 @section('content')
 <!-- Document Wrapper   
@@ -48,7 +48,7 @@
             @endif
             <div class="tab-content pt-4">
             <div class="tab-pane fade show active" id="loginPage" role="tabpanel" aria-labelledby="login-page-tab">
-            <form method="POST"  id="loginForm" action="{{ route('ro.verifyotp') }}">
+            <form method="POST"  id="loginForm" action="{{ route('ro.loginverifyotp') }}">
              @csrf
               <div class="form-group">
                 <label for="loginMobile"><b>{{__('ENTER OTP')}}</b></label>

@@ -50,10 +50,9 @@ Route::prefix('admin')->namespace('Admin')->group(function(){
 
 
 Route::prefix('RO')->namespace('Auth\Ro')->group(function(){
-
 Route::get('login', 'LoginController@showLoginForm')->name('ro.login');
 Route::get('verifyOTP/{id}/{password}', 'LoginController@showOTPLoginForm')->name('ro.verifyOTP');
-Route::post('verifyotp', 'LoginController@verifyOTPAndLogin')->name('ro.verifyotp');
+Route::post('loginverifyotp', 'LoginController@verifyOTPAndLogin')->name('ro.loginverifyotp');
 
 Route::post('login', 'LoginController@login');
 Route::post('logout', 'LoginController@logout')->name('ro.logout');
@@ -75,7 +74,40 @@ Route::post('email/resend', 'Auth\VerificationController@resend')->name('ro.veri
 
 
 Route::prefix('RO')->namespace('RO')->group(function(){
-	Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+	Route::get('dashboard', 'DashboardController@index')->name('rodashboard');
+
+
+	Route::any('balancerequest', 		'WalletController@newBalanceRequest')->name('robalancerequest');
+	// Route::any('allbalancerequest', 	'WalletController@allbalancerequest')->name('roallbalancerequest');
+	Route::any('pushbalance', 			'WalletController@pushBalanceRequest')->name('ropushbalance');
+	Route::any('pushbalancenow/{id}/{tday}', 'WalletController@TransferBalanceToUser')->name('ropushbalancenow');
+	Route::any('transfertouserwallet/{id}/{tday}','WalletController@TransferBalanceToUserWallet')->name('rotransfertouserwallet');
+	Route::any('verifytransfer/{id}/{tday}','WalletController@verifyOTPForBalanceTransfer')->name('roverifytransfer');
+	Route::any('verifyotp','SMSController@isValidOTP')->name('roverifyotp');
+	Route::any('txncreditsuccess/{id}/{lastid}','WalletController@balanceTransferSuccessfully')->name('rotxncreditsuccess');
+
+
+	Route::any('tatrechargeesybuz/{id}','WalletController@tatkalWalletRechargeEaseBuzz')->name('rotatrechargeesybuz');
+	Route::any('tatrechargeesybuz','WalletController@tatkalWalletRechargeEaseBuzz')->name('rotatrechargeesybuz');
+	Route::any('confirmrecharge','WalletController@confirmRechargeTatkalWalletRechargeEaseBuzz')->name('roconfirmrecharge');
+	Route::post('confirmationorder','WalletController@confirmationOrderPage')->name('roconfirmationorder');
+	Route::any('rechargesuccess','WalletController@walletRechargeSuccess')->name('rorechargesuccess');
+	Route::any('rechargefailed','WalletController@walletRechargeFailed')->name('rorechargefailed');
+	Route::any('walletcredited/{id}','WalletController@walletCredited')->name('rowalletcredited');
+	
+	//Report
+	Route::any('myreport'				,	'ReportController@myReport')->name('myreport');
+	Route::any('rorechargesreport'		,	'ReportController@walletRechargeReport')->name('rorechargesreport');
+
+	Route::any('writeus'				,	'GeneralController@writeus')->name('writeus');
+	Route::any('help'					,	'GeneralController@help')->name('help');
+	Route::any('addbankaccount'			,	'GeneralController@help')->name('addbankaccount');
+	
+	// //Money Transfer To Bank from Wallet
+	Route::any('moneytransfer'			,	'MoneyTransferController@moneyTransfer')->name('romoneytransfer');
+	Route::any('bankaccountlist/{mdstr}',	'MoneyTransferController@bankAccountList')->name('robankaccountlist');
+	Route::any('addaccount/{id}'		,	'MoneyTransferController@addAccountNumber')->name('roaddaccount');
+	Route::any('addaccountrequest'	,	'MoneyTransferController@addAccountRequest')->name('roaddaccountrequest');
 });
 
 

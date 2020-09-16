@@ -46,7 +46,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest:ro')->except('logout');
+        $this->middleware('guest:ro')->except('logout','verifyOTPAndLogin');
     }
 
     /**
@@ -55,7 +55,8 @@ class LoginController extends Controller
      * @return \Illuminate\View\View
      */
     public function showLoginForm()
-    {
+    { 
+        //dd("dasd");
         return view('RO.index');
     }
 
@@ -100,13 +101,14 @@ class LoginController extends Controller
      */
     public function showOTPLoginForm(Request $request,$id,$password)
     {
+        
         try {
                 
             $userId = Crypt::decryptString($id);
             if($userId!=''){
-                $user_id    = $userId;
-                $user       = User::find($user_id);
-                $mobile     = $user['mobile'];
+                $user_id            = $userId;
+                $user               = User::find($user_id);
+                $mobile             = $user['mobile'];
                 $data['user_id']    = $user['id'];
                 $data['otp']        = $this->getOTP($mobile);
                 $data['mobile']     = $mobile;
@@ -143,12 +145,10 @@ class LoginController extends Controller
         
         //Decryption User Id
         try {
-            $userId = Crypt::decryptString($user_id);
-            $password = Crypt::decryptString($pass);
-
+            $userId      = Crypt::decryptString($user_id);
+            $password    = Crypt::decryptString($pass);
             $userDetails = User::find($userId);
-
-            $mobile = $userDetails['mobile'];
+            $mobile      = $userDetails['mobile'];
             
             //Verify OTP
             $loginDetails = LoginOtp::where('user_id','=',$userId)->where('mobile','=',$mobile)->where('OTP','=',$otp)->orderBy('id','DESC')->first();
@@ -190,10 +190,7 @@ class LoginController extends Controller
 
 
        
-        // If the login attempt was unsuccessful we will increment the number of attempts
-        // to login and redirect the user back to the login form. Of course, when this
-        // user surpasses their maximum number of attempts they will get locked out.
-        $this->incrementLoginAttempts($request);
+       
 
         return $this->sendFailedLoginResponse($request);
 

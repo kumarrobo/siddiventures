@@ -39,6 +39,11 @@ class PaymentWalletTransaction extends Model
     public function User() {
          return $this->belongsTo('App\User', 'user_id', 'id' );
     }
+    
+
+    public function WalletRechargePayment() {
+         return $this->belongsTo('App\WalletRechargePayment', 'wallet_recharge_payment_id', 'id' );
+    }
 
 
    

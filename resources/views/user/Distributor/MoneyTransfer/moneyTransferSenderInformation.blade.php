@@ -55,7 +55,7 @@
                       </div>
                       <div class="col-md-7">
                       
-                       <input type="number"  class="form-control" data-bv-field="email" id="email"  placeholder="{{ __('Enter email address') }}" name="email" >
+                       <input type="email"  class="form-control" data-bv-field="email" id="email"  placeholder="{{ __('Enter email address') }}" name="email" >
                       </div>
                       </div>
                       </div>
