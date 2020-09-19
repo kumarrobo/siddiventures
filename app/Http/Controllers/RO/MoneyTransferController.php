@@ -20,6 +20,11 @@ use App\VerifyBankAccount;
 use App\MasterBank;
 use App\VerifyBeneficiariesBankAccount;
 use App\VerifyMobileBeneficiariesBankAccount;
+use App\BankAccountTransaction;
+use App\PaymentWalletTransaction;
+use App\DsWalletBalanceRequest;
+use App\PaymentWallet;
+use App\VerifiedMobileMonthlyTransaction;
 
 class MoneyTransferController extends Controller
 {
@@ -75,12 +80,12 @@ class MoneyTransferController extends Controller
             if($this->isMobileVerified($request)){
                 //Session::flash('message', "Mobile Number is Verified Now !!");
                 $mobileDateStr = Crypt::encryptString($mobile.'|'.date('Ymd'));
-                return redirect('RO/bankaccountlist/'.$mobileDateStr)->with(['message'=>["OTP Verify Sucessfully."]]);
+                return redirect('RO/bankaccountlist/'.$mobileDateStr)->with(['message'=>"OTP Verify Sucessfully."]);
             }
             if($mobile_otp){
                  if($this->isValidOTP($request)){
                      $mobileDateStr = Crypt::encryptString($mobile.'|'.date('Ymd'));
-                     return redirect('RO/bankaccountlist/'.$mobileDateStr)->with(['message'=>["OTP Verify Sucessfully."]]);
+                     return redirect('RO/bankaccountlist/'.$mobileDateStr)->with(['message'=>"OTP Verify Sucessfully."]);
                 }else{
                     $verifyOTP = true;
                     Session::flash('error', ["Invalid OTP, Please try again."]);   
@@ -108,6 +113,25 @@ class MoneyTransferController extends Controller
             return true;
         }else{
             return false;
+        }
+    }
+
+
+
+     /**
+    * @param  \Illuminate\Http\Request  $request
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+    public function deleteBankAccount(Request $request,$id){
+        $verifyMobileNumberObj = VerifyMobileBeneficiariesBankAccount::where('user_id','=',$this->getUserId())
+                ->where('id','=',$id)->delete();
+        if($verifyMobileNumberObj){
+            Session::flash('message', "Bank Account deleted !!");
+            return redirect()->back()->withInput();
+        }else{
+            Session::flash('message', "Bank Account not deleted !!");
+            return redirect()->back()->withInput();
         }
     }
 
@@ -172,6 +196,7 @@ class MoneyTransferController extends Controller
         try{
             $mdstr  = Crypt::decryptString($mdstr);
             $strArr = explode("|",$mdstr);
+
             if(is_array($strArr)){
                 $mobile = $strArr[0];
                 $tday   = $strArr[1];
@@ -183,7 +208,13 @@ class MoneyTransferController extends Controller
                     $bankAccountList    = VerifyBankAccount::with('MasterBank')->where('user_id','=',$this->getUserId())
                     ->where('verify_mobile_number_id','=',$verifyMID)
                     ->get();
+
+                    $bankAccountList = VerifyMobileBeneficiariesBankAccount::with('VerifyBeneficiariesBankAccount')
+                    ->where('user_id','=',$this->getUserId())
+                    ->where('verify_mobile_number_id','=',$verifyMID)
+                    ->paginate($this->getPageItem());
                     $bankList   =  $bankAccountList;
+                    //dd($bankList);
                     $mobileTransactionBalanceAmount = Helper::getMonthlyBalanceAmount($verifyMID);
                     $monthlyLimit   = Helper::getUserMonthlyBalance();
                     $utilized       = $monthlyLimit -  $mobileTransactionBalanceAmount;
@@ -235,7 +266,7 @@ class MoneyTransferController extends Controller
                 $data['account_number']     =   $account_no;
                 $data['ifsc']               =   $IFSCCode;
                 $result = $this->WireAPI->addWireBeneficiariesAPI($request, $data);
-                dd($result);
+                //dd($result);
                 if($resultArr['success']){
                     $vbbaccount     = new VerifyBeneficiariesBankAccount();
                     //$vbbaccount[''] =    
@@ -246,7 +277,7 @@ class MoneyTransferController extends Controller
                     $data['pageSize']   = 10;
                     $data['current']    = 1;
                     $result = $this->WireAPI->getWireBeneficiariesAPI($data);
-                    dd($result);
+                    //dd($result);
                 }
              }
              //dd($VerifyMobileNumber);
@@ -262,6 +293,61 @@ class MoneyTransferController extends Controller
     }
 
 
+  
+
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * Request parameters with Bank Account Number, IFSC Code, 
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+    public function isValidAccountNumber(Request $request){
+           $result["success"] = false;
+           $result["message"] = "Error";
+           if ($request->isMethod('post')) {
+               $account_no         = $request->get('account_no');
+               $master_bank_id     = $request->get('master_bank_id');
+               $IFSCCode           = $request->get('IFSCCode');
+
+               $data               = array();
+               $data['account_no'] = $account_no;
+               $data['ifsc']       = $IFSCCode;
+               $registredRes       = $this->getRegistredBeneficeriesAccount($request); 
+               if(!empty($registredRes)){
+                    $resultArr        = $registredRes;
+                    //$this->addAccountRequest($request);
+                    $result["success"] = true;
+                    $result["message"] = "Account Number is valid";
+                    $result["is_valid"] = true;
+                    $result["is_api"]   = false;
+                    $result['data']= $resultArr;
+               }else{
+                    $resultArr = $this->WireAPI->verifyBankAccountAPI($request, $data);
+                    $result["success"] = true;
+                    $result["message"] = "Account Number is verified";
+                    $result["is_valid"] = true;
+                    $result["is_api"]   = true;
+                    $result['data']= $resultArr;
+                    //$this->addAccountRequest($request);
+               }
+           }
+
+           return response()->json($result);
+    }
+
+
+    //get Account Number if already added into system
+    private function getRegistredBeneficeriesAccount(Request $request){
+            $account_no         = $request->get('account_no');
+            $IFSCCode           = $request->get('IFSCCode');
+            $res = VerifyBeneficiariesBankAccount::where('account_number','=',$account_no)
+            ->where('account_ifsc','=',$IFSCCode)
+            ->first();
+            return $res;
+   }
+
 
 
     public function addAccountRequest(Request $request){
@@ -271,6 +357,8 @@ class MoneyTransferController extends Controller
             $master_bank_id     = $request->get('master_bank_id');
             $IFSCCode           = $request->get('IFSCCode');
             $hiddenid           = $request->get('id');
+            $beneficiary_mob_no = $request->get('beneficiary_mob_no');
+           
             $ids                = Crypt::decryptString($hiddenid);
             $VerifyMobileNumber = VerifyMobileNumber::find($ids);
             $contact_id         = $VerifyMobileNumber['wireApiContactID'];
@@ -283,6 +371,7 @@ class MoneyTransferController extends Controller
             ->first();
             if(!empty($res)){
                 //Check Id this Account Number is already present
+                //Hidden Is must be passed in parameters
                 if($this->isAccountNumberPresent($request) == false){
                     $VMBBAObj = new VerifyMobileBeneficiariesBankAccount();
                     $lastId   = $res['id'];
@@ -290,16 +379,28 @@ class MoneyTransferController extends Controller
                     $VMBBAObj['user_id']                                = $this->getUserId();
                     $VMBBAObj['verify_mobile_number_id']                = $VerifyMobileNumber['id'];
                     $VMBBAObj['status']                                 = 1;
-                    $VMBBAObj['recipient_number']                       = NULL;
+                    $VMBBAObj['recipient_number']                       = $beneficiary_mob_no;
                     $VMBBAObj['created_at']                             = $this->getNow();
                     if($VMBBAObj->save()){
-                        $result =array("success"=>true,"message"=>"Beneficiaries Account added successfully.");
+                        //Start Payment Trasnfer 1 RS for testing and 
+                        $paymentTransfer = $this->WireAPI->quickMoneyTransferInitiateAPI($request, $lastId);
+                        $paymentTransferArr = json_decode($paymentTransfer,true);
+                        
+                        if($paymentTransferArr['success']){
+                            $verify_mobile_number_id = $VerifyMobileNumber['id'];
+                            $verify_mobile_beneficiaries_bank_account_id = $VMBBAObj->id;
+                            $this->paymentInitiate($paymentTransferArr, $verify_mobile_number_id,$verify_mobile_beneficiaries_bank_account_id);
+                        }
+                        $redirectUrl    = url('RO/bankaccountlist/'.$hiddenid.'|'.date('Ymd'));
+                        $result =array("success"=>true,"message"=>"Beneficiaries Account added successfully.","redirect"=>true,'redirectUrl'=>$redirectUrl);
                     }else{
-                        $result =array("success"=>false,"message"=>"Beneficiaries Account not added, somthing went wrong.");
+                        $result =array("success"=>false,"message"=>"Beneficiaries Account not added, somthing went wrong.","redirect"=>false);
                         
                     }    
                 }else{
-                    $result =array("success"=>false,"message"=>"Beneficiaries Account already present.");
+                    //$this->WireAPI->quickMoneyTransferInitiateAPI($request, $res['id']);
+                    $redirectUrl    = url('RO/bankaccountlist/'.$hiddenid.'|'.date('Ymd'));
+                    $result =array("success"=>false,"message"=>"Beneficiaries Account already present.","redirect"=>true,'redirectUrl'=>$redirectUrl);
                 }
             }else{
 
@@ -310,11 +411,13 @@ class MoneyTransferController extends Controller
                 $data['account_number']     =   $account_no;
                 $data['ifsc']               =   $IFSCCode;
                 $result = $this->WireAPI->addWireBeneficiariesAPI($request, $data);
+                //print_r($result);
                 if($result['success']){
                     if($this->saveBeneficiary($result, $VerifyMobileNumber)){
-                        $result =array("success"=>true,"message"=>"Beneficiaries Account Added Successfully.");
+                    $redirectUrl    = url('bankaccountlist/'.$hiddenid.'|'.date('Ymd'));
+                    $result =array("success"=>true,"message"=>"Beneficiaries Account Added Successfully.","redirect"=>true,'redirectUrl'=>$redirectUrl);
                     }else{
-                        $result =array("success"=>false,"message"=>"Somthing went wrong.");
+                        $result =array("success"=>false,"message"=>"Somthing went wrong.","redirect"=>false);
                     }
                 }
             }
@@ -324,7 +427,32 @@ class MoneyTransferController extends Controller
 
     //Check Account Number Added or Not
     private function isAccountNumberPresent(Request $request){
-        return true;
+        $account_no         = $request->get('account_no');
+        $master_bank_id     = $request->get('master_bank_id');
+        $IFSCCode           = $request->get('IFSCCode');
+        $hiddenid           = $request->get('id');
+        $hiddenid           = $request->get('id');
+        $ids                = Crypt::decryptString($hiddenid);
+        $VerifyMobileNumber = VerifyMobileNumber::find($ids);
+        $verify_mobile_number_id = $VerifyMobileNumber['id'];
+
+        $res  = VerifyBeneficiariesBankAccount::where('account_number','=',$account_no)
+            ->where('account_ifsc','=',$IFSCCode)
+            ->first();
+        if(!empty($res)){
+            $verify_beneficiaries_bank_account_id   =  $res['id'];
+            $verify_mobile_number_id                =  $verify_mobile_number_id;
+            $user_id                                =  $this->getUserId();
+            $verMobileBBankAccountRes = VerifyMobileBeneficiariesBankAccount::where('user_id','=',$user_id)
+            ->where('verify_mobile_number_id','=',$verify_mobile_number_id)
+            ->where('verify_beneficiaries_bank_account_id','=',$verify_beneficiaries_bank_account_id)
+            ->first();
+            if(!empty($verMobileBBankAccountRes)){
+                return true;
+            }else{
+                return false;
+            }
+        }  
     }
 
 
@@ -358,7 +486,7 @@ class MoneyTransferController extends Controller
             $lastId = $vbbaccount->save();
             if($lastId>0){
                 $VMBBAObj = new VerifyMobileBeneficiariesBankAccount();
-                $VMBBAObj['verify_beneficiaries_bank_account_id']   = $lastId;
+                $VMBBAObj['verify_beneficiaries_bank_account_id']   = $vbbaccount->id;
                 $VMBBAObj['user_id']                                = $this->getUserId();
                 $VMBBAObj['verify_mobile_number_id']                = $VerifyMobileNumber['id'];
                 $VMBBAObj['status']                                 = 1;
@@ -376,6 +504,336 @@ class MoneyTransferController extends Controller
     }
 
 
+
+    //First Payment Initiated After Adding New Account
+    public function paymentInitiate($paymentTransferArray, $verify_mobile_number_id, $verify_mobile_beneficiaries_bank_account_id){
+
+        if ($paymentTransferArray['success']) {
+            $user_id    = $this->getUserId();
+            $paymentTransferArr = $paymentTransferArray['data']['transfer_request'];
+
+            $amount     = $paymentTransferArr['amount'];
+            $narration  = $paymentTransferArr['narration'];
+            $bankTxnObj = new BankAccountTransaction();
+            $bankTxnObj['user_id']                  =   $this->getUserId();
+            $bankTxnObj['status']                   =   $paymentTransferArr['status'];
+            $bankTxnObj['verify_mobile_number_id']  =   $verify_mobile_number_id;
+            $bankTxnObj['verify_mobile_beneficiaries_bank_account_id']  =   $verify_mobile_beneficiaries_bank_account_id;
+            $bankTxnObj['unique_request_number']    =   $paymentTransferArr['unique_request_number'];
+            $bankTxnObj['transfer_request_id']      =   $paymentTransferArr['id'];
+            $bankTxnObj['failure_reason']           =   $paymentTransferArr['failure_reason'];
+            $bankTxnObj['beneficiary_id']           =   $paymentTransferArr['beneficiary_id'];
+            $bankTxnObj['transaction_date']         =   $paymentTransferArr['created_at'];
+            $bankTxnObj['unique_transaction_reference']  =   $paymentTransferArr['unique_transaction_reference'];
+            $bankTxnObj['payment_mode']             =   $paymentTransferArr['payment_mode'];
+            $bankTxnObj['amount']                   =   $paymentTransferArr['amount'];
+            $bankTxnObj['currency']                 =   $paymentTransferArr['currency'];
+            $bankTxnObj['narration']                =   $paymentTransferArr['narration'];
+            $bankTxnObj['beneficiary_bank_name']    =   $paymentTransferArr['beneficiary_bank_name'];
+            $bankTxnObj['beneficiary_account_name'] =   $paymentTransferArr['beneficiary_account_name'];
+            $bankTxnObj['beneficiary_account_number']=  $paymentTransferArr['beneficiary_account_number'];
+            $bankTxnObj['beneficiary_account_ifsc']  =  $paymentTransferArr['beneficiary_account_ifsc'];
+            $bankTxnObj['beneficiary_upi_handle']    =  $paymentTransferArr['beneficiary_upi_handle'];
+            $bankTxnObj['service_charge']            =  $paymentTransferArr['service_charge'];
+            $bankTxnObj['gst_amount']                =  $paymentTransferArr['gst_amount'];
+            $bankTxnObj['service_charge_with_gst']   =  $paymentTransferArr['service_charge_with_gst'];
+            $bankTxnObj['queue_on_low_balance']      =  $paymentTransferArr['queue_on_low_balance'];
+            $bankTxnObj['udf5']                      =  $paymentTransferArr['udf5'];
+            $bankTxnObj['udf4']                      =  $paymentTransferArr['udf4'];
+            $bankTxnObj['udf3']                      =  $paymentTransferArr['udf3'];
+            $bankTxnObj['udf2']                      =  $paymentTransferArr['udf2'];
+            $bankTxnObj['udf1']                      =  $paymentTransferArr['udf1'];
+            $bankTxnObj['created_at']                =  $this->getNow();
+
+            if($bankTxnObj->save()){
+
+                //Update Payment Wallet Transactions For User
+                $this->pushDebitRequestedBalanceAmount($user_id, $amount, $narration);
+                $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
+                
+            }
+        }
+    }
+
+
+
+
+
+    /**
+    * @param integher
+    * @return void
+    * @param user_id, requested_amount
+    * Distributor and RO as user_id.
+    **/
+    private function pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount){
+        $monthlyTxnObj  = new VerifiedMobileMonthlyTransaction();
+        $monthlyTxnObj['user_id']                   = $this->getUserId();
+        $monthlyTxnObj['verify_mobile_number_id']   = $verify_mobile_number_id;
+        $monthlyTxnObj['month']                     = strtoupper(date('M'));
+        $monthlyTxnObj['year']                      = date('Y');
+        $monthlyTxnObj['used']                      = $amount;
+        $monthlyTxnObj['transaction_status']        = 1;
+        $monthlyTxnObj['created_at']                = $this->getNow();
+        if($monthlyTxnObj->save()){
+            return true;
+        }
+    }
+
+
+
+     /**
+    * @param integher
+    * @return void
+    * @param user_id, requested_amount
+    * Distributor and RO as user_id.
+    **/
+    private function pushDebitRequestedBalanceAmount($user_id,$amount,$requestData){
+            $userId         = $user_id;
+            $creditAmount   = "0.00";
+            $debitAmount    = $amount;
+            $remarks        = $requestData;
+            $newWalletTransaction  = array();          
+            // Start transaction!
+            DB::beginTransaction();
+            try {
+                //Call From Main Controller
+                if($this->isValidPaymentWallet($userId)){
+
+                        //Debit From the Wallet of the User
+                        $paymentDebitDetails = $this->getPaymentWalletDetails($userId);
+                        // Validate, then create if valid
+                        $payment_wallet_id  = $paymentDebitDetails['id'];
+                        $debit_amount       = $debitAmount;
+                        $credit_amount      = $creditAmount;
+                        $transaction_number = $this->getTransactionNumber();
+                        $transaction_date   = $this->getNow();
+                        $debitByUserId      = Auth::user()->id;
+                        $status             = 'Success';
+                        $remarks            = $remarks;
+                        $created_at         = $this->getTodayDate();
+                        
+                        $debitWalletTransaction = PaymentWalletTransaction::create( 
+                            [
+                                'payment_wallet_id' => $payment_wallet_id,
+                                'debit_amount'      => $debit_amount,
+                                'credit_amount'     => $credit_amount,
+                                'transaction_number'=> $transaction_number,
+                                'transaction_date'  => $transaction_date,
+                                'user_id'           => $debitByUserId,
+                                'status'            => $status,
+                                'remarks'           => $remarks,
+                                'created_at'        => $created_at
+                            ] );
+                        if($debitWalletTransaction!=null){
+                            $lastPaymentWalletTransactionId = $debitWalletTransaction['id']; 
+                            //Deduct the balance from the Wallet  from the user
+                            $this->debitFromPaymentWallet($debit_amount,$lastPaymentWalletTransactionId);
+
+                        }
+                   
+                }
+            
+            } catch(\Exception $e){
+                DB::rollback();
+                throw $e;
+            }
+            // If we reach here, then
+            // data is valid and working.
+            // Commit the queries!
+            DB::commit();
+            return $newWalletTransaction;
+    }
+
+
+
+
+
+    /**
+    * @param user_id, as id of Distributor OR Retailers
+    * @param credit_amount as Amount to be added into wallet
+    * @return boolean , True on sucess, False of Failed
+    */
+    private function creditIntoPaymentWallet($user_id,$amount,$lastPaymentWalletTransactionId){
+        $userId     = $user_id; 
+        $newAmount  = $amount;
+        if($this->isValidPaymentWallet($user_id)){
+            $paymentWalletDetails   = $this->getPaymentWalletDetails($user_id);
+            $id                     =  $paymentWalletDetails['id'];
+            $paymentWalletArr       = PaymentWallet::with('User')->find($id);
+            
+            $mobile                 = $paymentWalletArr['User']['mobile'];
+            //Update New amount
+            $paymentWalletArr['total_balance'] =  $paymentWalletArr['total_balance'] + $amount;
+            if($paymentWalletArr->save()){
+                $this->SMSController->sendCreditSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
+                return true;
+            }else{
+                return false;
+            }
+        }
+        
+    }
+
+
+     /**
+    * @param user_id, as id of Distributor OR Retailers
+    * @param credit_amount as Amount to be added into wallet
+    * @return boolean , True on sucess, False of Failed
+    */
+    private function debitFromPaymentWallet($amount,$lastPaymentWalletTransactionId){
+        $userId     = Auth::user()->id;
+        $mobile     = Auth::user()->mobile;
+        $newAmount  = $amount;
+        if($this->isValidPaymentWallet($userId)){
+            $paymentWalletDetails   =  $this->getPaymentWalletDetails($userId);
+            $id                     =  $paymentWalletDetails['id'];
+            $paymentWalletArr       =  PaymentWallet::find($id);
+            //Update New amount
+            $paymentWalletArr['total_balance'] =  $paymentWalletArr['total_balance'] - $amount;
+            if($paymentWalletArr->save()){
+                //Send SMS For Deduct Balance
+                $this->SMSController->sendDeductSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
+                return true;
+            }else{
+                return false;
+            }
+        }
+        
+    }
+
+
+
+
+
+    public function transferMoney(Request $request,$id){
+        try {
+            //$verify_mobile_beneficiaries_bank_account_id 
+            $verifyBeneficiariesId = Crypt::decryptString($id);
+            $result     =   VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
+            //dd($result);
+            $verify_mobile_number_id = $result['verify_mobile_number_id'];
+            $verifyMobile            = VerifyMobileNumber::find($verify_mobile_number_id);
+
+            $mobileTransactionBalanceAmount = Helper::getMonthlyBalanceAmount($verify_mobile_number_id);
+            $monthlyLimit   = Helper::getUserMonthlyBalance();
+            $utilized       = $monthlyLimit -  $mobileTransactionBalanceAmount;
+            //dd($verifyMobile);
+        } catch (DecryptException $e) {
+            Session::flash('error', ["Somthing Went Wring, Please try again later"]);
+            
+        }
+        return view('RO.TransferMoneyToBankAccount',array(
+            'id'                            => $id,
+            'result'                        => $result,
+            'verifyMobile'                  => $verifyMobile,
+            'mobileTransactionBalanceAmount'=> $mobileTransactionBalanceAmount,
+            'monthlyLimit'                  => $monthlyLimit,
+            'utilized'                      => $utilized,
+            'verify_mobile_number_id'       => $verify_mobile_number_id
+            
+        ));
+
+    }
+
+
+
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * Request parameters with Bank Account Number, IFSC Code, 
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+    public function transferMoneyAPIAction(Request $request){
+            $validator               = array();
+            $mobile                  = $request->get('mobile');
+            $balance                 = $request->get('balance');
+            $r_mobile                = $request->get('r_mobile');
+            $account_name            = $request->get('account_name');
+            $account_number          = $request->get('account_number');
+            $bank_name               = $request->get('bank_name');
+            $account_ifsc            = $request->get('account_ifsc');
+            $amount                  = $request->get('amount');
+            $fee                     = $request->get('fee');
+            $remarks                 = $request->get('remarks');
+            $payment_mode            = $request->get('payment_mode');
+            $verifyBeneficiariesId   = $request->get('beneficiaries_bank_account_id');
+            $verify_mobile_number_id = $request->get('verify_mobile_number_id');
+
+            $result     =   VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
+            
+            $verify_beneficiaries_bank_account_id =$result['VerifybeneficiariesBankAccount']['id']; 
+            // $contact_id             =   $result['VerifybeneficiariesBankAccount']['contact_id'];
+            // $beneficiary_id         =   $result['VerifybeneficiariesBankAccount']['beneficiary_id'];
+            // $verifyMobile           =   VerifyMobileNumber::find($verify_mobile_number_id);
+            
+            $paymentTransfer        = $this->WireAPI->moneyTransferInitiateAPI($request, $verify_beneficiaries_bank_account_id);
+            $paymentTransferArr     = json_decode($paymentTransfer,true);
+            if($paymentTransferArr['success']){
+                $verify_mobile_number_id    = $verify_mobile_number_id;
+                $verify_mobile_beneficiaries_bank_account_id = $verify_beneficiaries_bank_account_id;
+                $res =$this->paymentTransfered($paymentTransferArr, $verify_mobile_number_id,$verify_mobile_beneficiaries_bank_account_id);
+                if($res){
+                    //Update Payment Wallet Transactions For User
+                    $user_id    = $this->getUserId();
+                    $verifyMobileResult = VerifyMobileNumber::find($verify_mobile_number_id);
+                    $this->pushDebitRequestedBalanceAmount($user_id, $amount, $remarks);
+                    $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
+                    $midStr    = $verifyMobileResult['mobile'].'|'.date('Ymd'); 
+                    $enMidStr  = Crypt::encryptString($midStr);
+                    return redirect('RO/bankaccountlist/'.$enMidStr)->with('message', "Money Transffred Successfully!!");
+                }
+            }
+    }
+
+
+
+    //First Payment Initiated After Adding New Account
+    public function paymentTransfered($paymentTransferArray, $verify_mobile_number_id, $verify_mobile_beneficiaries_bank_account_id){
+
+        if ($paymentTransferArray['success']) {
+            $user_id    = $this->getUserId();
+            $paymentTransferArr = $paymentTransferArray['data']['transfer_request'];
+
+            $amount     = $paymentTransferArr['amount'];
+            $narration  = $paymentTransferArr['narration'];
+            $bankTxnObj = new BankAccountTransaction();
+            $bankTxnObj['user_id']                  =   $this->getUserId();
+            $bankTxnObj['status']                   =   $paymentTransferArr['status'];
+            $bankTxnObj['verify_mobile_number_id']  =   $verify_mobile_number_id;
+            $bankTxnObj['verify_mobile_beneficiaries_bank_account_id']  =   $verify_mobile_beneficiaries_bank_account_id;
+            $bankTxnObj['unique_request_number']    =   $paymentTransferArr['unique_request_number'];
+            $bankTxnObj['transfer_request_id']      =   $paymentTransferArr['id'];
+            $bankTxnObj['failure_reason']           =   $paymentTransferArr['failure_reason'];
+            $bankTxnObj['beneficiary_id']           =   $paymentTransferArr['beneficiary_id'];
+            $bankTxnObj['transaction_date']         =   $paymentTransferArr['created_at'];
+            $bankTxnObj['unique_transaction_reference']  =   $paymentTransferArr['unique_transaction_reference'];
+            $bankTxnObj['payment_mode']             =   $paymentTransferArr['payment_mode'];
+            $bankTxnObj['amount']                   =   $paymentTransferArr['amount'];
+            $bankTxnObj['currency']                 =   $paymentTransferArr['currency'];
+            $bankTxnObj['narration']                =   $paymentTransferArr['narration'];
+            $bankTxnObj['beneficiary_bank_name']    =   $paymentTransferArr['beneficiary_bank_name'];
+            $bankTxnObj['beneficiary_account_name'] =   $paymentTransferArr['beneficiary_account_name'];
+            $bankTxnObj['beneficiary_account_number']=  $paymentTransferArr['beneficiary_account_number'];
+            $bankTxnObj['beneficiary_account_ifsc']  =  $paymentTransferArr['beneficiary_account_ifsc'];
+            $bankTxnObj['beneficiary_upi_handle']    =  $paymentTransferArr['beneficiary_upi_handle'];
+            $bankTxnObj['service_charge']            =  $paymentTransferArr['service_charge'];
+            $bankTxnObj['gst_amount']                =  $paymentTransferArr['gst_amount'];
+            $bankTxnObj['service_charge_with_gst']   =  $paymentTransferArr['service_charge_with_gst'];
+            $bankTxnObj['queue_on_low_balance']      =  $paymentTransferArr['queue_on_low_balance'];
+            $bankTxnObj['udf5']                      =  $paymentTransferArr['udf5'];
+            $bankTxnObj['udf4']                      =  $paymentTransferArr['udf4'];
+            $bankTxnObj['udf3']                      =  $paymentTransferArr['udf3'];
+            $bankTxnObj['udf2']                      =  $paymentTransferArr['udf2'];
+            $bankTxnObj['udf1']                      =  $paymentTransferArr['udf1'];
+            $bankTxnObj['created_at']                =  $this->getNow();
+
+            if($bankTxnObj->save()){
+                return true;
+            }
+        }
+    }
     
 
 

@@ -10,7 +10,7 @@
     <div class="bg-light shadow-md rounded p-4"> 
       <!--User Profile Section
       ============================================= -->
-      @include('RO.MoneyTransfer.BankAccountList')
+      @include('RO.MoneyTransfer.TransferMoneyToBankAccount')
       <!-- Personal Information end --> 
     </div>
   </div>

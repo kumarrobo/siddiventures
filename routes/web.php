@@ -107,7 +107,14 @@ Route::prefix('RO')->namespace('RO')->group(function(){
 	Route::any('moneytransfer'			,	'MoneyTransferController@moneyTransfer')->name('romoneytransfer');
 	Route::any('bankaccountlist/{mdstr}',	'MoneyTransferController@bankAccountList')->name('robankaccountlist');
 	Route::any('addaccount/{id}'		,	'MoneyTransferController@addAccountNumber')->name('roaddaccount');
-	Route::any('addaccountrequest'	,	'MoneyTransferController@addAccountRequest')->name('roaddaccountrequest');
+	Route::any('addaccountrequest'		,	'MoneyTransferController@addAccountRequest')->name('roaddaccountrequest');
+	Route::any('verifybankaccount'		,	'MoneyTransferController@isValidAccountNumber')->name('roverifybankaccount');
+	Route::any('deleteaccount/{id}'		,	'MoneyTransferController@deleteBankAccount')->name('rodeleteaccount');
+	Route::any('paymentinitiate'		,	'MoneyTransferController@paymentinitiate')->name('ropaymentinitiate');
+
+	//Send Money To Bank Account, Param is Verified Mobile Id
+	Route::any('transfermoney/{id}'		,	'MoneyTransferController@transferMoney')->name('rotransfermoney');
+	Route::any('transferaction'			,	'MoneyTransferController@transferMoneyAPIAction')->name('rotransferaction');
 });
 
 
@@ -150,7 +157,8 @@ Route::prefix('user')->namespace('User')->group(function(){
 	Route::any('moneytransfer'			,	'MoneyTransferController@moneyTransfer')->name('moneytransfer');
 	Route::any('bankaccountlist/{mdstr}',	'MoneyTransferController@bankAccountList')->name('bankaccountlist');
 	Route::any('addaccount/{id}'		,	'MoneyTransferController@addAccountNumber')->name('addaccount');
-	Route::any('addaccountrequest'	,	'MoneyTransferController@addAccountRequest')->name('addaccountrequest');
+	Route::any('addaccountrequest'		,	'MoneyTransferController@addAccountRequest')->name('addaccountrequest');
+	
 });
 
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\VerifyBeneficiariesBankAccount;
+use App\VerifyMobileBeneficiariesBankAccount;
 
 class WireAPIController extends Controller
 {
@@ -47,8 +49,21 @@ class WireAPIController extends Controller
     private function getAddBeneficiariesAPIURL(){
         return config('global.ADD_BENEFICIARIES_API');
     }
+
+    //Get Beneficiaries
     private function getBeneficiariesAPIURL(){
         return config('global.ADD_BENEFICIARIES_API');
+    }
+
+
+    //Get Beneficiaries
+    private function getVerifyAccountAPIURL(){
+        return config('global.VERIFY_ACCOUNT_API');
+    }
+
+   //Get Beneficiaries
+    private function getTRANSFERSINITIATEAPIURL(){
+        return config('global.TRANSFERS_INITIATE_API');
     }
 
 
@@ -88,6 +103,36 @@ class WireAPIController extends Controller
 
 
 
+      /**
+    * @param  \Illuminate\Http\Request  $request
+    * @return void    *
+    */
+    public function verifyBankAccountAPI(Request $request, $data){
+            $account_no         = $data['account_no'];
+            $ifsc               = $data['ifsc'];
+
+            $merchentKey    = $this->getMerchentKey();
+            $salt           = $this->getMerchentSalt();
+
+            //SHA-512 hash of string in the format of “[key]|[name]|[email]|[phone]|[salt]”
+            $keyStr             = $merchentKey.'|'.$account_no.'|'.$ifsc.'|'.$salt;
+            $AuthorizationKey   = hash('sha512', $keyStr);
+            $url                = $this->getVerifyAccountAPIURL();
+             $data = array(
+                'key'        => $merchentKey,
+                'account_no' => $account_no,
+                'ifsc'       => $ifsc,
+            );
+            //echo "dasd"; die;
+            $result = $this->postCurlData($data,$url,$AuthorizationKey);
+            //print_r($result);
+            return json_decode($result,true);
+    }
+
+
+
+
+
 
 
      /**
@@ -112,6 +157,90 @@ class WireAPIController extends Controller
             $result = $this->getCurlData($data,$url,$AuthorizationKey);
             return json_decode($result,true);
     }
+
+
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * @return void    *
+    */
+    public function quickMoneyTransferInitiateAPI(Request $request,$verify_beneficiaries_bank_accounts_id){
+         if ($request->isMethod('post')) {
+            $res = VerifyBeneficiariesBankAccount::find($verify_beneficiaries_bank_accounts_id);
+            //dd($res);
+            $merchentKey    = $this->getMerchentKey();
+            $salt           = $this->getMerchentSalt();
+
+            $beneficiary_code       = $res['beneficiary_id'];
+            $unique_request_number  = md5(time());
+            $payment_mode           = "IMPS";
+            $amount                 = "1.00";
+            $narration              = "Account Added  with first payment initiated";
+            //SHA-512 hash of string in the format of “[key]|[name]|[email]|[phone]|[salt]”
+            $keyStr             = $merchentKey.'|'.$beneficiary_code.'|'.$unique_request_number.'|'.$amount.'|'.$salt; 
+            $AuthorizationKey   = hash('sha512', $keyStr);
+            $url                = $this->getTRANSFERSINITIATEAPIURL();
+             $data = array(
+                'key'                   => $merchentKey,
+                'beneficiary_code'      => $beneficiary_code,
+                'unique_request_number' => $unique_request_number,
+                'payment_mode'          => $payment_mode,
+                'amount'                => 1.00,
+                'narration'             => $narration
+            );
+            $result = $this->postCurlData($data,$url,$AuthorizationKey);
+            return $result;
+         }
+    }
+
+
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * @return void    *
+    */
+    public function moneyTransferInitiateAPI(Request $request){
+         if ($request->isMethod('post')) {
+            $verifyBeneficiariesId      = $request->get('beneficiaries_bank_account_id');
+            $amount                     = $request->get('amount');
+            $remarks                    = $request->get('remarks');
+            $payment_mode               = $request->get('payment_mode');
+
+            $result     =   VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
+            $verify_beneficiaries_bank_account_id =$result['VerifybeneficiariesBankAccount']['id']; 
+            //dd($result);
+            $merchentKey    = $this->getMerchentKey();
+            $salt           = $this->getMerchentSalt();
+
+            $beneficiary_code       = $result['VerifybeneficiariesBankAccount']['beneficiary_id'];
+            $unique_request_number  = md5(time());
+            $payment_mode           = $payment_mode;
+            $amount                 = "$amount".".00";
+            $narration              = $remarks;
+            //SHA-512 hash of string in the format of “[key]|[name]|[email]|[phone]|[salt]”
+            $keyStr             = $merchentKey.'|'.$beneficiary_code.'|'.$unique_request_number.'|'.$amount.'|'.$salt; 
+            $AuthorizationKey   = hash('sha512', $keyStr);
+            $url                = $this->getTRANSFERSINITIATEAPIURL();
+            $data = array(
+                'key'                   => $merchentKey,
+                'beneficiary_code'      => $beneficiary_code,
+                'unique_request_number' => $unique_request_number,
+                'payment_mode'          => $payment_mode,
+                'amount'                => (float) $amount,
+                'narration'             => $narration
+            );
+            // dd($data);
+            $result = $this->postCurlData($data,$url,$AuthorizationKey);
+            return $result;
+         }
+    }
+
+
+
+
+    
 
 
 
@@ -158,11 +287,11 @@ class WireAPIController extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
         $result = curl_exec($ch);
-        // if ($result === false)
-        // {
-        //     // throw new Exception('Curl error: ' . curl_error($crl));
-        //     print_r('Curl error: ' . curl_error($ch));
-        // }
+        if ($result === false)
+        {
+            // throw new Exception('Curl error: ' . curl_error($crl));
+            print_r('Curl error: ' . curl_error($ch));
+        }
         curl_close($ch);
         return $result; 
     }

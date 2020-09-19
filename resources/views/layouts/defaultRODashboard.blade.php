@@ -23,11 +23,39 @@
 <link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/vendor/daterangepicker/daterangepicker.css" />
 
 <link rel="stylesheet" type="text/css" href="{{config('global.THEME_PATH')}}/css/stylesheet.css" />
+<style>
+#overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  cursor: pointer;
+}
+
+#text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 18px;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
+</style>
 </head>
 <body>
+<div id="overlay">
+  <div id="text">Please Wait...</div>
+</div>
 <!-- Preloader -->
 <div id="preloader">
-  <div data-loader="dual-ring"></div>
+  <div data-loader="dual-ring" ></div>
 </div>
 <!-- Document Wrapper   
 ============================================= -->
@@ -162,19 +190,23 @@
         });
   });
 
-
+  $("#add_beneficiary").click(function(e){
+        $("#beneficiary_mob_no").show();
+  });  
 
   //Add Bank Account
-   $("#addAccountBtn").click(function(e){
+   $("#verifyAccountBtn").click(function(e){
       var account_no      = $("#account_no").val();
       if(account_no.length==0){
         $("#account_no").addClass('alert-danger');
+        return false;
       }else{
         $("#account_no").removeClass('alert-danger');
       }
       var master_bank_id  = $("#master_bank_id").val();
       if(master_bank_id.length==0){
         $("#master_bank_id").addClass('alert-danger');
+        return false;
       }else{
         $("#master_bank_id").removeClass('alert-danger');
       }
@@ -182,21 +214,118 @@
       var ifsccodeStr     = $("#IFSCCode").val();
       if(ifsccodeStr.length==0){
         $("#IFSCCode").addClass('alert-danger');
+        return false;
       }else{
         $("#IFSCCode").removeClass('alert-danger');
       }
-      var hiddenid        = $("#hiddenid").val();
+      var hiddenid            = $("#hiddenid").val();
+      var beneficiary_mob_no  = $("#beneficiary_mob_no").val();
       e.preventDefault();
-       $.ajax({
+      $.ajax({
            type:'POST',
-           url:"{{ route('roaddaccountrequest') }}",
-           data:{account_no:account_no,master_bank_id:master_bank_id,IFSCCode:ifsccodeStr,id:hiddenid},
+           url:"{{ route('roverifybankaccount') }}",
+           data:{account_no:account_no,master_bank_id:master_bank_id,IFSCCode:ifsccodeStr,id:hiddenid,beneficiary_mob_no:beneficiary_mob_no},
+           beforeSend: function(){
+            // Statement
+            $('#overlay').show();
+           },
            success:function(data){
               if(data.success === true){
-                alert("ok");
+                    if(data.is_api == false){
+
+                       $('#verifedBankAccount').show();
+                        var account_name    = data.data.account_name;
+                        var bank_name       = $("#master_bank_id").val();
+                        var account_number  = data.data.account_number;
+                        var ifsc            = data.data.account_ifsc;
+                    }else if(data.data.is_valid == true){
+                        $('#verifedBankAccount').show();
+                        var account_name    = data.data.account_name;
+                        var bank_name       = $("#master_bank_id").val();
+                        var account_number  = data.data.account_number;
+                        var ifsc            = data.data.ifsc;
+                    }else{
+                      var str = "<div class='alert alert-danger'>Invalid Account Details</div>";
+                        $("#msg").html(str);
+                        $('#overlay').hide();
+                    }
+                      
+                      $("#ifsc").val(ifsc);
+                      $("#account_number").val(account_number);
+                      $("#account_name").val(account_name);
+
+                      $("#accountHolerName").html(account_name);
+                      var str ="<th scope='row'>Success</th>";
+                          str+="<td>"+bank_name+"</td>";
+                          str+="<td>"+account_number+"</td>";
+                          str+="<td>"+ifsc+"</td>";
+                      $("#RecipientDetails").html(str);
+                      $("#account_number").val(account_number);
+                      $('#overlay').hide();
+                      var str = "<div class='alert alert-success'>Account Varified !!</div>";
+                      $("#msg").html(str);
+                       
+                   
+                
               }else{
                 var str = "<div class='alert alert-danger'>"+data.message+"</div>";
                 $("#msg").html(str);
+                $('#overlay').hide();
+              }
+           }
+        });
+   });
+ 
+  //Add Bank Account
+   $("#addAccountBtn").click(function(e){
+      var account_no      = $("#account_number").val();
+      if(account_no.length==0){
+        $("#account_no").addClass('alert-danger');
+        return false;
+      }else{
+        $("#account_no").removeClass('alert-danger');
+      }
+      var master_bank_id  = $("#master_bank_id").val();
+      if(master_bank_id.length==0){
+        $("#master_bank_id").addClass('alert-danger');
+        return false;
+      }else{
+        $("#master_bank_id").removeClass('alert-danger');
+      }
+
+      var ifsccodeStr     = $("#ifsc").val();
+      if(ifsccodeStr.length==0){
+        $("#IFSCCode").addClass('alert-danger');
+        return false;
+      }else{
+        $("#IFSCCode").removeClass('alert-danger');
+      }
+      var hiddenid            = $("#hiddenid").val();
+      var beneficiary_mob_no  = $("#beneficiary_mob_no").val();
+      e.preventDefault();
+      $.ajax({
+           type:'POST',
+           url:"{{ route('roaddaccountrequest') }}",
+           data:{account_no:account_no,master_bank_id:master_bank_id,IFSCCode:ifsccodeStr,id:hiddenid},
+           beforeSend: function(){
+            // Statement
+            $('#overlay').show();
+           },
+           success:function(data){
+              if(data.success === true){
+                var str = "<div class='alert alert-success'>"+data.message+"</div>";
+                $("#msgBank").html(str);
+                $('#overlay').hide();
+                if(data.redirect){
+                  $("#personalInformation").submit();
+                }
+              }else{
+                var str = "<div class='alert alert-danger'>"+data.message+"</div>";
+                $("#msgBank").html(str);
+                $('#overlay').hide();
+                if(data.redirect){
+                  $("#personalInformation").submit();
+                }
               }
            }
         });

@@ -259,6 +259,20 @@ class Helper {
      * @param  string
      * @return string
      */
+    public static function getAmountFormate($number) {
+        if($number>0){
+            //$number = str_replace(',', '',$number);
+            return number_format($number,2);   
+        }else{
+            return '0.00';
+        }
+    }
+
+
+     /**
+     * @param  string
+     * @return string
+     */
     public static function getAmount($number) {
         if($number>0){
             $number = str_replace(',', '',$number);

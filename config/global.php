@@ -28,7 +28,9 @@ return [
     
     'ADD_CONTACT_API'	      =>  WIRE_API_URL."/api/v1/contacts/",
     'ADD_BENEFICIARIES_API'   =>  WIRE_API_URL."/api/v1/beneficiaries/",
-    'GET_BENEFICIARIES_API'   =>  WIRE_API_URL."/api/v1/beneficiaries/"
+    'GET_BENEFICIARIES_API'   =>  WIRE_API_URL."/api/v1/beneficiaries/",
+    'VERIFY_ACCOUNT_API'      =>  WIRE_API_URL."/api/v1/beneficiaries/bank_account/verify/",
+    'TRANSFERS_INITIATE_API'  =>  WIRE_API_URL."/api/v1/transfers/initiate/"
 
     
 ];

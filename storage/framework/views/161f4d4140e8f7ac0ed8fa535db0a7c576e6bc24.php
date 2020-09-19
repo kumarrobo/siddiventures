@@ -7,7 +7,7 @@
     <div class="bg-light shadow-md rounded p-4"> 
       <!--User Profile Section
       ============================================= -->
-      <?php echo $__env->make('RO.MoneyTransfer.BankAccountList', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+      <?php echo $__env->make('RO.MoneyTransfer.TransferMoneyToBankAccount', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
       <!-- Personal Information end --> 
     </div>
   </div>
@@ -19,4 +19,4 @@
 <?php $__env->stopSection(); ?>
 
 
-<?php echo $__env->make('layouts.defaultRODashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/siddiventures/resources/views/RO/bankAccountList.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.defaultRODashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/siddiventures/resources/views/RO/TransferMoneyToBankAccount.blade.php ENDPATH**/ ?>

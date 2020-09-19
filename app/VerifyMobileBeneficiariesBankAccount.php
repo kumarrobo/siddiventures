@@ -38,7 +38,7 @@ class VerifyMobileBeneficiariesBankAccount extends Model
 
 
     public function VerifyBeneficiariesBankAccount() {
-         return $this->hasMany('App\VerifyBeneficiariesBankAccount', 'verify_beneficiaries_bank_account_id', 'id' );
+         return $this->belongsTo('App\VerifyBeneficiariesBankAccount', 'verify_beneficiaries_bank_account_id', 'id' );
     }
 
 

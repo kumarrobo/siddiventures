@@ -1,18 +1,8 @@
-<p>
- 
-  <?php if(Session::has('error')): ?>
-  <p class="alert alert-danger"><small>
-  <?php $__currentLoopData = Session::get('error'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $err): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-  <b>Error:</b> <?php echo e($err); ?></br>
-  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-  </small>
-  </p>
-  <?php endif; ?>
-   <?php if(Session::has('message')): ?>
-  <p class="alert alert-success"><?php echo e(Session::get('message')); ?></p>
-  <?php endif; ?>
-
-</p>            <!-- Personal Information
+<!--  <?php if(Session::has('message')): ?>
+<p class="alert alert-success"><?php echo e(Session::get('message')); ?></p>
+<?php endif; ?>        
+ -->
+ <!-- Personal Information
           ============================================= -->
             <div class="row">
               <div class="col-lg-4 col-sm-12">
@@ -146,33 +136,33 @@
                       <th>Bank Name</th>
                       <th>IFSC Code</th>
                       <th>Account No</th>
-                      <th>Mobile</th>
                       <th class="text-center">Status</th>
                       <th>Pay By IFSC</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <?php $count=1;foreach ($bankList as $key => $value) { //dd($value); ?>
+                    <?php $count=1;foreach ($bankList as $key => $value) {  ?>
                     <tr>
                       <td class="align-middle"><?php echo e($count); ?></td>
-                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['recipient_name']); ?></td>
-                      <td class="align-middle"><?php echo e($value['MasterBank']['title']); ?></td>
-                      <td class="align-middle"><?php echo e($value['IFSC_code']); ?></td>
-                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['account_no']); ?></td>
-                      <td class="align-middle"><?php echo e($value['associate_mobile_no']); ?></td>
+                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['VerifyBeneficiariesBankAccount']['account_name']); ?></td>
+                      <td class="align-middle"><?php echo e($value['VerifyBeneficiariesBankAccount']['bank_name']); ?></td>
+                      <td class="align-middle"><?php echo e($value['VerifyBeneficiariesBankAccount']['account_number']); ?></td>
+                      <td class="align-middle"><?php echo e($value['VerifyBeneficiariesBankAccount']['account_ifsc']); ?></td>
                       <td class="align-middle text-center">
-                        <?php if($value['is_active']=='1'){ ?>
+                        <?php if($value['status']=='1'){ ?>
                           <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Active"></i>
                         <?php }else{ ?>
                            <i class="fas fa-times-circle text-4 text-danger" data-toggle="tooltip" data-original-title="InActive"></i>
                         <?php } ?>
                       </td>
-                      <td class="align-middle">
-                        <?php if($value['is_active']=='1'){ ?>
-                         <a href="#" class="btn btn-success" style="padding:10px;font-size: 12px;">Pay Now</a>
+                      <td class="pull-right" align="text-right" style="width: 15%">
+                        <?php if($value['status']=='1'){ ?>
+                         <a href="<?php echo e(route('rotransfermoney',['id'=>Crypt::encryptString($value['id'])])); ?>" class="btn btn-success " style="padding:10px;font-size: 12px;">Pay Now</a>
                         <?php }else{ ?>
                            <p class="btn btn-default"  style="padding:10px;font-size: 12px; background-color: #CCC">Pay Now</p>
                         <?php } ?>
+                        &nbsp;
+                        <a href="<?php echo e(route('rodeleteaccount',['id'=>$value['id']])); ?>" class="btn btn-danger" style="padding:10px;font-size: 12px;" onclick="return confirm('Are you sure you want to delete?')">Delete</a>
                       </td>
                      
                     </tr>
@@ -183,6 +173,7 @@
                   
                   </tbody>
                 </table>
+                <?php echo e($bankList->links()); ?>
 
               </div>
            
