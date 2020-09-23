@@ -26,6 +26,7 @@ class PaymentWalletTransaction extends Model
         'user_id',
         'status',
         'remarks',
+        'updated_wallet_balance',
         'created_at'
     ];
 

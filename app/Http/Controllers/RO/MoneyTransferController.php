@@ -614,15 +614,17 @@ class MoneyTransferController extends Controller
                         
                         $debitWalletTransaction = PaymentWalletTransaction::create( 
                             [
-                                'payment_wallet_id' => $payment_wallet_id,
-                                'debit_amount'      => $debit_amount,
-                                'credit_amount'     => $credit_amount,
-                                'transaction_number'=> $transaction_number,
-                                'transaction_date'  => $transaction_date,
-                                'user_id'           => $debitByUserId,
-                                'status'            => $status,
-                                'remarks'           => $remarks,
-                                'created_at'        => $created_at
+                                
+                                'payment_wallet_id'         => $payment_wallet_id,
+                                'debit_amount'              => $debit_amount,
+                                'credit_amount'             => $credit_amount,
+                                'transaction_number'        => $transaction_number,
+                                'transaction_date'          => $transaction_date,
+                                'user_id'                   => $debitByUserId,
+                                'status'                    => $status,
+                                'remarks'                   => $remarks,
+                                'created_at'                => $created_at
+
                             ] );
                         if($debitWalletTransaction!=null){
                             $lastPaymentWalletTransactionId = $debitWalletTransaction['id']; 
@@ -690,16 +692,20 @@ class MoneyTransferController extends Controller
             $paymentWalletArr       =  PaymentWallet::find($id);
             //Update New amount
             $paymentWalletArr['total_balance'] =  $paymentWalletArr['total_balance'] - $amount;
+            $newBalance = $paymentWalletArr['total_balance'];
             if($paymentWalletArr->save()){
                 //Send SMS For Deduct Balance
-                $this->SMSController->sendDeductSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
-                return true;
+                if($this->updatePaymentWalletTransactionBalance($newBalance, $lastPaymentWalletTransactionId)){
+                    $this->SMSController->sendDeductSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
+                    return true;
+                }
             }else{
                 return false;
             }
         }
         
     }
+
 
 
 

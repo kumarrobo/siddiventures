@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Auth;
 use App\PaymentWallet;
 use GuzzleHttp\Client;
+use App\PaymentWalletTransaction;
 
 class Controller extends BaseController
 {
@@ -123,7 +124,12 @@ class Controller extends BaseController
 
     //Get Auth User Id
     public function getAuthUserID(){
-        return Auth::user()->id;
+        if(Auth::guard('user')->check()){
+            return Auth::user()->id;
+        }
+        if(Auth::guard('ro')->check()){
+            return Auth::user()->id;
+        }
     }
 
 
@@ -202,6 +208,22 @@ class Controller extends BaseController
     }
 
    
+
+
+
+
+    /**
+    * @param Last Payment Wallet Transaction ID
+    * @param Amount
+    * @return boolean , True on sucess, False of Failed
+    */
+    public function updatePaymentWalletTransactionBalance($newBalance, $lastPaymentWalletTransactionId){
+            $paymentObj = PaymentWalletTransaction::find($lastPaymentWalletTransactionId);
+            $paymentObj->updated_wallet_balance = $newBalance;
+            if($paymentObj->save()){
+                return true;
+            }
+    }
 
 
 

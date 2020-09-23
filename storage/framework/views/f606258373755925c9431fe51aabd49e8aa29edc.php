@@ -1,12 +1,12 @@
             <!-- Personal Information
           ============================================= -->
             <div class="row">
-              <div class="col-lg-5  " style="border: solid 1px #eee;padding:20px; 
+              <div class="col-lg-5  card " style="border: solid 1px #eee;padding:20px; 
               -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
               -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
               box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75); ">
 
-                <h5 class="mb-4"><?php echo e(__('Enter Mobile Number')); ?></h5>
+                <h5 style="margin: 0px; padding: 0px;" class="mb-4"><?php echo e(__('Enter Mobile Number')); ?></h5>
                  <p>
                    
                     <?php if(Session::has('error')): ?>
@@ -94,8 +94,10 @@
 
                 <div class="form-group ">
                      <div class="row">
-                      <div class="col-md-7" style="font-weight: bold;">
-                      <button class="btn btn-primary" type="submit">Submit</button>
+                       <div class="col-md-4">&nbsp;</div>
+                      <div class="col-md-8">
+                        <button class="btn btn-danger" type="submit">Cancle</button>
+                        <button class="btn btn-primary" type="submit">Submit</button>
                       </div>
                       </div>
                   </div>

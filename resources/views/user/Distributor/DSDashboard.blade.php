@@ -2,17 +2,7 @@
             <!-- Personal Information
           ============================================= -->
             <div class="row">
-              <div class="col-lg-3"> 
-          <!-- Nav Link
-          ============================================= -->
-          <ul class="nav nav-pills alternate flex-lg-column sticky-top">
-            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('balancerequest')}}" href="profile.html"><i class="fas fa-wallet"></i>{{ __('Wallet  Upload & Recharge') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="profile-favourites.html"><i class="fas fa-user-shield"></i>{{ __('View Active RO')}}</a></li>
-            <li class="nav-item"><a class="nav-link" href="profile-notifications.html"><i class="fas fa-retweet"></i>{{ __('Push Balance-RO')}}</a></li>
-            <li class="nav-item"><a class="nav-link" href="profile-notifications.html"><i class="fa fa-chart-line"></i>{{ __('My Report')}}</a></li>
-          </ul>
-   
-        </div>
+            
        
               <div class="col-lg-6" style="border: solid 1px #eee;padding:20px; 
               -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
@@ -157,6 +147,7 @@
                         &nbsp;
                       </div>
                       <div class="col-md-7" style="font-weight: bold;">
+                      <button class="btn btn-danger" type="button">Cancle</button>
                       <button class="btn btn-primary" type="submit">Submit</button>
                       </div>
                       </div>

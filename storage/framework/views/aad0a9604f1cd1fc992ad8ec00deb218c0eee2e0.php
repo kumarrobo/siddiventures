@@ -114,7 +114,7 @@
                       <td class="align-middle" nowrap="nowrap"><?php echo e($value['UserDetail']['pan_card_number']); ?></td>
                       <td class="align-middle"><?php echo e($value['UserDetail']['address_line_1']); ?></td>
                       <td class="align-middle"><?php echo e($value['UserDetail']['pincode']); ?></td>
-                      <td class="align-middle"><?php echo e(number_format($value['wallet_balance'],2)); ?></td>
+                      <td class="align-middle"><?php echo e(GeneralHelper::getAmount($value['PaymentWallet']['total_balance'])); ?></td>
                       <td class="align-middle"><?php echo e(GeneralHelper::getDateFormate($value['UserDetail']['created_at'])); ?></td>
                       <td class="align-middle text-center">
                         <?php if($value['status']=='1'){ ?>

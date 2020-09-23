@@ -21,7 +21,7 @@
                       <tr>
                         <td width="60%"><b>Total Credit</b></td>
                         <td width="10%">:</td>
-                        <td width="30%">{{GeneralHelper::getAmount(GeneralHelper::getWalletBalance())}}</td>
+                        <td width="30%">{{GeneralHelper::getCreditBalance()}}</td>
                       </tr>
                       <tr>
                         <td><b>Total Debit</b></td>

@@ -15,6 +15,9 @@ use Log;
 use Session;
 use App\DocumentType;
 use App\UserDetail;
+use App\PaymentWallet;
+use App\Helpers\Helper;
+
 
 
 class RegisterController extends Controller
@@ -81,8 +84,27 @@ class RegisterController extends Controller
             'email'     => $data['email'],
             'mobile'    => $data['mobile'],
             'status'    => 0,
-            'role_id'   => 3,
+            'role_id'   => 2,
             'password'  => Hash::make($data['password']),
+        ]);
+    }
+
+
+
+  /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\User
+     */
+    protected function createPaymentWallet($user_id)
+    {   
+
+        return PaymentWallet::create([
+            'user_id'       => $user_id,
+            'total_balance' => Helper::getCashback(),
+            'status'        => 1,
+            'created_at'    => $this->getNow(),
         ]);
     }
 
@@ -236,6 +258,7 @@ class RegisterController extends Controller
         }
         //dd($userDetails);
         if($userDetails->save()){
+            $this->createPaymentWallet($user_id);
             return $userDetails;
         }
 

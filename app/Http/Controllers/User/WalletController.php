@@ -403,11 +403,11 @@ class WalletController extends Controller
 
 
                 if($agent_id!= null){
-                    $userDetails = User::with('UserDetail')->where('id','=',$agent_id)->get();
+                    $userDetails = User::with('UserDetail','PaymentWallet')->where('id','=',$agent_id)->get();
 
                 }
                 if($mobile!= null){
-                    $userDetails = User::with('UserDetail')->where('mobile','=',$mobile)->get();
+                    $userDetails = User::with('UserDetail','PaymentWallet')->where('mobile','=',$mobile)->get();
                 }
 
                 if($userDetails->count() == 0){

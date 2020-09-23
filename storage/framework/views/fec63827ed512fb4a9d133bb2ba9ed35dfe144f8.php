@@ -18,13 +18,15 @@
             <?php echo e(GeneralHelper::isActiveMenu('allretailerlist')); ?> 
             <?php echo e(GeneralHelper::isActiveMenu('roprofile')); ?> 
             <?php echo e(GeneralHelper::isActiveMenu('rocompanyprofile')); ?> 
+            <?php echo e(GeneralHelper::isActiveMenu('setcommission')); ?> 
+            <?php echo e(GeneralHelper::isActiveMenu('editusercommission')); ?> 
             <?php echo e(GeneralHelper::isActiveMenu('retailercompany')); ?>" 
 
-            href="<?php echo e(route('addretailer')); ?>">
+            href="<?php echo e(route('allretailerlist')); ?>">
               <span><i class="fas fa-users"></i></span>RO</a> 
           </li>
           <li class="nav-item"> 
-            <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('myreport')); ?>" href="<?php echo e(route('dashboard')); ?>">
+            <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('dsmyreport')); ?>" href="<?php echo e(route('dsmyreport')); ?>">
               <span><i class="fas fa-chart-line"></i></span>My Report</a>
           </li>
           <li class="nav-item"> 
@@ -41,7 +43,7 @@
             " href="<?php echo e(route('pushbalance')); ?>">
               <span><i class="fas fa-retweet"></i></span>Push Balance-RO</a>
           </li>
-          <li class="nav-item"> 
+      <!--     <li class="nav-item"> 
             <a class="nav-link 
             <?php echo e(GeneralHelper::isActiveMenu('moneytransfer')); ?>
 
@@ -49,7 +51,7 @@
 
             " href="<?php echo e(route('moneytransfer')); ?>">
               <span><i class="fas fa-university"></i></span>Money Transfer</a>
-          </li>
+          </li> -->
           <li class="nav-item"> 
             <a class="nav-link 
             <?php echo e(GeneralHelper::isActiveMenu('allbalancerequest')); ?>
@@ -57,7 +59,7 @@
             <?php echo e(GeneralHelper::isActiveMenu('wallet')); ?>
 
              <?php echo e(GeneralHelper::isActiveMenu('balancerequest')); ?>" href="<?php echo e(route('balancerequest')); ?>">
-              <span><i class="fas fa-wallet"></i></span> Wallet Recharge</a> 
+              <span><i class="fas fa-wallet"></i></span> Balance Request</a> 
           </li>
           <li class="nav-item"> 
             <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('tatrechargeesybuz')); ?>" href="<?php echo e(route('tatrechargeesybuz')); ?>">

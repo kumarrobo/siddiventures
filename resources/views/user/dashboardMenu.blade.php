@@ -18,13 +18,15 @@
             {{GeneralHelper::isActiveMenu('allretailerlist')}} 
             {{GeneralHelper::isActiveMenu('roprofile')}} 
             {{GeneralHelper::isActiveMenu('rocompanyprofile')}} 
+            {{GeneralHelper::isActiveMenu('setcommission')}} 
+            {{GeneralHelper::isActiveMenu('editusercommission')}} 
             {{GeneralHelper::isActiveMenu('retailercompany')}}" 
 
-            href="{{route('addretailer')}}">
+            href="{{route('allretailerlist')}}">
               <span><i class="fas fa-users"></i></span>RO</a> 
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="{{route('dashboard')}}">
+            <a class="nav-link {{GeneralHelper::isActiveMenu('dsmyreport')}}" href="{{route('dsmyreport')}}">
               <span><i class="fas fa-chart-line"></i></span>My Report</a>
           </li>
           <li class="nav-item"> 
@@ -37,19 +39,19 @@
             " href="{{route('pushbalance')}}">
               <span><i class="fas fa-retweet"></i></span>Push Balance-RO</a>
           </li>
-          <li class="nav-item"> 
+      <!--     <li class="nav-item"> 
             <a class="nav-link 
             {{GeneralHelper::isActiveMenu('moneytransfer')}}
             {{GeneralHelper::isActiveMenu('bankaccountlist')}}
             " href="{{route('moneytransfer')}}">
               <span><i class="fas fa-university"></i></span>Money Transfer</a>
-          </li>
+          </li> -->
           <li class="nav-item"> 
             <a class="nav-link 
             {{GeneralHelper::isActiveMenu('allbalancerequest')}}
             {{GeneralHelper::isActiveMenu('wallet')}}
              {{GeneralHelper::isActiveMenu('balancerequest')}}" href="{{route('balancerequest')}}">
-              <span><i class="fas fa-wallet"></i></span> Wallet Recharge</a> 
+              <span><i class="fas fa-wallet"></i></span> Balance Request</a> 
           </li>
           <li class="nav-item"> 
             <a class="nav-link {{GeneralHelper::isActiveMenu('tatrechargeesybuz')}}" href="{{route('tatrechargeesybuz')}}">

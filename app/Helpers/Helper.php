@@ -12,8 +12,54 @@ use App\PaymentWallet;
 use App\TransactionType;
 use App\AgentCommission;
 use App\VerifiedMobileMonthlyTransaction;
+use App\PaymentWalletTransaction;
 
 class Helper {
+
+
+
+     /**
+     * @param AgetnCommission Arr and TransactionType Id
+     * 
+     * @return value
+     */
+    public static function getCommissionValue($AgentCommission,$TransactionTypeId) {
+        //echo $TransactionTypeId."<pre>"; 
+        //print_r($AgentCommission);
+        if(!empty($AgentCommission)){
+            foreach($AgentCommission as $item){
+                if($item['transaction_type_id']==$TransactionTypeId){
+                    return $item['commission'];
+                }
+            }
+        }
+        return '0.00';
+    }
+
+
+
+
+
+     /**
+     * @param AgetnCommission Arr and TransactionType Id
+     * 
+     * @return value
+     */
+    public static function getCommissionStatusValue($AgentCommission,$TransactionTypeId) {
+        //echo $TransactionTypeId."<pre>"; 
+        //print_r($AgentCommission);
+        if(!empty($AgentCommission)){
+            foreach($AgentCommission as $item){
+                if($item['transaction_type_id']==$TransactionTypeId){
+                    return $item['status'];
+                }
+            }
+        }
+        return '0.00';
+    }
+
+
+
 	
     /**
      * @return string
@@ -212,14 +258,52 @@ class Helper {
             if(!empty($PaymentWallet)){
                 return self::getAmount($PaymentWallet['total_balance']);
             }else{
+
                 return '0.00';    
             }
         }
 
         if(Auth::guard('ro')->check()){
-            return number_format(15000,2);   
+            $user_id = Auth::user()->id;
+            $paymentWalletId = self::getPaymentWalletID($user_id);
+            $res = PaymentWalletTransaction::where('payment_wallet_id','=',$paymentWalletId)->where('status','=','Success')->get();
+            $debitArr = array();
+            $debitAmt = '0.00';
+            if(!empty($res)){
+                foreach ($res as $value) {
+                    $debitArr[] = $value['debit_amount'];
+                }
+                $debitAmt = number_format(array_sum($debitArr),2);
+            }
+            return self::getAmount($debitAmt);   
         }
     
+              
+    }
+
+
+
+
+     /**
+     * @param  string
+     * @return string
+     */
+    public static function getCreditBalance() {
+
+        $user_id = Auth::user()->id;
+        $paymentWalletId = self::getPaymentWalletID($user_id);
+        $res = PaymentWalletTransaction::where('payment_wallet_id','=',$paymentWalletId)->where('status','=','Success')->get();
+        $creditArr = array();
+        $creditAmt = '0.00';
+        if(!empty($res)){
+            foreach ($res as $value) {
+                $creditArr[] = $value['credit_amount'];
+            }
+            $creditAmt = number_format(array_sum($creditArr),2);
+        }
+        return self::getAmount($creditAmt);   
+    
+
               
     }
 
@@ -707,13 +791,28 @@ class Helper {
 
 
 
-      /**
+    /**
      * Get Balance Per Mobiile for User 
      * @return integer
      */
     public static function getUserMonthlyBalance(){
         return   Auth::user()->per_mobile_monthly_limit;;
     }
+
+
+
+
+
+    
+     /**
+     * Get Balance Per Mobiile for User 
+     * @return integer
+     */
+    public static function getCashback(){
+        return   10.00;
+    }
+
+
 
 
 

@@ -15,7 +15,7 @@
                         <ul class="nav secondary-nav">
                             <li class="nav-item"> 
                           <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('wallet')); ?>" href="<?php echo e(route('balancerequest')); ?>">
-                            <span><i class="fas fa-wallet"></i></span> Wallet Recharge</a> 
+                            <span><i class="fas fa-wallet"></i></span> Balance Request</a> 
                         </li>
                          <li class="nav-item"> 
                             <a class="nav-link"  href="<?php echo e(route('allretailerlist')); ?>">
@@ -23,7 +23,7 @@
                           </li>
                       
                          <li class="nav-item"> 
-                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('myreport')); ?>" href="recharge-bill-datacard.html">
+                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('dsmyreport')); ?>" href="<?php echo e(route(('dsmyreport'))); ?>">
                             <span><i class="fas fa-chart-line"></i></span>My Report</a>
                         </li>
                         <li class="nav-item"> 
@@ -35,10 +35,10 @@
                            <ul class="nav secondary-nav">
                          <li class="nav-item"> 
                             <a class="nav-link"  href="<?php echo e(route('allbalancerequest')); ?>">
-                              <span><i class="fas fa-gavel"></i></span>Balance Request</a> 
+                              <span><i class="fas fa-gavel"></i></span>All Balance Request</a> 
                           </li>
                         <li class="nav-item"> 
-                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('wallet')); ?>" href="<?php echo e(route('balancerequest')); ?>">
+                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('addretailer')); ?>" href="<?php echo e(route('addretailer')); ?>">
                             <span><i class="fas fa-user-plus"></i></span>Add RO</a> 
                         </li>
                          <li class="nav-item"> 
@@ -46,7 +46,7 @@
                             <span><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>Commission</a>
                         </li>
                         <li class="nav-item"> 
-                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('moneytransfer')); ?>" href="recharge-bill-datacard.html">
+                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('transactionstatus')); ?>" href="<?php echo e(route('transactionstatus')); ?>">
                             <span><i class="fas fa-unlink"></i></span>Transaction Status</a>
                         </li>
                     

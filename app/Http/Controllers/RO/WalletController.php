@@ -1118,7 +1118,7 @@ class WalletController extends Controller
         $userId                = $rechargePaymentId->user_id; 
         $net_amount_credit     = $rechargePaymentId->net_amount_credit;
         $deduction_percentage  = $rechargePaymentId->deduction_percentage;
-        $payment_ref_key       = $rechargePaymentId->payment_ref_key;
+        $payment_ref_key       = $rechargePaymentId->txnid;
         $status                = $rechargePaymentId->status;
         $productinfo           = $rechargePaymentId->productinfo;
         $payment_mode          = $rechargePaymentId->payment_mode;
@@ -1158,10 +1158,13 @@ class WalletController extends Controller
                 $paymentWallet = PaymentWallet::find($payment_wallet_id);
                 $paymentWallet->total_balance = $paymentWallet->total_balance + $netCreditAmount;
                 if($paymentWallet->save()){
+                    //This method Call From App\Http\Controller for Update Balance
+                    $this->updatePaymentWalletTransactionBalance($paymentWallet->total_balance,$payWTObj->id);
                     //Save Credit Wallet Amount For Admin as well
                     $payment_wallet_id = Helper::getPaymentWalletID(1);
                     $adminPaymentWallet = PaymentWallet::find($payment_wallet_id);
-                    $adminPaymentWallet->total_balance = $adminPaymentWallet->total_balance +  $adminWalletAmount;
+                    $newBalance         = $adminPaymentWallet->total_balance +  $adminWalletAmount;
+                    $adminPaymentWallet->total_balance = $newBalance;
                     if($adminPaymentWallet->save()){
                         //Save Payment Wallet Trasction Credit Amount
                          $payAWTObj               = new PaymentWalletTransaction();
@@ -1176,6 +1179,7 @@ class WalletController extends Controller
                          $payAWTObj['ds_wallet_balance_request_id'] = '0';
                          $payAWTObj['remarks']                    = $productinfo;
                          $payAWTObj['wallet_recharge_payment_id'] = $last_payment_id;
+                         $payAWTObj['updated_wallet_balance']     = $newBalance;
                          if($payAWTObj->save()){
                                 return true;
                          }

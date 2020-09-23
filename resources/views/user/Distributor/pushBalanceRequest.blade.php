@@ -112,7 +112,7 @@
                       <td class="align-middle" nowrap="nowrap">{{$value['UserDetail']['pan_card_number']}}</td>
                       <td class="align-middle">{{$value['UserDetail']['address_line_1']}}</td>
                       <td class="align-middle">{{$value['UserDetail']['pincode']}}</td>
-                      <td class="align-middle">{{number_format($value['wallet_balance'],2)}}</td>
+                      <td class="align-middle">{{GeneralHelper::getAmount($value['PaymentWallet']['total_balance'])}}</td>
                       <td class="align-middle">{{GeneralHelper::getDateFormate($value['UserDetail']['created_at'])}}</td>
                       <td class="align-middle text-center">
                         <?php if($value['status']=='1'){ ?>

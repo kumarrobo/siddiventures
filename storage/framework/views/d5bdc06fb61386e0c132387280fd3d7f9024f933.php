@@ -21,7 +21,7 @@
               <ul class="navbar-nav">
             
                
-                <li class="dropdown" style="padding:1px;height: 50px; font-weight: bold"> <a class="" href="#" style="padding: 5px;">Balacne:&nbsp;<i class="fas fa-rupee-sign"></i><?php echo e(GeneralHelper::getWalletBalance()); ?></a><li>
+                <li class="dropdown" style="padding:1px;height: 50px; font-weight: bold"> <a class="" href="#" style="padding: 5px;">Balance:&nbsp;<i class="fas fa-rupee-sign"></i><?php echo e(GeneralHelper::getWalletBalance()); ?></a><li>
                 <li class="login-signup ml-lg-2 dropdown">
                   <a class="pl-lg-4 pr-0 dropdown-toggle" href="#" title="Retailer Login">Welcome, <?php echo e(Auth::user()->name); ?>
 

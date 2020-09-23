@@ -37,6 +37,7 @@
                       <th>Balance</th>
                       <th>Created</th>
                       <th class="text-center">Status</th>
+                      <th class="text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -63,6 +64,8 @@
                            <i class="fas fa-times-circle text-4 text-danger" data-toggle="tooltip" data-original-title="InActive"></i>
                         <?php } ?>
                       </td>
+                       <?php $enid = Crypt::encryptString($value['id']);?>
+                       <td class="align-middle"><a href="{{route('editusercommission',['id'=>$enid])}}">Commission</a></td>
                     </tr>
                     <?php $count++;} ?>
                      

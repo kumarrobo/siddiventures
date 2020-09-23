@@ -135,6 +135,12 @@ Route::prefix('user')->namespace('User')->group(function(){
 	Route::any('personaldetails/{id}',	'DashboardController@retailerPersonalDetails')->name('personaldetails');
 	Route::any('documentproof/{id}', 	'DashboardController@retailerDocumentProof')->name('documentproof');
 	Route::any('viewrodetails/{id}', 	'DashboardController@viewrodetails')->name('viewrodetails');
+
+	//Report
+	Route::any('dsmyreport'				,	'ReportController@myReport')->name('dsmyreport');
+	Route::any('dsrechargesreport'		,	'ReportController@walletRechargeReport')->name('dsrechargesreport');
+	Route::any('commission'				,	'DashboardController@commingSoon')->name('commission');
+	Route::any('transactionstatus'		,	'DashboardController@commingSoon')->name('transactionstatus');
 	
 	//Generate Balance Request By Distributor
 	Route::any('balancerequest', 		'WalletController@newBalanceRequest')->name('balancerequest');
@@ -158,6 +164,7 @@ Route::prefix('user')->namespace('User')->group(function(){
 	Route::any('bankaccountlist/{mdstr}',	'MoneyTransferController@bankAccountList')->name('bankaccountlist');
 	Route::any('addaccount/{id}'		,	'MoneyTransferController@addAccountNumber')->name('addaccount');
 	Route::any('addaccountrequest'		,	'MoneyTransferController@addAccountRequest')->name('addaccountrequest');
+	Route::any('editusercommission/{id}'			,	'DashboardController@editUserCommission')->name('editusercommission');
 	
 });
 

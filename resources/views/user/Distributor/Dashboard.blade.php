@@ -15,7 +15,7 @@
                         <ul class="nav secondary-nav">
                             <li class="nav-item"> 
                           <a class="nav-link {{GeneralHelper::isActiveMenu('wallet')}}" href="{{route('balancerequest')}}">
-                            <span><i class="fas fa-wallet"></i></span> Wallet Recharge</a> 
+                            <span><i class="fas fa-wallet"></i></span> Balance Request</a> 
                         </li>
                          <li class="nav-item"> 
                             <a class="nav-link"  href="{{route('allretailerlist')}}">
@@ -23,7 +23,7 @@
                           </li>
                       
                          <li class="nav-item"> 
-                          <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="recharge-bill-datacard.html">
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('dsmyreport')}}" href="{{route(('dsmyreport'))}}">
                             <span><i class="fas fa-chart-line"></i></span>My Report</a>
                         </li>
                         <li class="nav-item"> 
@@ -35,10 +35,10 @@
                            <ul class="nav secondary-nav">
                          <li class="nav-item"> 
                             <a class="nav-link"  href="{{route('allbalancerequest')}}">
-                              <span><i class="fas fa-gavel"></i></span>Balance Request</a> 
+                              <span><i class="fas fa-gavel"></i></span>All Balance Request</a> 
                           </li>
                         <li class="nav-item"> 
-                          <a class="nav-link {{GeneralHelper::isActiveMenu('wallet')}}" href="{{route('balancerequest')}}">
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('addretailer')}}" href="{{route('addretailer')}}">
                             <span><i class="fas fa-user-plus"></i></span>Add RO</a> 
                         </li>
                          <li class="nav-item"> 
@@ -46,7 +46,7 @@
                             <span><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>Commission</a>
                         </li>
                         <li class="nav-item"> 
-                          <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="recharge-bill-datacard.html">
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('transactionstatus')}}" href="{{route('transactionstatus')}}">
                             <span><i class="fas fa-unlink"></i></span>Transaction Status</a>
                         </li>
                     

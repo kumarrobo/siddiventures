@@ -8,7 +8,8 @@
       <!--User Profile Section
 
       ============================================= -->
-      <h5 class="mb-4">My Transactions</h5>
+      <h5 class="mb-4">My Waller Transactions</h5>
+      <hr/>
       <?php if(count($payment_wallet_transactions)){ ?>
 
             <div class="tab-content my-3" id="myTabContent">
@@ -24,6 +25,7 @@
                       <th>Txn No</th>
                       <th>Status</th>
                       <th>Remarks</th>
+                      <th>Transfer</th>
                       <th>Recharge</th>
                       <th>Balance</th>
                     </tr>
@@ -52,12 +54,19 @@
                       <td class="align-middle">{{$value['remarks']}}</td>
                       <td class="align-middle">
                        <?php if($value['wallet_recharge_payment_id']==null){ ?>
+                          <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Yes"></i>
+                      <?php }else{ ?>
+                          <i class="fas fa-times-circle text-4 text-danger" data-toggle="tooltip" data-original-title="No"></i>
+                      <?php } ?>
+                      </td>
+                      <td class="align-middle">
+                       <?php if($value['wallet_recharge_payment_id']==null){ ?>
                           <i class="fas fa-times-circle text-4 text-danger" data-toggle="tooltip" data-original-title="No"></i>
                       <?php }else{ ?>
                            <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Yes"></i>
                       <?php } ?>
                       </td>
-                      <td class="align-middle">{{GeneralHelper::getAmount($value['PaymentWallet']['total_balance'])}}</td>
+                      <td class="align-middle">{{GeneralHelper::getAmount($value['updated_wallet_balance'])}}</td>
                     </tr>
                     <?php $count++;} ?>
                      
@@ -73,6 +82,8 @@
             </div>
            
           </div>
+           <?php }else{?>
+            <div class="alert alert-danger col-md-12">No Records Found</div>
            <?php } ?>
       <!-- Personal Information end --> 
     </div>

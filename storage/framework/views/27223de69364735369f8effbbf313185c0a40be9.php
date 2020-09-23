@@ -238,12 +238,12 @@
                         var bank_name       = $("#master_bank_id").val();
                         var account_number  = data.data.account_number;
                         var ifsc            = data.data.account_ifsc;
-                    }else if(data.data.is_valid == true){
+                    }else if(data.data.data.is_valid == true){
                         $('#verifedBankAccount').show();
-                        var account_name    = data.data.account_name;
+                        var account_name    = data.data.data.account_name;
                         var bank_name       = $("#master_bank_id").val();
-                        var account_number  = data.data.account_number;
-                        var ifsc            = data.data.ifsc;
+                        var account_number  = data.data.data.account_number;
+                        var ifsc            = data.data.data.ifsc;
                     }else{
                       var str = "<div class='alert alert-danger'>Invalid Account Details</div>";
                         $("#msg").html(str);

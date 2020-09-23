@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Session;
 use Log;
 use Hash;
@@ -12,6 +14,9 @@ use App\State;
 use App\City;
 use App\UserDetail;
 use App\DocumentType;
+use App\PaymentWallet;
+use App\TransactionType;
+use App\AgentCommission;
 
 class DashboardController extends Controller
 {
@@ -40,6 +45,63 @@ class DashboardController extends Controller
         return view('user.dashboard');
     }
 
+
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function commingSoon()
+    {
+        //dd("ok");
+        return view('user.commingSoon');
+    }
+
+
+
+    public function editUserCommission(Request $request,$id){
+        $userId = Crypt::decryptString($id);
+        $user = User::find($userId);
+        if ($request->isMethod('post')) {
+            //dd($request->all());
+            $data = $request->all();
+            $count = count($data['transaction_type_code']);
+       
+            $AgentCommissionArr = array();
+            AgentCommission::where('user_id','=',$userId)->delete();
+            for($i=0;$i<$count;$i++){
+              $AgentCommissionArr =   new  AgentCommission();
+              $AgentCommissionArr["transaction_type_id"] =    $data['ids'][$i];
+              $AgentCommissionArr["user_id"]     =   $user['id'];
+              $AgentCommissionArr["role_id" ]    =   $user['role_id'];
+              $AgentCommissionArr["commission"]  =   $data['value'][$i];
+              $AgentCommissionArr["status"]      =   0;
+              $AgentCommissionArr["created_at"]  =   date("Y-m-d H:i:s");
+              $AgentCommissionArr->save();
+            
+            }
+            Session::flash('message', 'RO Commission Types List Updated Successfully!');
+            return redirect()->route('allretailerlist');
+        }
+        $transactionTypesList = TransactionType::where('status','=',1)->get();
+        $agentCommission = AgentCommission::with('User','TransactionType')
+                ->where('user_id','=',$userId)
+                ->get();
+
+        //dd($agentCommission);
+
+
+         $agetCommissionArr = array();
+         foreach($transactionTypesList as $item){
+            $agetCommissionArr[$item['transaction_type_id']] = AgentCommission::with('TransactionType')
+            ->where('user_id','=',$userId)
+            ->where('transaction_type_id','=',$item['id'])
+            ->first();
+        }
+        //dd($agetCommissionArr);
+        return view('user.editUserCommission',compact('transactionTypesList','agentCommission','user'));
+    }
 
 
 
@@ -115,17 +177,19 @@ class DashboardController extends Controller
      */
     public function retailerDocumentProof(Request $request, $id)
     {
+
         $addressProofType   = DocumentType::getAddressTypeDocument();
         $idProofType        = DocumentType::getIDTypeDocument();
         $companyProofType   = DocumentType::getCompanyTypeDocument();
 
         if ($request->isMethod('post')) {
+             //dd('dasd');
             $user = $this->saveCompanyProof($request->all())->toArray();
             //dd($request->all());
             //Save Resume
             Log::channel('userDetails')
                 ->info('Request', array('Document'=>"Document Uploaded",'Date'=>$user['created_at'])); 
-                return redirect('/user/retailercompany/'.$user['id'])
+                return redirect('/user/documentproof/'.$user['id'])
                 ->with('message', 'Retailer Details Saved !!');
             
            
@@ -205,6 +269,7 @@ class DashboardController extends Controller
      */
     public function addretailer(Request $request)
     {
+        //$this->getAuthUserID();  
       
         return view('user.addRetailer');
     }
@@ -421,10 +486,11 @@ class DashboardController extends Controller
                      ->withErrors($validator)
                      ->withInput();
             }else{
+
                 $user = $this->saveCompany($request->all())->toArray();
                 Log::channel('userDetails')
                 ->info('Request', array('Name'=>$user['company_name'],'Date'=>$user['created_at'])); 
-                return redirect('/user/retailercompany/'.$user['id'])
+                return redirect('/user/documentproof/'.$user['id'])
                 ->with('message', 'Retailer Details Saved !!');
             }
 
@@ -457,13 +523,25 @@ class DashboardController extends Controller
                      ->withErrors($validator)
                      ->withInput();
             }else{
-                $user = $this->create($request->all())->toArray();
-
-                $userDetail = UserDetail::create(['user_id'    => $user['id']]);
-                Log::channel('newuser')
-                ->info('Request', array('Name'=>$user['name'],'Date'=>$user['created_at'])); 
+                $user           = $this->create($request->all())->toArray();
+                $userObj        =   User::find($user['id']);
+                $userObj->parent_user_id = $this->getAuthUserID();
+                if($userObj->save()){
+                    $userDetail     =   UserDetail::create(['user_id'    => $user['id']]);
+                    $paymentWallet  =   PaymentWallet::create([
+                                    'user_id'       =>  $user['id'],
+                                    'total_balance' =>  0.00,
+                                    'status'        =>  1,
+                                    'created_at'    =>  $this->getNow()
+                    ]);   
+                    Log::channel('newuser')
+                    ->info('Request', array('Name'=>$user['name'],'Date'=>$user['created_at'])); 
+                    return redirect('/user/retaileraddress/'.$userDetail['id'])
+                    ->with('message', 'We sent a comfirmation email to your email, please click on link inside before login');
+                }
                 return redirect('/user/retaileraddress/'.$userDetail['id'])
-                ->with('message', 'We sent a comfirmation email to your email, please click on link inside before login');
+                    ->with('message', 'We sent a comfirmation email to your email, please click on link inside before login'); 
+                
             }
 
         }
@@ -481,7 +559,7 @@ class DashboardController extends Controller
      */
     protected function create(array $data)
     {   
-
+        $data['parent_user_id'] = $this->getAuthUserID();
         return User::create([
                 'first_name'    => $data['first_name'],
                 'last_name'     => $data['last_name'],
@@ -490,7 +568,7 @@ class DashboardController extends Controller
                 'mobile'        => $data['mobile'],
                 'password'      => Hash::make($data['password']),
                 'role_id'       => 3,
-                'parent_user_id'=> $this->getAuthUserID(),
+                'parent_user_id'=> $data['parent_user_id'],
         ]);
 
 
