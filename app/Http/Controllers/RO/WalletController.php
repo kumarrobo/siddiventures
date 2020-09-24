@@ -835,7 +835,7 @@ class WalletController extends Controller
     //dd($userDetails );
     //Get the Payment Type Lisst
     $TransactionType = TransactionType::where('status','=',1)->get(); 
-
+    //dd($TransactionType);
     //Get AgentCommission
     $AgentCommission = AgentCommission::with('TransactionType')
     ->where('user_id','=',$user_id)
@@ -897,22 +897,32 @@ class WalletController extends Controller
                 $phone              = $mobile;
                 $productinfo        = $remarks;
                 $paymentMethod      = Helper::getTransactionType($payment_mode);
+
+                //Get All Commission Value
+                $payment_mode_type_id = $request->get('payment_mode');
+
+                //Get the Percentage or Flat Value on Payment Mode i.e Credit Card, Debit Card
+                $commissionValue      = Helper::getAgentCommissionValue($payment_mode_type_id);
+
+                //Pass Value Amount and Percentage Value of i.e Credit Card, Debit Card
+                $afterComissionValue  = Helper::getAmuntAfterCommission($request->get('request_amount'), $commissionValue);
+                //dd($request->get('payment_mode'));
              }
     }
      return view('RO.ConfirmTatkalWalletRechargeEaseBuzz',array(
-        'userDetails'   => $userDetails,
-        'request_amount'=> $request_amount,
-        'request_name'  => $request_name,
-        'payment_mode'  => $payment_mode,
-        'email_address' => $email_address,
-        'mobile'        => $mobile,
-        'productinfo'   => $productinfo,
-        'enRequestAmount'=>$enRequestAmount,
-        'enEmailAddress'=> $enEmailAddress,
-        'enMobile'      => $enMobile,
-        'enUserID'      => $enUserID,
-        'paymentMode'   => $paymentMode
-
+                'userDetails'   => $userDetails,
+                'request_amount'=> $request_amount,
+                'request_name'  => $request_name,
+                'payment_mode'  => $payment_mode,
+                'email_address' => $email_address,
+                'mobile'        => $mobile,
+                'productinfo'   => $productinfo,
+                'enRequestAmount'=>$enRequestAmount,
+                'enEmailAddress'=> $enEmailAddress,
+                'enMobile'      => $enMobile,
+                'enUserID'      => $enUserID,
+                'paymentMode'   => $paymentMode,
+                'afterComission'=> $afterComissionValue
     ));
     
    }

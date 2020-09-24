@@ -613,6 +613,27 @@ class Helper {
 
 
     /**
+     * Get the Commission Value
+     * @param integer
+     * @return integer
+     */
+    public static function getAgentCommissionValue($id){
+        $paymentMethod = '';
+        if($id>0){
+            $TransactionType = AgentCommission::where('user_id','=',Auth::user()->id)
+            ->where('transaction_type_id','=',$id)
+            ->where('status','=',1)
+            ->first();
+            if(!empty($TransactionType)){
+                return $TransactionType['commission'];
+            }
+        }
+    }
+
+
+
+
+    /**
      * Get the Tranaction Type
      * @param integer
      * @return integer
@@ -810,6 +831,17 @@ class Helper {
      */
     public static function getCashback(){
         return   10.00;
+    }
+
+
+
+    /**
+     * Get Balance Per Mobiile for User 
+     * @return integer
+     */
+    public static function getAmuntAfterCommission($amount, $value){
+        $total = $amount - (($amount * $value)/(100));
+        return   $total;
     }
 
 
