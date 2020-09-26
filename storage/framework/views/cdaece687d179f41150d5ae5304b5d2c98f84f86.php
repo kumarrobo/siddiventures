@@ -137,8 +137,7 @@
                 </div>
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionDefault"   style="border:solid 1px #CCC; padding: 1px;">
                   <div class="card-body" style="padding:5px;"> 
-                        <?php if(count($bankList)){ ?>
-
+            <?php if(count($bankList)){ ?>
             <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="first" role="tabpanel" aria-labelledby="first-tab">
               <div class="table-responsive-md" style="overflow: auto">
@@ -181,18 +180,12 @@
                      
                     </tr>
                     <?php $count++;} ?>
-                     
-                   
-
-                  
                   </tbody>
                 </table>
                 <?php echo e($bankList->links()); ?>
 
               </div>
-           
             </div>
-           
           </div>
            <?php } ?>
                   </div>

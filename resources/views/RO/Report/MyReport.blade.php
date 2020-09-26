@@ -23,6 +23,7 @@
                       <th>Credit</th>
                       <th>Debit</th>
                       <th>Txn No</th>
+                      <th>Payment Mode</th>
                       <th>Status</th>
                       <th>Remarks</th>
                       <th>Transfer</th>
@@ -50,6 +51,7 @@
                         <?php } ?> 
                       </td>
                       <td class="align-middle" nowrap="nowrap">{{$value['transaction_number']}}</td>
+                      <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getTransactionTypeName($value['WalletRechargePayment']['payment_mode'])}}</td>
                       <td class="align-middle">{{$value['status']}}</td>
                       <td class="align-middle">{{$value['remarks']}}</td>
                       <td class="align-middle">

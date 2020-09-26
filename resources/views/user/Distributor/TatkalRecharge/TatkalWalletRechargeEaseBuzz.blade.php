@@ -139,8 +139,8 @@
                       </div>
                       <div class="col-md-7">
                        <select name="payment_mode" class="form-control" style="padding:5px;">
-                        <?php foreach($TransactionType as $item){ ?>
-                         <option value="{{$item['id']}}">{{$item['transaction_type']}}</option>
+                        <?php foreach($AgentCommission as $item){ ?>
+                         <option value="{{$item['TransactionType']['id']}}">{{$item['TransactionType']['transaction_type']}}</option>
                        <?php } ?>
                        </select>
                       </div>

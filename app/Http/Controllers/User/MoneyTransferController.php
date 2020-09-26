@@ -38,8 +38,8 @@ class MoneyTransferController extends Controller
 
 
     private function generateOTPNow($mobile){
-        //$otp = $this->getNewOTP($mobile);
-        $otp = '123456';
+        $otp = $this->getNewOTP($mobile);
+        //$otp = '123456';
         if($otp){
             $VerifyMobileNumber = new VerifyMobileNumber();
             $VerifyMobileNumber['user_id']          = $this->getUserId();

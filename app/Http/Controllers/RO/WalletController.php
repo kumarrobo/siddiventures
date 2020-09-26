@@ -1067,9 +1067,10 @@ class WalletController extends Controller
             $net_amount_credit  = $request->get('net_amount_debit');
             $payment_source     = $request->get('payment_source');
             $phone              = $request->get('phone');
-            $payment_ref_key    = $request->get('key');
+            $payment_ref_key    = $request->get('easepayid');
             $cash_back_percentage= $request->get('cash_back_percentage');
             $status             = $request->get('status');
+            $easepayid          = $request->get('easepayid');
             $txnid              = $request->get('txnid');
             $card_type          = $request->get('card_type');
             $cardnum            = $request->get('cardnum');

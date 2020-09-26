@@ -587,6 +587,7 @@ class WalletController extends Controller
                             'remarks'           => $remarks,
                             'created_at'        => $created_at
                         ] );
+                    //dd($newWalletTransaction);
                     if($newWalletTransaction){
                         $lastPaymentWalletTransactionId = $newWalletTransaction['id'];
                         //After Created PaymentWalletTransaction, Push this balance to Payment
@@ -656,15 +657,18 @@ class WalletController extends Controller
         $userId     = $user_id; 
         $newAmount  = $amount;
         if($this->isValidPaymentWallet($user_id)){
-            $paymentWalletDetails = $this->getPaymentWalletDetails($user_id);
-            $id =  $paymentWalletDetails['id'];
-            $paymentWalletArr = PaymentWallet::with('User')->find($id);
-            
-            $mobile = $paymentWalletArr['User']['mobile'];
+            $paymentWalletDetails   = $this->getPaymentWalletDetails($user_id);
+            $id                     =  $paymentWalletDetails['id'];
+            $paymentWalletArr       = PaymentWallet::with('User')->find($id);
+            $mobile                 = $paymentWalletArr['User']['mobile'];
             //Update New amount
             $paymentWalletArr['total_balance'] =  $paymentWalletArr['total_balance'] + $amount;
             if($paymentWalletArr->save()){
-                $this->SMSController->sendCreditSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
+                $payWT = PaymentWalletTransaction::find($lastPaymentWalletTransactionId);
+                $payWT->updated_wallet_balance = $paymentWalletArr['total_balance'];
+                if($payWT->save()){
+                    $this->SMSController->sendCreditSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
+                }
                 return true;
             }else{
                 return false;
@@ -691,7 +695,11 @@ class WalletController extends Controller
             $paymentWalletArr['total_balance'] =  $paymentWalletArr['total_balance'] - $amount;
             if($paymentWalletArr->save()){
                 //Send SMS For Deduct Balance
-                $this->SMSController->sendDeductSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
+                $payWT = PaymentWalletTransaction::find($lastPaymentWalletTransactionId);
+                $payWT->updated_wallet_balance = $paymentWalletArr['total_balance'];
+                if($payWT->save()){
+                    $this->SMSController->sendDeductSMS($mobile,$amount,$userId,$lastPaymentWalletTransactionId);
+                }
                 return true;
             }else{
                 return false;
@@ -895,6 +903,16 @@ class WalletController extends Controller
                 $phone              = $mobile;
                 $productinfo        = $remarks;
                 $paymentMethod      = Helper::getTransactionType($payment_mode);
+
+                 //Get All Commission Value
+                $payment_mode_type_id = $request->get('payment_mode');
+
+                //Get the Percentage or Flat Value on Payment Mode i.e Credit Card, Debit Card
+                $commissionValue      = Helper::getAgentCommissionValue($payment_mode_type_id);
+
+                //Pass Value Amount and Percentage Value of i.e Credit Card, Debit Card
+                $afterComissionValue  = Helper::getAmuntAfterCommission($request->get('request_amount'), $commissionValue);
+                //dd($request->get('payment_mode'));
              }
     }
      return view('user.ConfirmTatkalWalletRechargeEaseBuzz',array(
@@ -909,7 +927,8 @@ class WalletController extends Controller
         'enEmailAddress'=> $enEmailAddress,
         'enMobile'      => $enMobile,
         'enUserID'      => $enUserID,
-        'paymentMode'   => $paymentMode
+        'paymentMode'   => $paymentMode,
+        'afterComission'=> $afterComissionValue
 
     ));
     
@@ -1049,15 +1068,18 @@ class WalletController extends Controller
 
     public function walletRechargeSuccess(Request $request){
         if ($request->isMethod('post')) {
-            // dd($request->all());
+
+            //dd($request->all());
             $payment_mode       = $request->get('udf4');
             $paymentId          = $request->get('udf5');
             $net_amount_credit  = $request->get('net_amount_debit');
             $payment_source     = $request->get('payment_source');
             $phone              = $request->get('phone');
-            $payment_ref_key    = $request->get('key');
+            $payment_ref_key    = $request->get('easepayid');
             $cash_back_percentage= $request->get('cash_back_percentage');
             $status             = $request->get('status');
+            $easepayid          = $request->get('easepayid');
+            $addedon            = $request->get('addedon');
             $txnid              = $request->get('txnid');
             $card_type          = $request->get('card_type');
             $cardnum            = $request->get('cardnum');
@@ -1071,6 +1093,7 @@ class WalletController extends Controller
                 $paymentObj = WalletRechargePayment::find($paymentId);
                 $paymentObj->net_amount_credit  = $net_amount_credit;
                 $paymentObj->payment_source     = $payment_source;
+                $paymentObj->payment_date       = $addedon;
                 $paymentObj->error_Message      = $error_Message;
                 $paymentObj->phone              = $phone;
                 $paymentObj->payment_ref_key    = $payment_ref_key;
@@ -1083,15 +1106,17 @@ class WalletController extends Controller
                 $paymentObj->cardCategory       = $cardCategory;
                 $paymentObj->amount             = $amount;
                 $paymentObj->deduction_percentage = $deduction_percentage;
-                $paymentObj->more_details = json_encode($request->all());
+                $paymentObj->amount_credited    = $amount;
+                $paymentObj->more_details       = json_encode($request->all());
                 if($paymentObj->save()){
-
                     //Save Balance to DS Wallet
                     if($this->savePaymentWalletTransactionsForDS($paymentObj->id)){
-                        Session::flash('message', "Wallet Credited Successfully!!");
-                        $message ="Wallet Credited Successfully!!";
                         $id        = Crypt::encryptString($paymentObj->id);
                         $this->loginNow($request,$id);
+                        //$this->creditAdminPaymentWalletTransactionOnRecharge($paymentObj->id);
+                        Session::flash('message', "Wallet Credited Successfully!!");
+                        $message ="Wallet Credited Successfully!!";
+                       
                         return redirect('user/tatrechargeesybuz/'.$id)->with(['message'=>$message]);
                     }else{
                         $this->loginNow($request,$id);
@@ -1121,28 +1146,37 @@ class WalletController extends Controller
         // dd($this->getNow());
         //Calculate the Amount After Deduction of Percentage
         $netCreditAmount        = $net_amount_credit;
-        $commissionValue        = Helper::getDSAgentCommissions($userId,$payment_mode);
+        $commissionValue        = Helper::getDSAgentCommissions($userId,$payment_mode); 
+
         $transactionType        = Helper::getTransactionCommissionType($payment_mode);
         //dd($commissionValue); 
         $adminCommissionValue   = Helper::getDefaultTransactionCommission($payment_mode);
 
         if($transactionType=='Percentage'){
-            //Get Admin Wallet Amount
-            $adminNetCreditAmount   = Helper::getCommissionDebitedAmount($netCreditAmount,$adminCommissionValue);
+            //Get Admin Wallet Amount After Deduction of Percentage on Total Amount i.e 1
+            $adminNetCreditAmount       = Helper::getCommissionDebitedAmount($netCreditAmount,$adminCommissionValue);
             
             //Get DS Wallet Amount
-            $netCreditAmount        = Helper::getCommissionDebitedAmount($netCreditAmount,$commissionValue);
+            $netCreditAmountForDS  = Helper::getCommissionDebitedAmount($netCreditAmount,$commissionValue);
 
              //Get Admin Wallet Amount
-            $adminWalletAmount      = $adminNetCreditAmount -  $netCreditAmount;
+            $adminWalletAmount     = $adminNetCreditAmount -  $netCreditAmountForDS; 
             //dd($adminNetCreditAmount.'-'.$netCreditAmount.'-'.$adminWalletAmount);
             
+           
+
             /*Save DS Payment Wallet Transaction For Credit Amount into Wallet */
             $payWTObj               = new PaymentWalletTransaction();
             $payment_wallet_id      = Helper::getPaymentWalletID($userId);
+
+
+            $paymentWallet = PaymentWallet::find($payment_wallet_id);
+            $paymentWallet->total_balance = $paymentWallet->total_balance + $netCreditAmountForDS;
+            $newUpdateBalanceOfDS = $paymentWallet->total_balance; 
+
             $payWTObj['payment_wallet_id']          = $payment_wallet_id;
             $payWTObj['debit_amount']               = '0.00';
-            $payWTObj['credit_amount']              = $netCreditAmount;
+            $payWTObj['credit_amount']              = $netCreditAmountForDS;
             $payWTObj['transaction_number']         = $payment_ref_key;
             $payWTObj['transaction_date']           = $this->getNow();
             $payWTObj['user_id']                    = $userId;
@@ -1150,18 +1184,21 @@ class WalletController extends Controller
             $payWTObj['ds_wallet_balance_request_id'] = '0';
             $payWTObj['remarks']                    = $productinfo;
             $payWTObj['wallet_recharge_payment_id'] = $last_payment_id;
+            $payWTObj['updated_wallet_balance']     = $newUpdateBalanceOfDS;
+            //dd($payWTObj);
             if($payWTObj->save()){
-                $paymentWallet = PaymentWallet::find($payment_wallet_id);
-                $paymentWallet->total_balance = $paymentWallet->total_balance + $netCreditAmount;
                 if($paymentWallet->save()){
                     //Save Credit Wallet Amount For Admin as well
                     $payment_wallet_id = Helper::getPaymentWalletID(1);
                     $adminPaymentWallet = PaymentWallet::find($payment_wallet_id);
                     $adminPaymentWallet->total_balance = $adminPaymentWallet->total_balance +  $adminWalletAmount;
+
+                    $newBalance         = $adminPaymentWallet->total_balance +  $adminWalletAmount;
+                    $adminPaymentWallet->total_balance = $newBalance;
                     if($adminPaymentWallet->save()){
                         //Save Payment Wallet Trasction Credit Amount
                          $payAWTObj               = new PaymentWalletTransaction();
-                         $payment_wallet_id      = Helper::getPaymentWalletID(1);
+                         //$payment_wallet_id       = Helper::getPaymentWalletID(1);
                          $payAWTObj['payment_wallet_id']          = $payment_wallet_id;
                          $payAWTObj['debit_amount']               = '0.00';
                          $payAWTObj['credit_amount']              = $adminWalletAmount;
@@ -1172,6 +1209,7 @@ class WalletController extends Controller
                          $payAWTObj['ds_wallet_balance_request_id'] = '0';
                          $payAWTObj['remarks']                    = $productinfo;
                          $payAWTObj['wallet_recharge_payment_id'] = $last_payment_id;
+                         $payAWTObj['updated_wallet_balance']     = $newBalance;
                          if($payAWTObj->save()){
                                 return true;
                          }

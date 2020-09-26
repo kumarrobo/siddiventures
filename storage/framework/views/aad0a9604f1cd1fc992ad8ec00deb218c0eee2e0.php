@@ -1,12 +1,9 @@
             <!-- Personal Information
           ============================================= -->
             <div class="row">
-              <div class="col-lg-6" style="border: solid 1px #eee;padding:20px; 
-              -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
-              -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
-              box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75); ">
+              <div class="col-lg-12" >
 
-                <h4 class="mb-4"><?php echo e(__('Push Wallet Balance')); ?></h4>
+                <h5 class="mb-4"><?php echo e(__('Push Wallet Balance')); ?></h5>
                  <p>
                     <?php if(Session::has('message')): ?>
                     <p class="alert alert-success"><?php echo e(Session::get('message')); ?></p>
@@ -23,56 +20,26 @@
                   </p>
                 <form id="personalInformation" method="post" action="<?php echo e(route('pushbalance')); ?>" method="POST">
                   <?php echo csrf_field(); ?>
+                
                   <div class="form-group ">
                      <div class="row">
-                      <div class="col-md-4">
-                      <label for="fullName" style="font-weight: bold;"><?php echo e(__('Current Balance Amount')); ?></label>
-                      </div>
-                       <div class="col-1">
-                        <p style="font-weight: bold;"><?php echo e(__(':')); ?></p>
-                      </div>
-                      <div class="col-md-7" style="font-weight: bold;">
-                        Rs. <?php echo e(GeneralHelper::getWalletBalance()); ?>
-
-                      </div>
-                      </div>
-                  </div>
-                  <div class="form-group ">
-                     <div class="row">
-                      <div class="col-md-7" style="font-weight: bold;">
+                      <div class="col-md-3" style="font-weight: bold;">
                        <input type="text"  class="form-control" data-bv-field="agent_id" id="agent_id"  placeholder="<?php echo e(__('Enter Agent ID')); ?>" name="agent_id" >
                       </div>
+                      <div class="col-md-1" style="font-weight: bold;padding-top: 10px;">
+                        <label>- OR -</label>
                       </div>
-
-                  </div>
-                   <div class="form-group ">
-                     <div class="row">
-                      <div class="col-md-2" style="font-weight: bold;">
-                      
-                      </div>
-                      <div class="col-md-4" style="font-weight: bold;">
-                       - OR -
-                      </div>
-                      </div>
-                  </div>
-                   <div class="form-group ">
-                     <div class="row">
-                      <div class="col-md-7" style="font-weight: bold;">
+                      <div class="col-md-3" style="font-weight: bold;">
                        <input type="text"  class="form-control" data-bv-field="mobile" id="mobile"  placeholder="<?php echo e(__('Enter Mobile Number')); ?>" name="mobile" >
                       </div>
-                      </div>
-                      
-                  </div>
-                  
-
-                
-
-
-                <div class="form-group ">
-                     <div class="row">
-                      <div class="col-md-7" style="font-weight: bold;">
+                      <div class="col-md-3" style="font-weight: bold;">
                       <button class="btn btn-primary" type="submit">Submit</button>
                       </div>
+                      </div>
+                  </div>
+                <div class="form-group ">
+                     <div class="row">
+                      
                       </div>
                   </div>
                 </form>

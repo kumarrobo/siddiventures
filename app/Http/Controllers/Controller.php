@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller as BaseController;
-use Auth;
 use App\PaymentWallet;
 use GuzzleHttp\Client;
 use App\PaymentWalletTransaction;
+use App\WalletRechargePayment;
+use App\Helpers\Helper;
 
 class Controller extends BaseController
 {
@@ -224,6 +226,106 @@ class Controller extends BaseController
                 return true;
             }
     }
+
+
+
+
+
+   /**
+    * @param Total Amount Paid as net_amount_credit
+    * @param deduction_percentage after doing payment
+    * @return boolean , True on sucess, False of Failed
+    */
+    public function getCreditedAmount($payment_mode, $net_amount_credit){
+           echo  $deduction_percentage   = $this->getCommissionValue($payment_mode); die;
+            $totalAmount            = $net_amount_credit;
+            $deduction_percentage   = $deduction_percentage;
+            $balanceAmt = $net_amount_credit - (($net_amount_credit*$deduction_percentage)/100);
+            return $balanceAmt;
+    }
+
+
+    /**
+    * @param Payment Mode Type i.e Debit Card, Credit Card
+    * @return float, Percentage Value or Flat Value
+    */
+    private function getCommissionValue($payment_mode){
+                $user_id = Auth::user()->id;
+                if(Auth::guard('ro')->check()){
+                    $role_id = 3;
+                }
+                if(Auth::guard('user')->check()){
+                    $role_id = 2;
+                }
+                $agentCommissionsValue = AgentCommission::where('user_id','=',$user_id)
+                ->where('role_id','=',$role_id)
+                ->where('transaction_type_id','=',$payment_mode)
+                ->where('status','=',1)
+                ->first();
+                dd($agentCommissionsValue);
+                if(!empty($agentCommissionsValue)){
+                    return $agentCommissionsValue['value'];
+                }else{
+                    return '0.00';
+                }
+        
+    }
+
+
+
+
+    /**
+    * @param Total Amount Paid as net_amount_credit
+    * @param deduction_percentage after doing payment
+    * @return boolean , True on sucess, False of Failed
+    */
+    public function creditAdminPaymentWalletTransactionOnRecharge($last_payment_id){
+
+            $rechargePaymentId     = WalletRechargePayment::find($last_payment_id);
+            //dd($rechargePaymentId);
+            $userId                = $rechargePaymentId->user_id; 
+            $net_amount_credit     = $rechargePaymentId->net_amount_credit;
+            $deduction_percentage  = $rechargePaymentId->deduction_percentage;
+            $payment_ref_key       = $rechargePaymentId->payment_ref_key;
+            $status                = $rechargePaymentId->status;
+            $productinfo           = $rechargePaymentId->productinfo;
+            $payment_mode          = $rechargePaymentId->payment_mode;
+            $adminWalletAmount     = $rechargePaymentId->amount_credited;
+            $payment_date          = $rechargePaymentId->payment_date;
+            
+            $payment_wallet_id     = Helper::getPaymentWalletID(1);
+
+            $adminPaymentWallet    = PaymentWallet::find($payment_wallet_id);
+            $adminPaymentWallet->total_balance = $adminPaymentWallet->total_balance +  $adminWalletAmount;
+            $newBalance         = $adminPaymentWallet->total_balance +  $adminWalletAmount; 
+
+            if($adminPaymentWallet->save()){
+
+            $payAWTObj               = new PaymentWalletTransaction();
+            $payment_wallet_id       = Helper::getPaymentWalletID(1);
+            $payAWTObj['payment_wallet_id']          = $payment_wallet_id;
+            $payAWTObj['debit_amount']               = '0.00';
+            $payAWTObj['credit_amount']              = $this->getCreditedAmount($payment_mode, $net_amount_credit);
+            $payAWTObj['transaction_number']         = $payment_ref_key;
+            $payAWTObj['transaction_date']           = $payment_date;
+            $payAWTObj['user_id']                    = $userId;
+            $payAWTObj['status']                     = 'Success';
+            $payAWTObj['ds_wallet_balance_request_id'] = '0';
+            $payAWTObj['remarks']                    = $productinfo;
+            $payAWTObj['wallet_recharge_payment_id'] = $last_payment_id;
+            $payAWTObj['updated_wallet_balance']     = $newBalance;
+
+            dd($payAWTObj);
+            if($payAWTObj->save()){
+                    return true;
+            }
+           }
+
+    }
+
+
+
+    
 
 
 

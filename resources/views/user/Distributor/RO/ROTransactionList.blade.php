@@ -9,7 +9,7 @@
           </div>
           <div class="col-md-6 text-right" style="padding-bottom: 0px">
             <h6 style="padding: 0px; margin:0px;">
-            <a class="nav-link" href="<?php echo e(route('addretailer')); ?>"><i class="fa fa-plus"></i>&nbsp;Add New RO
+            <a class="nav-link" href="{{route('addretailer')}}"><i class="fa fa-plus"></i>&nbsp;Add New RO
             </a>
             </h6>
           </div>
@@ -28,12 +28,11 @@
                   <thead class="thead-light">
                     <tr>
                       <th>SN</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Mobile</th>
-                      <th>PAN Card</th>
-                      <th>Address</th>
-                      <th>Pincode</th>
+                      <th>Date</th>
+                      <th>Credit</th>
+                      <th>Debit</th>
+                      <th>Txn No</th>
+                      <th>Remarks</th>
                       <th>Balance</th>
                       <th>Created</th>
                       <th class="text-center">Status</th>
@@ -41,25 +40,31 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <?php if(!empty($ROList)){ ?>
-                    <?php $count=1;foreach ($ROList as $key => $value) { //dd($value); ?>
+                    <?php if(!empty($RODetails)){ ?>
+                    <?php $count=1;foreach ($RODetails as $key => $value) { //dd($value); ?>
                     <tr>
-                      <td class="align-middle"><?php echo e($count); ?></td>
-                      <td class="align-middle" nowrap="nowrap">
-                      <a href="<?php echo e(route('roprofile',['id'=>$value['id']])); ?>">
-                      <?php echo e($value['first_name']); ?>&nbsp;<?php echo e($value['last_name']); ?>
-
-                      </a>
+                      <td class="align-middle">{{$count}}</td>
+                      <td class="align-middle" nowrap="nowrap">{{$value['transaction_date']}}</td>
+                      <td class="align-middle">
+                        <?php if($value['credit_amount']>0){ ?>
+                        <font color="green" style="font-weight:500">{{GeneralHelper::getAmount($value['credit_amount'])}}</font>
+                        <?php }else{ ?>
+                          {{GeneralHelper::getAmount($value['credit_amount'])}}
+                        <?php } ?>  
                       </td>
-                      <td class="align-middle"><?php echo e($value['email']); ?></td>
-                      <td class="align-middle"><?php echo e($value['mobile']); ?></td>
-                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['UserDetail']['pan_card_number']); ?></td>
-                      <td class="align-middle"><?php echo e($value['UserDetail']['address_line_1']); ?></td>
-                      <td class="align-middle"><?php echo e($value['UserDetail']['pincode']); ?></td>
-                      <td class="align-middle"><i class="fas fa-rupee-sign"></i>&nbsp;<?php echo e(number_format($value['PaymentWallet']['total_balance'],2)); ?></td>
-                      <td class="align-middle"><?php echo e(GeneralHelper::getDateFormate($value['UserDetail']['created_at'])); ?></td>
+                      <td class="align-middle">
+                      <?php if($value['debit_amount']>0){ ?>
+                        <font color="red" style="font-weight:500">{{GeneralHelper::getAmount($value['debit_amount'])}}</font>
+                        <?php }else{ ?>
+                          {{GeneralHelper::getAmount($value['debit_amount'])}}
+                        <?php } ?> 
+                      </td>
+                      <td class="align-middle" nowrap="nowrap">{{$value['transaction_number']}}</td>
+                      <td class="align-middle">{{$value['remarks']}}</td>
+                      <td class="align-middle"><i class="fas fa-rupee-sign"></i>&nbsp;{{number_format($value['updated_wallet_balance'],2)}}</td>
+                      <td class="align-middle">{{GeneralHelper::getDateFormate($value['created_at'])}}</td>
                       <td class="align-middle text-center">
-                        <?php if($value['status']=='1'){ ?>
+                        <?php if($value['status']=='Success'){ ?>
                           <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Active"></i>
                         <?php }else{ ?>
                            <i class="fas fa-times-circle text-4 text-danger" data-toggle="tooltip" data-original-title="InActive"></i>
@@ -67,8 +72,8 @@
                       </td>
                        <?php $enid = Crypt::encryptString($value['id']);?>
                        <td class="align-middle" style="font-size: 18px;">
-                        <a href="<?php echo e(route('editusercommission',['id'=>$enid])); ?>" title="Update Commission Value"><i class="fas fa-rupee-sign"></i></a>&nbsp;
-                        <a href="<?php echo e(route('viewrotransaction',['id'=>$enid])); ?>" title="View All Transaction"><i class="fas fa-chart-line"></i></a>
+                        <a href="{{route('editusercommission',['id'=>$enid])}}" title="Update Commission Value"><i class="fas fa-rupee-sign"></i></a>&nbsp;
+                        <a href="{{route('viewrotransaction',['id'=>$enid])}}" title="View All Transaction"><i class="fas fa-chart-line"></i></a>
                        </td>
                     </tr>
                     <?php $count++;} ?>
@@ -79,8 +84,7 @@
                   </tbody>
                 </table>
                 <div class="pull-right">
-                <?php echo e($ROList->links()); ?>
-
+                {{ $RODetails->links() }}
                 </div>
 
               </div>
@@ -90,4 +94,4 @@
           </div>
           <!-- Orders History end --> 
         </div>
-  <?php /**PATH /var/www/html/siddiventures/resources/views/user/Distributor/RO/allRetailerList.blade.php ENDPATH**/ ?>
+  

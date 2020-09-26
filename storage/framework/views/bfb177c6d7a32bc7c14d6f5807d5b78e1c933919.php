@@ -78,8 +78,10 @@
 <script src="<?php echo e(config('global.THEME_PATH')); ?>/js/theme.js"></script>
 <script src="<?php echo e(config('global.THEME_PATH')); ?>/vendor/daterangepicker/moment.min.js"></script> 
 <script src="<?php echo e(config('global.THEME_PATH')); ?>/vendor/daterangepicker/daterangepicker.js"></script> 
+<script src="<?php echo e(config('global.THEME_PATH')); ?>/vendor/easy-responsive-tabs/easy-responsive-tabs.js"></script> 
 
 <script type="text/javascript">
+
 
   /*
    * Script For Choose Payment Mode While "Upload Wallet Balance For Distributor"
@@ -186,6 +188,17 @@
            }
         });
    });
+</script>
+
+<script>
+$(document).ready(function () {
+$('#horizontalTab').easyResponsiveTabs({
+type: 'default', //Types: default, vertical, accordion          
+});
+$('#verticalTab').easyResponsiveTabs({
+type: 'vertical', //Types: default, vertical, accordion
+});
+});
 </script>
 </body>
 </html><?php /**PATH /var/www/html/siddiventures/resources/views/layouts/defaultDashboard.blade.php ENDPATH**/ ?>

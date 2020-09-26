@@ -28,12 +28,11 @@
                   <thead class="thead-light">
                     <tr>
                       <th>SN</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Mobile</th>
-                      <th>PAN Card</th>
-                      <th>Address</th>
-                      <th>Pincode</th>
+                      <th>Date</th>
+                      <th>Credit</th>
+                      <th>Debit</th>
+                      <th>Txn No</th>
+                      <th>Remarks</th>
                       <th>Balance</th>
                       <th>Created</th>
                       <th class="text-center">Status</th>
@@ -41,25 +40,33 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <?php if(!empty($ROList)){ ?>
-                    <?php $count=1;foreach ($ROList as $key => $value) { //dd($value); ?>
+                    <?php if(!empty($RODetails)){ ?>
+                    <?php $count=1;foreach ($RODetails as $key => $value) { //dd($value); ?>
                     <tr>
                       <td class="align-middle"><?php echo e($count); ?></td>
-                      <td class="align-middle" nowrap="nowrap">
-                      <a href="<?php echo e(route('roprofile',['id'=>$value['id']])); ?>">
-                      <?php echo e($value['first_name']); ?>&nbsp;<?php echo e($value['last_name']); ?>
+                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['transaction_date']); ?></td>
+                      <td class="align-middle">
+                        <?php if($value['credit_amount']>0){ ?>
+                        <font color="green" style="font-weight:500"><?php echo e(GeneralHelper::getAmount($value['credit_amount'])); ?></font>
+                        <?php }else{ ?>
+                          <?php echo e(GeneralHelper::getAmount($value['credit_amount'])); ?>
 
-                      </a>
+                        <?php } ?>  
                       </td>
-                      <td class="align-middle"><?php echo e($value['email']); ?></td>
-                      <td class="align-middle"><?php echo e($value['mobile']); ?></td>
-                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['UserDetail']['pan_card_number']); ?></td>
-                      <td class="align-middle"><?php echo e($value['UserDetail']['address_line_1']); ?></td>
-                      <td class="align-middle"><?php echo e($value['UserDetail']['pincode']); ?></td>
-                      <td class="align-middle"><i class="fas fa-rupee-sign"></i>&nbsp;<?php echo e(number_format($value['PaymentWallet']['total_balance'],2)); ?></td>
-                      <td class="align-middle"><?php echo e(GeneralHelper::getDateFormate($value['UserDetail']['created_at'])); ?></td>
+                      <td class="align-middle">
+                      <?php if($value['debit_amount']>0){ ?>
+                        <font color="red" style="font-weight:500"><?php echo e(GeneralHelper::getAmount($value['debit_amount'])); ?></font>
+                        <?php }else{ ?>
+                          <?php echo e(GeneralHelper::getAmount($value['debit_amount'])); ?>
+
+                        <?php } ?> 
+                      </td>
+                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['transaction_number']); ?></td>
+                      <td class="align-middle"><?php echo e($value['remarks']); ?></td>
+                      <td class="align-middle"><i class="fas fa-rupee-sign"></i>&nbsp;<?php echo e(number_format($value['updated_wallet_balance'],2)); ?></td>
+                      <td class="align-middle"><?php echo e(GeneralHelper::getDateFormate($value['created_at'])); ?></td>
                       <td class="align-middle text-center">
-                        <?php if($value['status']=='1'){ ?>
+                        <?php if($value['status']=='Success'){ ?>
                           <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Active"></i>
                         <?php }else{ ?>
                            <i class="fas fa-times-circle text-4 text-danger" data-toggle="tooltip" data-original-title="InActive"></i>
@@ -79,7 +86,7 @@
                   </tbody>
                 </table>
                 <div class="pull-right">
-                <?php echo e($ROList->links()); ?>
+                <?php echo e($RODetails->links()); ?>
 
                 </div>
 
@@ -90,4 +97,4 @@
           </div>
           <!-- Orders History end --> 
         </div>
-  <?php /**PATH /var/www/html/siddiventures/resources/views/user/Distributor/RO/allRetailerList.blade.php ENDPATH**/ ?>
+  <?php /**PATH /var/www/html/siddiventures/resources/views/user/Distributor/RO/ROTransactionList.blade.php ENDPATH**/ ?>

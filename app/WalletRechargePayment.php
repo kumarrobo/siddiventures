@@ -47,6 +47,10 @@ class WalletRechargePayment extends Model
     }
 
 
+    public function PaymentMode(){
+        return $this->belongsTo('App\TransactionType', 'payment_mode', 'id' );
+    }
+
 
     public function PaymentWalletTransaction() {
          return $this->hasMany('App\PaymentWalletTransaction', 'payment_wallet_id', 'id' );

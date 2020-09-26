@@ -17,6 +17,7 @@ use App\DocumentType;
 use App\PaymentWallet;
 use App\TransactionType;
 use App\AgentCommission;
+use App\PaymentWalletTransaction;
 
 class DashboardController extends Controller
 {
@@ -290,6 +291,34 @@ class DashboardController extends Controller
         ));
     }
 
+
+    /**
+     * View Retailer Profile 
+     * @param \Illuminate\Http\Request;
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function viewUserTransactionList(Request $request, $id)
+    {   
+        try {
+                $userId                 = Crypt::decryptString($id); 
+                $paymentWalletDetails   = $this->getPaymentWalletDetails($userId);
+                $payment_wallet_id      = $paymentWalletDetails['id'];
+                $RODetails = PaymentWalletTransaction::with('PaymentWallet')
+                ->where('user_id','=',$userId)
+                ->where('payment_wallet_id','=',$payment_wallet_id)
+                ->paginate($this->getPageItem());
+                //dd($RODetails);
+        }catch (DecryptException $e) {
+            Session::flash('error', ["Somthing went wrong"]);
+            return redirect('user/allretailerlist/')->with(['error'=>['Sorry ! Invalid Url.']]);
+        }
+
+        
+        return view('user.ROTransactionList',array(
+                        'RODetails'=>$RODetails
+                    ));
+    }
+
     
     /**
      * View Retailer Profile 
@@ -314,10 +343,12 @@ class DashboardController extends Controller
     public function allROList(Request $request)
     {
         $userId = $this->getAuthUserID();
-        $ROList = User::with('UserDetail')->where('role_id','=',3)->where('parent_user_id','=',$userId)->paginate(15);
+        $ROList = User::with('PaymentWallet','UserDetail')->where('role_id','=',3)->where('parent_user_id','=',$userId)->paginate(15);
         // dd($ROList);
         return view('user.allRetailerList',array('ROList'=>$ROList));
     }
+
+
 
 
     /**

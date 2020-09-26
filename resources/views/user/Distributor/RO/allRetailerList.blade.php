@@ -55,7 +55,7 @@
                       <td class="align-middle" nowrap="nowrap">{{$value['UserDetail']['pan_card_number']}}</td>
                       <td class="align-middle">{{$value['UserDetail']['address_line_1']}}</td>
                       <td class="align-middle">{{$value['UserDetail']['pincode']}}</td>
-                      <td class="align-middle">{{number_format($value['wallet_balance'],2)}}</td>
+                      <td class="align-middle"><i class="fas fa-rupee-sign"></i>&nbsp;{{number_format($value['PaymentWallet']['total_balance'],2)}}</td>
                       <td class="align-middle">{{GeneralHelper::getDateFormate($value['UserDetail']['created_at'])}}</td>
                       <td class="align-middle text-center">
                         <?php if($value['status']=='1'){ ?>
@@ -65,7 +65,10 @@
                         <?php } ?>
                       </td>
                        <?php $enid = Crypt::encryptString($value['id']);?>
-                       <td class="align-middle"><a href="{{route('editusercommission',['id'=>$enid])}}">Commission</a></td>
+                       <td class="align-middle" style="font-size: 18px;">
+                        <a href="{{route('editusercommission',['id'=>$enid])}}" title="Update Commission Value"><i class="fas fa-rupee-sign"></i></a>&nbsp;
+                        <a href="{{route('viewrotransaction',['id'=>$enid])}}" title="View All Transaction"><i class="fas fa-chart-line"></i></a>
+                       </td>
                     </tr>
                     <?php $count++;} ?>
                      

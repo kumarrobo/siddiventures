@@ -638,6 +638,21 @@ class Helper {
      * @param integer
      * @return integer
      */
+    public static function getTransactionTypeName($id){
+        $paymentMethod = '';
+        if($id>0){
+            $TransactionType = TransactionType::where('status','=',1)->where('id','=',$id)->first();
+            return $TransactionType['transaction_type'];
+        }
+    }
+
+
+
+    /**
+     * Get the Tranaction Type
+     * @param integer
+     * @return integer
+     */
     public static function getTransactionCommissionType($id){
         $paymentMethod = '';
         if($id>0){

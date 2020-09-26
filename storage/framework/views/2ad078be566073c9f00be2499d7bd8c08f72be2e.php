@@ -95,6 +95,19 @@
                       </div>
                       </div>
                   </div>
+                    <div class="form-group ">
+                     <div class="row">
+                      <div class="col-md-4">
+                      <label for="fullName" style="font-weight: bold;">Amount Into Wallet</label>
+                      </div>
+                       <div class="col-1">
+                        <p style="font-weight: bold;"></p>
+                      </div>
+                      <div class="col-md-7">
+                       <b><?php echo e(GeneralHelper::getAmount($afterComission)); ?></b>
+                      </div>
+                      </div>
+                  </div>
 
                    <div class="form-group ">
                      <div class="row">

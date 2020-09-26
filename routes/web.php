@@ -165,6 +165,7 @@ Route::prefix('user')->namespace('User')->group(function(){
 	Route::any('addaccount/{id}'		,	'MoneyTransferController@addAccountNumber')->name('addaccount');
 	Route::any('addaccountrequest'		,	'MoneyTransferController@addAccountRequest')->name('addaccountrequest');
 	Route::any('editusercommission/{id}'			,	'DashboardController@editUserCommission')->name('editusercommission');
+	Route::any('viewrotransaction/{id}'	,	'DashboardController@viewUserTransactionList')->name('viewrotransaction');
 	
 });
 
