@@ -63,12 +63,12 @@
 
 <!-- Modal Dialog - View Plans
 ============================================= -->
-@include('dialog_plans')
+<!-- @include('dialog_plans') -->
 <!-- Modal Dialog - View Plans end --> 
 
 <!-- Modal Dialog - Login/Signup
 ============================================= -->
-@include('dialog')
+<!-- @include('dialog') -->
 <!-- Modal Dialog - Login/Signup end --> 
 
 <!-- Script --> 
