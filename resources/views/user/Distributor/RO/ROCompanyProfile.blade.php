@@ -76,7 +76,7 @@
                         <p style="font-weight: bold;">{{__(':')}}</p>
                       </div>
                       <div class="col-md-4">
-                        <img src="{{Config('global.FILE_PATH')}}/{{$RODetails['UserDetail']['id_proof_document']}}" width="350">
+                        <img src="{{Config('global.FILE_PATH')}}/{{$RODetails['UserDetail']['id_proof_document']}}" width="350" onerror="this.onerror=null;this.src='<?php echo env('NO_IMAGE'); ?>'">
                       </div>
                       </div>
                   </div>
@@ -106,7 +106,7 @@
                         <p style="font-weight: bold;">{{__(':')}}</p>
                       </div>
                       <div class="col-md-4">
-                        <img src="{{Config('global.FILE_PATH')}}/{{$RODetails['UserDetail']['address_proof']}}" width="350">
+                        <img src="{{Config('global.FILE_PATH')}}/{{$RODetails['UserDetail']['address_proof']}}" width="350" onerror="this.onerror=null;this.src='<?php echo env('NO_IMAGE'); ?>'">
                       </div>
                       </div>
                   </div>
@@ -136,7 +136,7 @@
                         <p style="font-weight: bold;">{{__(':')}}</p>
                       </div>
                       <div class="col-md-4">
-                        <img src="{{Config('global.FILE_PATH')}}/{{$RODetails['UserDetail']['business_proof']}}" width="350">
+                        <img src="{{Config('global.FILE_PATH')}}/{{$RODetails['UserDetail']['business_proof']}}" width="350" onerror="this.onerror=null;this.src='<?php echo env('NO_IMAGE'); ?>'">
                       </div>
                       </div>
                   </div>

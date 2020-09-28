@@ -63,12 +63,12 @@
 
 <!-- Modal Dialog - View Plans
 ============================================= -->
-<?php echo $__env->make('dialog_plans', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<!-- <?php echo $__env->make('dialog_plans', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> -->
 <!-- Modal Dialog - View Plans end --> 
 
 <!-- Modal Dialog - Login/Signup
 ============================================= -->
-<?php echo $__env->make('dialog', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<!-- <?php echo $__env->make('dialog', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> -->
 <!-- Modal Dialog - Login/Signup end --> 
 
 <!-- Script --> 
@@ -124,6 +124,14 @@
       $('#neft_transfer_date').val(chosen_date.format('DD-MM-YYYY'));
   });
 
+   $('#busDepart').daterangepicker({
+    singleDatePicker: true,
+    maxDate: moment(),
+    autoUpdateInput: false,
+    }, function(chosen_date) {
+      $('#busDepart').val(chosen_date.format('YYYY-MM-DD'));
+  });
+
 
 
 
@@ -145,6 +153,9 @@
            type:'POST',
            url:"<?php echo e(route('verifyotp')); ?>",
            data:{otp:OTP},
+          beforeSend: function(request) {
+                request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+          },
            success:function(data){
               if(data.status === true){
                 $("#oldSuccessDiv").hide();

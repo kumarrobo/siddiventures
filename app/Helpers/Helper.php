@@ -1000,6 +1000,33 @@ class Helper {
         
     }
 
+
+
+
+
+    /**
+     * @return string
+     */
+    public static function getZoneTypeOptionList($type=1){
+        $paymentMode = array(
+            '1'=>'Zone Type-1',
+            '2'=>'Zone Type-2',
+            '3'=>'Zone Type-3',
+        );
+
+           $str = "";
+        foreach ($paymentMode as $key=>$value) {
+           if($type==$key){ 
+              $selected='selected';
+              $str.= '<option value="'.$key.'" selected="'.$selected.'">'.$value.'</option>';
+            }else{
+              $str.= '<option value="'.$key.'">'.$value.'</option>';
+            }
+        }
+        return $str;
+        
+    }
+
     
 
     

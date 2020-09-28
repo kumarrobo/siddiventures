@@ -6,9 +6,10 @@
           <!-- Nav Link
           ============================================= -->
           <ul class="nav nav-pills alternate flex-lg-column sticky-top">
-            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('addretailer')}}" href="profile.html"><i class="fas fa-user"></i>{{ __('Add New Retailer') }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{route('allretailerlist')}}"><i class="fas fa-users"></i>{{ __('View All RO')}}</a></li>
-       
+            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('addretailer')}}" href="{{route('addretailer')}}"><i class="fas fa-user"></i>{{ __('Add New Retailer') }}</a>
+            </li>
+            <li class="nav-item"><a class="nav-link disabled" href="#"><i class="fas fa-map-marker"></i>{{ __('Retailer Address') }}</a>
+            </li>
           </ul>
           <!-- Nav Link end --> 
           <!--  <div class="bg-light-2 p-3">

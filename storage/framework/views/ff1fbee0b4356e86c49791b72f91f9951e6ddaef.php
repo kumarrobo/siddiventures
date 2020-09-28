@@ -80,7 +80,7 @@
                         <p style="font-weight: bold;"><?php echo e(__(':')); ?></p>
                       </div>
                       <div class="col-md-4">
-                        <img src="<?php echo e(Config('global.FILE_PATH')); ?>/<?php echo e($RODetails['UserDetail']['id_proof_document']); ?>" width="350">
+                        <img src="<?php echo e(Config('global.FILE_PATH')); ?>/<?php echo e($RODetails['UserDetail']['id_proof_document']); ?>" width="350" onerror="this.onerror=null;this.src='<?php echo env('NO_IMAGE'); ?>'">
                       </div>
                       </div>
                   </div>
@@ -110,7 +110,7 @@
                         <p style="font-weight: bold;"><?php echo e(__(':')); ?></p>
                       </div>
                       <div class="col-md-4">
-                        <img src="<?php echo e(Config('global.FILE_PATH')); ?>/<?php echo e($RODetails['UserDetail']['address_proof']); ?>" width="350">
+                        <img src="<?php echo e(Config('global.FILE_PATH')); ?>/<?php echo e($RODetails['UserDetail']['address_proof']); ?>" width="350" onerror="this.onerror=null;this.src='<?php echo env('NO_IMAGE'); ?>'">
                       </div>
                       </div>
                   </div>
@@ -140,7 +140,7 @@
                         <p style="font-weight: bold;"><?php echo e(__(':')); ?></p>
                       </div>
                       <div class="col-md-4">
-                        <img src="<?php echo e(Config('global.FILE_PATH')); ?>/<?php echo e($RODetails['UserDetail']['business_proof']); ?>" width="350">
+                        <img src="<?php echo e(Config('global.FILE_PATH')); ?>/<?php echo e($RODetails['UserDetail']['business_proof']); ?>" width="350" onerror="this.onerror=null;this.src='<?php echo env('NO_IMAGE'); ?>'">
                       </div>
                       </div>
                   </div>

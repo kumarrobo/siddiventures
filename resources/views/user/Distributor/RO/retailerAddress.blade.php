@@ -16,10 +16,10 @@
           <!-- Nav Link
           ============================================= -->
           <ul class="nav nav-pills alternate flex-lg-column sticky-top">
-            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('personaldetails')}}" href="{{route('personaldetails',['id'=>$id])}}"><i class="fas fa-user"></i>{{ __('Personal Details') }}</a></li>
-            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('retaileraddress')}}" href="{{route('retaileraddress',['id'=>$id])}}" ><i class="fas fa-bookmark"></i>{{ __('Address Details')}}</a></li>
-            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('retailercompany')}}" href="{{route('retailercompany',['id'=>$id])}}" ><i class="fas fa-bookmark"></i>{{ __('Company Proof')}}</a></li>
-            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('documentproof')}}" href="{{route('documentproof',['id'=>$id])}}" ><i class="fas fa-bookmark"></i>{{ __('Document Proof')}}</a></li>
+            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('personaldetails')}}" href="{{route('personaldetails',['id'=>$id])}}"><i class="fas fa-user"></i>{{ __('Retailer Personal Details') }}</a></li>
+            <li class="nav-item"><a class="nav-link {{GeneralHelper::isActiveMenu('retaileraddress')}}" href="{{route('retaileraddress',['id'=>$id])}}" ><i class="fas fa-map-marker"></i>{{ __('Retailer Address Details')}}</a></li>
+            <li class="nav-item"><a class="nav-link" href="javascript:void(0)" ><i class="fas fa-bookmark"></i>{{ __('Retailer Company Proof')}}</a></li>
+            <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i class="fas fa-file"></i>{{ __('Retailer Document Proof')}}</a></li>
             
           </ul>
           <!-- Nav Link end --> 
@@ -32,7 +32,10 @@
                 </div> -->
         </div>
        
-              <div class="col-lg-6">
+              <div class="col-lg-6"  style="border: solid 1px #eee;padding:20px; 
+              -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
+              -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
+              box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75); ">
 
                 <h4 class="mb-4">{{ __('Retailer Address Detail') }}</h4>
                  <p>
@@ -73,21 +76,14 @@
                     <div class="form-group">
                     <label for="emailID">{{ __('Choose State') }}</label>
                     <select class="form-control" name="state_id">
-                        <option value="">Choose State</option>
-                        <?php foreach($cityList as $item){ ?>
-                        <option value="{{$item['id']}}">{{$item['state_name']}}</option>
-                        <?php } ?>
+                        {!!GeneralHelper::getStateOptionListName($userDetails['state_id'])!!}
                       </select>
                   </div>
 
                     <div class="form-group">
                     <label for="emailID">{{ __('Choose City') }}</label>
                     <select class="form-control" name="city_id">
-                        <option value="">Choose City</option>
-                        <?php foreach($cityList as $item){ ?>
-                        <option value="{{$item['id']}}">{{$item['city_name']}}</option>
-                        <?php } ?>
-                        
+                        {!!GeneralHelper::getCityOptionListName($userDetails['city_id'])!!}
                       </select>
                   </div>
                   
@@ -106,9 +102,12 @@
                       @enderror
                     
                   </div>
-                 
-                  
-                  <button class="btn btn-primary" type="submit">Save</button>
+                <div class="form-group row">
+                  <div class="col-md-12 offset-3">
+                    <button class="btn btn-danger" type="button" onclick="history.go('-1')">Back</button>
+                    <button class="btn btn-primary" type="submit">Save & Continue</button>
+                   </div>
+                </div>
                 </form>
               </div>
              

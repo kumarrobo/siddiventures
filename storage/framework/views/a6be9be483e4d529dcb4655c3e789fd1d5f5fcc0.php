@@ -82,6 +82,24 @@
                       </div>
                       </div>
                   </div>
+                  <div class="form-group ">
+                     <div class="row">
+                      <div class="col-md-2">
+                      <label for="fullName" style="font-weight: bold;"><?php echo e(__('Account Status')); ?></label>
+                      </div>
+                       <div class="col-1">
+                        <p style="font-weight: bold;"><?php echo e(__(':')); ?></p>
+                      </div>
+                      <div class="col-md-4">
+                         <?php if($RODetails['status']==0){ ?>
+                          <font color="red"><b>In Active</b></font>
+                        <?php } ?>
+                        <?php if($RODetails['status']==1){ ?>
+                          <font color="green"><b>Active</b></font>
+                        <?php } ?>
+                      </div>
+                      </div>
+                  </div>
 
 
                   

@@ -66,7 +66,8 @@
                       </td>
                        <?php $enid = Crypt::encryptString($value['id']);?>
                        <td class="align-middle" style="font-size: 18px;">
-                        <a href="{{route('editusercommission',['id'=>$enid])}}" title="Update Commission Value"><i class="fas fa-rupee-sign"></i></a>&nbsp;
+                        <a href="{{route('retaileraddress',['id'=>$value['id']])}}" title="Update Retailers"><i class="fas fa-pencil-alt"></i></a>
+                        &nbsp;<a href="{{route('editusercommission',['id'=>$enid])}}" title="Update Commission Value"><i class="fas fa-rupee-sign"></i></a>&nbsp;
                         <a href="{{route('viewrotransaction',['id'=>$enid])}}" title="View All Transaction"><i class="fas fa-chart-line"></i></a>
                        </td>
                     </tr>

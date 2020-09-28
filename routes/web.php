@@ -131,6 +131,7 @@ Route::prefix('user')->namespace('User')->group(function(){
 	Route::any('retailercompany/{id}', 	'DashboardController@retailerCompanyProof')->name('retailercompany');
 	Route::any('roprofile/{id}', 		'DashboardController@retailerProfile')->name('roprofile');
 	Route::any('rocompanyprofile/{id}', 'DashboardController@ROCompanyProfile')->name('rocompanyprofile');
+	Route::any('updateretailer'		, 'DashboardController@UpdateROProfile')->name('updateretailer');
 	
 	Route::any('personaldetails/{id}',	'DashboardController@retailerPersonalDetails')->name('personaldetails');
 	Route::any('documentproof/{id}', 	'DashboardController@retailerDocumentProof')->name('documentproof');

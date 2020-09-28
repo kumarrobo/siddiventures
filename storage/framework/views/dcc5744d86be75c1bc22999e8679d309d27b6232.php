@@ -6,9 +6,10 @@
           <!-- Nav Link
           ============================================= -->
           <ul class="nav nav-pills alternate flex-lg-column sticky-top">
-            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('addretailer')); ?>" href="profile.html"><i class="fas fa-user"></i><?php echo e(__('Add New Retailer')); ?></a></li>
-            <li class="nav-item"><a class="nav-link" href="<?php echo e(route('allretailerlist')); ?>"><i class="fas fa-users"></i><?php echo e(__('View All RO')); ?></a></li>
-       
+            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('addretailer')); ?>" href="<?php echo e(route('addretailer')); ?>"><i class="fas fa-user"></i><?php echo e(__('Add New Retailer')); ?></a>
+            </li>
+            <li class="nav-item"><a class="nav-link disabled" href="#"><i class="fas fa-map-marker"></i><?php echo e(__('Retailer Address')); ?></a>
+            </li>
           </ul>
           <!-- Nav Link end --> 
           <!--  <div class="bg-light-2 p-3">

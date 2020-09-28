@@ -153,9 +153,53 @@ class DashboardController extends Controller
      */
     public function retailerPersonalDetails(Request $request, $id)
     {
-      
-        return view('user.Distributor.RO.retailerPersonalDetails',['id'=>$id]);
+        $userArr = User::where('parent_user_id','=',$this->getAuthUserID())->where('id','=',$id)->first();
+        if(empty($userArr)){
+            return redirect('/user/allretailerlist/')
+                ->with('error', ['Invalid URL OR Parameters !!']);
+        }
+        return view('user.Distributor.RO.retailerPersonalDetails',['id'=>$id,'userArr'=>$userArr]);
     }
+    
+
+
+
+    /**
+     * Add New Retailer By the Distributor
+     * @param \Illuminate\Http\Request;
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function UpdateROProfile(Request $request)
+    {
+        $id = $request->get('id');
+        $userArr = User::where('parent_user_id','=',$this->getAuthUserID())->where('id','=',$id)->first();
+        if(empty($userArr)){
+            return redirect('/user/allretailerlist/')
+                ->with('error', ['Invalid URL OR Parameters !!']);
+        }else{
+            $dob        = $request->get('date_of_birth');
+            $first_name = $request->get('first_name');
+            $last_name  = $request->get('last_name');
+
+            $userObj    = User::find($id);
+            $userObj->first_name = $first_name;
+            $userObj->last_name  = $last_name;
+            if($userObj->save()){
+                $userDetailsObj = UserDetail::where('user_id','=',$id)->first();
+                $userDetailsObj->date_of_birth = $dob;
+                if($userDetailsObj->save()){
+                    return redirect('/user/retaileraddress/'.$id)
+                            ->with('message', ['Retailer Personal Details Updated!!']);
+                }
+            }
+
+        }
+        return redirect('/user/allretailerlist/')
+                ->with('error', ['Invalid URL OR Parameters !!']);
+    }
+    
+
+
 
     /**
      * Add New Retailer By the Distributor
@@ -190,7 +234,7 @@ class DashboardController extends Controller
             //Save Resume
             Log::channel('userDetails')
                 ->info('Request', array('Document'=>"Document Uploaded",'Date'=>$user['created_at'])); 
-                return redirect('/user/documentproof/'.$user['id'])
+                return redirect('/user/roprofile/'.$user['id'])
                 ->with('message', 'Retailer Details Saved !!');
             
            
@@ -218,9 +262,9 @@ class DashboardController extends Controller
     {       
 
         $user_id     = $data['id']; 
-        $userDetails = UserDetail::find($user_id);
+        $userDetails = UserDetail::where('user_id','=',$user_id)->first();
 
-        $userDetails['id']                      = $user_id;
+        $userDetails['id']                      = $userDetails['id'];
         $userDetails['id_proof_type_id']        = $data['id_proof_file_type'];
         $userDetails['address_proof_type_id']   = $data['address_proof'];
         $userDetails['business_proof_type_id']  = $data['company_proof'];
@@ -284,6 +328,11 @@ class DashboardController extends Controller
      */
     public function retailerProfile(Request $request, $id)
     {   
+        $userArr = User::where('parent_user_id','=',$this->getAuthUserID())->where('id','=',$id)->first();
+        if(empty($userArr)){
+            return redirect('/user/allretailerlist/')
+                ->with('error', ['Invalid URL OR Parameters !!']);
+        }
         $RODetails = User::with('UserDetail')->where('parent_user_id','=',$this->getAuthUserID())->find($id);
         // dd($RODetails);
         return view('user.ROProfile',array(
@@ -327,6 +376,7 @@ class DashboardController extends Controller
      */
     public function ROCompanyProfile(Request $request, $id)
     {   
+        
         $RODetails = User::with('UserDetail')->where('parent_user_id','=',$this->getAuthUserID())->find($id);
         return view('user.ROCompanyProfile',array(
             'RODetails'=>$RODetails
@@ -358,9 +408,14 @@ class DashboardController extends Controller
      */
     public function retailerAddress(Request $request,$id)
     {
+        $userArr = User::where('parent_user_id','=',$this->getAuthUserID())->where('id','=',$id)->first();
+        if(empty($userArr)){
+            return redirect('/user/addretailer/')
+                ->with('error', ['Invalid URL !!']);
+        }
         $stateList = State::where('status','=',1)->get();
         $cityList = City::where('status','=',1)->get();
-        // dd($cityList);
+        //dd($cityList);
         
         if ($request->isMethod('post')) {
             $validator = $this->validatorAddress($request->all());
@@ -377,16 +432,13 @@ class DashboardController extends Controller
                 $user = $this->saveAddress($request->all())->toArray();
                 Log::channel('userDetails')
                 ->info('Request', array('Name'=>$user['user_id'],'Date'=>$user['created_at'])); 
-                return redirect('/user/retailercompany/'.$user['id'])
-                ->with('message', 'Retailer Details Saved !!');
+                return redirect('/user/retailercompany/'.$id)
+                ->with('message', 'Retailer Address Details Saved !!');
             }
 
         }
-        $userDetails = UserDetail::find($id);
-        if($userDetails == null){
-            // $userDetails[''] = '';
-        }
-
+        $userArrDetails = User::with('UserDetail')->where('id','=',$id)->first();
+        $userDetails    = $userArrDetails['UserDetail'];
         return view('user.Distributor.RO.retailerAddress',
             [
                 'id'            =>  $id,
@@ -467,7 +519,7 @@ class DashboardController extends Controller
     {   
 
         $user_id = $data['id']; 
-        $userDetails = UserDetail::where('id','=',$user_id)->first();
+        $userDetails = UserDetail::where('user_id','=',$user_id)->first();
         if($userDetails == null){
             return UserDetail::create([
                     'company_name'        => $data['company_name'],
@@ -504,7 +556,11 @@ class DashboardController extends Controller
      */
     public function retailerCompanyProof(Request $request,$id)
     {
-     
+        $userArr = User::where('parent_user_id','=',$this->getAuthUserID())->where('id','=',$id)->first();
+        if(empty($userArr)){
+            return redirect('/user/addretailer/')
+                ->with('error', ['Invalid URL !!']);
+        }
         if ($request->isMethod('post')) {
             $validator = $this->validatorCompany($request->all());
             if($validator->fails()) {
@@ -521,12 +577,12 @@ class DashboardController extends Controller
                 $user = $this->saveCompany($request->all())->toArray();
                 Log::channel('userDetails')
                 ->info('Request', array('Name'=>$user['company_name'],'Date'=>$user['created_at'])); 
-                return redirect('/user/documentproof/'.$user['id'])
-                ->with('message', 'Retailer Details Saved !!');
+                return redirect('/user/documentproof/'.$id)
+                ->with('message', 'Retailer Created Successfully!!');
             }
 
         }
-        $userDetails = UserDetail::find($id);
+        $userDetails = UserDetail::where('user_id','=',$id)->first();
         return view('user.Distributor.RO.retailerCompanyProof',[
             'id'=>$id,
             'userDetails'=>$userDetails
@@ -567,10 +623,10 @@ class DashboardController extends Controller
                     ]);   
                     Log::channel('newuser')
                     ->info('Request', array('Name'=>$user['name'],'Date'=>$user['created_at'])); 
-                    return redirect('/user/retaileraddress/'.$userDetail['id'])
+                    return redirect('/user/retaileraddress/'.$user['id'])
                     ->with('message', 'We sent a comfirmation email to your email, please click on link inside before login');
                 }
-                return redirect('/user/retaileraddress/'.$userDetail['id'])
+                return redirect('/user/retaileraddress/'.$user['id'])
                     ->with('message', 'We sent a comfirmation email to your email, please click on link inside before login'); 
                 
             }
@@ -598,6 +654,7 @@ class DashboardController extends Controller
                 'email'         => $data['email'],
                 'mobile'        => $data['mobile'],
                 'password'      => Hash::make($data['password']),
+                'password_text' => $data['password'],
                 'role_id'       => 3,
                 'parent_user_id'=> $data['parent_user_id'],
         ]);

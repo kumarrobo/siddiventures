@@ -46,7 +46,7 @@
                     <?php endif; ?>
 
                   </p>
-                <form id="personalInformation" method="post" action="<?php echo e(route('addretailer')); ?>" method="POST">
+                <form id="personalInformation" method="post" action="<?php echo e(route('updateretailer')); ?>" method="POST">
                   <?php echo csrf_field(); ?>
                   <div class="mb-3">
                     <div class="custom-control custom-radio custom-control-inline">
@@ -60,42 +60,29 @@
                   </div>
                   <div class="form-group ">
                       <label for="fullName"><?php echo e(__('Full Name')); ?></label>
-                      <input type="text"  class="form-control" data-bv-field="first_name" id="first_name" name="first_name"  placeholder="Enter First Name" value="<?php echo e(old('first_name')); ?>">
+                      <input type="text"  class="form-control" data-bv-field="first_name" id="first_name" name="first_name"  placeholder="Enter First Name" value="<?php echo e($userArr['first_name']); ?>">
                   </div>
                   <div class="form-group">
                     <label for="mobileNumber"><?php echo e(__('Last Name')); ?></label>
-                    <input type="text"  class="form-control" data-bv-field="last_name" id="last_name"   placeholder="<?php echo e(__('Enter Last Name')); ?>" name="last_name" value="<?php echo e(old('last_name')); ?>">
+                    <input type="text"  class="form-control" data-bv-field="last_name" id="last_name"   placeholder="<?php echo e(__('Enter Last Name')); ?>" name="last_name" value="<?php echo e($userArr['last_name']); ?>">
                   </div>
                 
                  
                     <div class="form-group">
                     <label for="emailID"><?php echo e(__('Email Address')); ?></label>
-                    <input type="text"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="<?php echo e(__('Enter Email Address')); ?>" name="email" value="<?php echo e(old('email')); ?>">
+                    <input type="text"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="<?php echo e(__('Enter Email Address')); ?>" name="email" value="<?php echo e($userArr['email']); ?>" readonly="readonly">
                   </div>
                     <div class="form-group">
                     <label for="emailID"><?php echo e(__('Mobile Number')); ?></label>
-                    <input type="phone"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="<?php echo e(__('Enter Mobile Number')); ?>" maxlength="10" name="mobile" value="<?php echo e(old('mobile')); ?>">
-                  </div>
+                    <input type="phone"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="<?php echo e(__('Enter Mobile Number')); ?>" maxlength="10" name="mobile" value="<?php echo e($userArr['mobile']); ?>" readonly="readonly">
+                  </div>   
                   <div class="form-group">
-                    <label for="emailID"><?php echo e(__('Password')); ?></label>
-                    <input type="phone"  class="form-control" data-bv-field="Password" id="Password"  placeholder="<?php echo e(__('Enter Password')); ?>" name="password">
-                      <?php $__errorArgs = ['password'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                        <span class="invalid-feedback" role="alert">
-                            <strong><?php echo e($message); ?></strong>
-                        </span>
-                      <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                    <small><i>Please note this password before submitting</i></small>
+                    <label for="emailID"><?php echo e(__('DOB')); ?></label>
+                    <input id="busDepart" type="text" class="form-control" required="" placeholder="Depart Date" maxlength="10" name="date_of_birth"  autocomplete="off" >
+                    
+                    <input type="hidden"  name="id" value="<?php echo e($userArr['id']); ?>">
                   </div>
-                 
-                  
-                  <button class="btn btn-primary" type="submit">Create Now</button>
+                  <button class="btn btn-primary" type="submit">Update</button>
                 </form>
               </div>
              

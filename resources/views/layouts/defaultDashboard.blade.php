@@ -124,6 +124,14 @@
       $('#neft_transfer_date').val(chosen_date.format('DD-MM-YYYY'));
   });
 
+   $('#busDepart').daterangepicker({
+    singleDatePicker: true,
+    maxDate: moment(),
+    autoUpdateInput: false,
+    }, function(chosen_date) {
+      $('#busDepart').val(chosen_date.format('YYYY-MM-DD'));
+  });
+
 
 
 

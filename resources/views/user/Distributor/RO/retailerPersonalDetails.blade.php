@@ -49,7 +49,7 @@
                     @endif
 
                   </p>
-                <form id="personalInformation" method="post" action="{{route('addretailer')}}" method="POST">
+                <form id="personalInformation" method="post" action="{{route('updateretailer')}}" method="POST">
                   @csrf
                   <div class="mb-3">
                     <div class="custom-control custom-radio custom-control-inline">
@@ -63,35 +63,29 @@
                   </div>
                   <div class="form-group ">
                       <label for="fullName">{{ __('Full Name') }}</label>
-                      <input type="text"  class="form-control" data-bv-field="first_name" id="first_name" name="first_name"  placeholder="Enter First Name" value="{{ old('first_name') }}">
+                      <input type="text"  class="form-control" data-bv-field="first_name" id="first_name" name="first_name"  placeholder="Enter First Name" value="{{$userArr['first_name']}}">
                   </div>
                   <div class="form-group">
                     <label for="mobileNumber">{{ __('Last Name') }}</label>
-                    <input type="text"  class="form-control" data-bv-field="last_name" id="last_name"   placeholder="{{ __('Enter Last Name') }}" name="last_name" value="{{ old('last_name') }}">
+                    <input type="text"  class="form-control" data-bv-field="last_name" id="last_name"   placeholder="{{ __('Enter Last Name') }}" name="last_name" value="{{$userArr['last_name']}}">
                   </div>
                 
                  
                     <div class="form-group">
                     <label for="emailID">{{ __('Email Address') }}</label>
-                    <input type="text"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="{{ __('Enter Email Address') }}" name="email" value="{{ old('email') }}">
+                    <input type="text"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="{{ __('Enter Email Address') }}" name="email" value="{{$userArr['email']}}" readonly="readonly">
                   </div>
                     <div class="form-group">
                     <label for="emailID">{{ __('Mobile Number') }}</label>
-                    <input type="phone"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="{{ __('Enter Mobile Number') }}" maxlength="10" name="mobile" value="{{ old('mobile') }}">
-                  </div>
+                    <input type="phone"  class="form-control" data-bv-field="emailid" id="emailID"  placeholder="{{ __('Enter Mobile Number') }}" maxlength="10" name="mobile" value="{{$userArr['mobile']}}" readonly="readonly">
+                  </div>   
                   <div class="form-group">
-                    <label for="emailID">{{ __('Password') }}</label>
-                    <input type="phone"  class="form-control" data-bv-field="Password" id="Password"  placeholder="{{ __('Enter Password') }}" name="password">
-                      @error('password')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                      @enderror
-                    <small><i>Please note this password before submitting</i></small>
+                    <label for="emailID">{{ __('DOB') }}</label>
+                    <input id="busDepart" type="text" class="form-control" required="" placeholder="Depart Date" maxlength="10" name="date_of_birth"  autocomplete="off" >
+                    
+                    <input type="hidden"  name="id" value="{{$userArr['id']}}">
                   </div>
-                 
-                  
-                  <button class="btn btn-primary" type="submit">Create Now</button>
+                  <button class="btn btn-primary" type="submit">Update</button>
                 </form>
               </div>
              
