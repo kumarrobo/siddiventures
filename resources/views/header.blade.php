@@ -21,7 +21,8 @@
               <ul class="navbar-nav">
                 {!!GeneralHelper::getMenu()!!}
                 <li class="dropdown"> <a class="dropdown-toggle" href="{{route('register')}}">Register<i class="arrow"></i></a></li>
-                <li class="dropdown"> <a class="dropdown-toggle" href="{{route('ro.login')}}">RO Login<i class="arrow"></i></a></li>
+                <li class="dropdown"> <a class="dropdown-toggle" href="{{route('login')}}">DS Login<i class="arrow"></i></a></li>
+                <li class="dropdown"> <a class="dropdown-toggle" href="{{route('ro.login')}}">Retailer Login<i class="arrow"></i></a></li>
                 <li class="login-signup ml-lg-2"><a class="pl-lg-4 pr-0" data-toggle="modal" data-target="#login-signup" href="#">Welcome, Guest<span class="d-none d-lg-inline-block"><i class="fas fa-user"></i></span></a></li>
               </ul>
             </div>
