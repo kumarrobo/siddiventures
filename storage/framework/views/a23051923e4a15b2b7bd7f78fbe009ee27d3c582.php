@@ -101,7 +101,16 @@ unset($__errorArgs, $__bag); ?>
                     <label class="custom-control-label" for="remember-me">Remember Me</label>
                   </div>
                 </div>
-                <div class="col-sm text-right"> <a class="justify-content-end" href="#">Forgot Password ?</a> </div>
+                <div class="col-sm text-right"> 
+                    <?php if(Route::has('password.request')): ?>
+                        <a class="justify-content-end" href="<?php echo e(route('password.request')); ?>">
+                            <?php echo e(__('Forgot Password?')); ?>
+
+                        </a>
+                    <?php endif; ?>
+                  </div>
+
+
               </div>
               <button class="btn btn-primary btn-block" type="submit">Login</button>
 

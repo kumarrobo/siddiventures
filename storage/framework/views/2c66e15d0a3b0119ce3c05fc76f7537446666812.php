@@ -37,7 +37,7 @@
           <!-- Mobile Recharge
           ============================================= -->
           <div class="col-lg-8 mb-4 mb-lg-0">
-            <h2 class="text-4 mb-3">New Registration- Upload Document</h2>
+            <h2 class="text-4 mb-3">New Registration- Upload Document </h2>
             <hr/>
             <?php if(Session::has('error')): ?>
             <div class="card-header alert-danger"><?php echo e(__(Session::get('error'))); ?></div>
@@ -48,55 +48,124 @@
             <form id="personalInformation" method="post" action="<?php echo e(route('uploaddocument',['id'=>$id])); ?>" method="POST" enctype="multipart/form-data">
                   <?php echo csrf_field(); ?>
                   <input type="hidden" name="id" value="<?php echo e($id); ?>">
-                  <div class="form-group ">
+                  <div class="form-group row">
+                     <div class="col-md-6">
+                      <label for="fullName"><?php echo e(__('Company Type')); ?></label>
+                       <select class="form-control" name="company_type">
+                        <?php echo GeneralHelper::getCompanyOptionsTypeList(); ?>
+
+                      </select>
+                    </div>
+                     <div class="col-md-6">
+                      <label for="fullName"><?php echo e(__('Company Name')); ?></label>
+                     <input type="text"  class="form-control" data-bv-field="company_name" id="company_name"   placeholder="<?php echo e(__(' Company Name')); ?>" name="company_name" value="<?php echo e(old('company_name')); ?>">
+                    </div>
+
+                  </div>
+
+                   <div class="form-group row">
+                     <div class="col-md-6">
+                      <label for="fullName"><?php echo e(__('Identification Type')); ?></label>
+                       <select class="form-control" name="identification_type">
+                        <?php echo GeneralHelper::getIdentificationTypeOptionList(); ?>
+
+                      </select>
+                    </div> 
+                    <div class="col-md-6">
+                      <label for="fullName"><?php echo e(__('Service Type')); ?></label>
+                       <select class="form-control" name="service_by">
+                        <?php echo GeneralHelper::getServiceTypeOptionList(); ?>
+
+                      </select>
+                    </div>
+                  
+
+                  </div>
+
+                  <div class="form-group row">
+                     <div class="col-md-6">
+                      <label for="fullName"><?php echo e(__('Is Name On Pan Card')); ?></label>
+                       <select class="form-control" name="is_name_on_pan_card">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                      </select>
+                    </div> 
+                    <div class="col-md-6">
+                      <label for="fullName"><?php echo e(__('PAN Card No')); ?></label>
+                       <input type="text"  class="form-control" data-bv-field="pan_card_number" id="pan_card_number"  placeholder="<?php echo e(__('Upload ID Proof')); ?>" name="pan_card_number" maxlength="10">
+                    </div>
+                  
+
+                  </div>
+
+                    <div class="form-group row">
+                     <div class="col-md-6">
                       <label for="fullName"><?php echo e(__('ID Proof')); ?></label>
                        <select class="form-control" name="id_proof_file_type">
                         <?php foreach($idProofType as $key=>$item){ ?>
                         <option value="<?php echo e($key); ?>"><?php echo e($item); ?></option>
                         <?php } ?>
                       </select>
+                    </div>
+                     <div class="col-md-6">
+                      <label for="fullName"><?php echo e(__('Upload ID Proof')); ?></label>
+                     <input type="file"  class="form-control" data-bv-field="id_proof_file" id="id_proof_file"   placeholder="<?php echo e(__('Upload ID Proof')); ?>" name="id_proof_file" value="<?php echo e(old('id_proof_file')); ?>">
+                     <small class="" style="color: red">File extension type should be .jpg, .jpeg, .pdf. Max size 1024KB</small>
+                    </div>
 
                   </div>
                   <div class="form-group">
-                     <label for="fullName"><?php echo e(__('Upload ID Proof')); ?></label>
-                     <input type="file"  class="form-control" data-bv-field="id_proof_file" id="id_proof_file"   placeholder="<?php echo e(__('Upload ID Proof')); ?>" name="id_proof_file" value="<?php echo e(old('id_proof_file')); ?>">
-                     <small class="" style="color: red">File extension type should be .jpg, .jpeg, .pdf. Max file size 1024KB</small>
-                  </div>
-                  <div class="form-group">
-                    <hr/><br/>
+                    <hr/>
                   </div>
                  
-                    <div class="form-group">
+                  <div class="form-group row">
+                     <div class="col-md-6">
                     <label for="emailID"><?php echo e(__('Address Proof')); ?></label>
                     <select class="form-control" name="address_proof">
                       <?php foreach($addressProofType as $key=>$item){ ?>
                         <option value="<?php echo e($key); ?>"><?php echo e($item); ?></option>
                         <?php } ?>
                     </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="emailID"><?php echo e(__('Upload Address Proof')); ?></label>
+                    <input type="file"  class="form-control" data-bv-field="address_proof_file" id="address_proof_file"   name="address_proof_file">
+                     <small class="" style="color: red">File extension type should be .jpg, .jpeg, .pdf. Max size 1024KB</small>
+                    </div>
                   </div>
                     <div class="form-group">
-                    <label for="emailID"><?php echo e(__('Upload Address Proof')); ?></label>
-                    <input type="file"  class="form-control" data-bv-field="address_proof_file" id="address_proof_file"   name="address_proof_file">
-                     <small class="" style="color: red">File extension type should be .jpg, .jpeg, .pdf. Max file size 1024KB</small>
-                    <hr/><br/>
+                    <hr/>
                   </div>
-                     <div class="form-group">
-                    <label for="emailID"><?php echo e(__('Company Proof')); ?></label>
-                    <select class="form-control" name="company_proof">
-                      <?php foreach($companyProofType as $key=>$item){ ?>
-                        <option value="<?php echo e($key); ?>"><?php echo e($item); ?></option>
-                        <?php } ?>
-                    </select>
+
+                     <div class="form-group row">
+                       <div class="col-md-6">
+                        <label for="emailID"><?php echo e(__('Company Proof')); ?></label>
+                        <select class="form-control" name="company_proof">
+                          <?php foreach($companyProofType as $key=>$item){ ?>
+                            <option value="<?php echo e($key); ?>"><?php echo e($item); ?></option>
+                            <?php } ?>
+                        </select>
+                       </div>
+                       <div class="col-md-6">
+                          <label for="emailID"><?php echo e(__('Company Proof')); ?></label>
+                          <input type="file"  class="form-control" data-bv-field="company_proof_file" id="company_proof_file"   name="company_proof_file">
+                          
+                       </div>
                   </div>
-                  <div class="form-group">
-                    <label for="emailID"><?php echo e(__('Company Proof')); ?></label>
-                    <input type="file"  class="form-control" data-bv-field="company_proof_file" id="company_proof_file"   name="company_proof_file">
-                     <small class="" style="color: red">File extension type should be .jpg, .jpeg, .pdf. Max file size 1024KB</small>
-                    
-                  </div>
-                 
+
+                        <div class="form-group row mb-0">
+                            <div class="col-md-12 offset-md-3">
+                               <button type="button" class="btn btn-danger">
+                                    <?php echo e(__('Cancle')); ?>
+
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <?php echo e(__('Save & Register')); ?>
+
+                                </button>
+                            </div>
+                        </div>
                   
-                  <button class="btn btn-primary" type="submit">Upload & Save</button>
                 </form>
 
           </div>
