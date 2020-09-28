@@ -40,7 +40,7 @@
           <!-- Mobile Recharge
           ============================================= -->
           <div class="col-lg-8 mb-4 mb-lg-0">
-            <h2 class="text-4 mb-3">New Registration</h2>
+            <h2 class="text-4 mb-3">New Registration Address</h2>
             <hr/>
             @if (Session::has('message'))
             <div class="card-header alert-success">{{ __(Session::get('message')) }}</div>
@@ -95,11 +95,11 @@
 
 
                             <div class="col-md-6">
-                               <label for="mobile" class=" col-form-label text-md-right">{{ __('Mobile Number') }}</label>
+                               <label for="email" class=" col-form-label text-md-right">{{ __('Mobile Number') }}</label>
 
                                 <input id="mobile" type="number" class="form-control @error('mobile') is-invalid @enderror" name="mobile" value="{{ old('mobile') }}" required autocomplete="mobile">
 
-                                @error('mobile')
+                                @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -134,13 +134,9 @@
                         </div>
                       
                         <div class="form-group row mb-0">
-                            <div class="col-md-12 offset-md-3">
-                                <button type="button" class="btn btn-danger">
-                                    {{ __('Cancle') }}
-                                </button>
-                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Save & Continue') }}
-                                </button>
+                            <div class="col-md-6 offset-md-4">
+                                <button type="button" class="btn btn-danger">{{ __('Cancle') }}</button>
+                                <button type="submit" class="btn btn-primary">{{ __('Save & Continue') }}</button>
                             </div>
                         </div>
                     </form>

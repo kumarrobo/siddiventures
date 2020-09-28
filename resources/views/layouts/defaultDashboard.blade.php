@@ -145,6 +145,9 @@
            type:'POST',
            url:"{{ route('verifyotp') }}",
            data:{otp:OTP},
+          beforeSend: function(request) {
+                request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+          },
            success:function(data){
               if(data.status === true){
                 $("#oldSuccessDiv").hide();
