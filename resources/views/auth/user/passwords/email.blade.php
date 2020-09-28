@@ -1,6 +1,38 @@
-@extends('layouts.app')
+
+@extends('layouts.default')
 
 @section('content')
+<!-- Document Wrapper   
+============================================= -->
+<div id="main-wrapper"> 
+  
+  <!-- Header
+  ============================================= -->
+  @include('header')
+
+  <!-- Content
+  ============================================= -->
+  <div id="content"lass="bg-secondary"> 
+    <section class="page-header page-header-text-light bg-secondary">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1>Forgot Password</h1>
+          </div>
+          <div class="col-md-4">
+            <ul class="breadcrumb justify-content-start justify-content-md-end mb-0">
+              <li><a href="{{route('home')}}">Home</a></li>
+              <li class="active">Forgot Password</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Secondary Navigation
+    ============================================= -->
+
+  <!-- Header end --> 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -43,5 +75,13 @@
             </div>
         </div>
     </div>
+</div>
+  <!-- Content end --> 
+  
+  <!-- Footer
+  ============================================= -->
+  @include('footer')
+  <!-- Footer end --> 
+
 </div>
 @endsection

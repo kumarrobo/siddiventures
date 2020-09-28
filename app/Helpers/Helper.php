@@ -82,7 +82,7 @@ class Helper {
                 if(isset($item['pageSlug'])){
                 if($item['orderNo']<6){
                 //dd($item);
-                    $menuStr.="<li class='dropdown active'> <a class='dropdown-toggle' href='".url($item['pageSlug'])."''>".$item['title']."</a></li>";
+                    $menuStr.="<li class='dropdown'> <a class='dropdown-toggle' href='".url($item['pageSlug'])."''>".$item['title']."</a></li>";
                     }
                 }
             }
@@ -557,6 +557,47 @@ class Helper {
 
 
 
+    /**
+     * @return string
+     */
+    public static function getStateOptionListName($id){
+        $document_types = State::where('status','=',1)->get();
+        $str = "";
+        foreach ($document_types as $value) {
+           if($id==$value['id']){ 
+              $selected='selected';
+              $str.= '<option value="'.$value['id'].'" selected="'.$selected.'">'.$value['state_name'].'</option>';
+            }else{
+              $str.= '<option value="'.$value['id'].'">'.$value['state_name'].'</option>';
+            }
+        }
+        return $str;
+    }
+
+
+
+
+    /**
+     * @return string
+     */
+    public static function getCityOptionListName($state_id=null,$id=null){
+        $document_types = City::where('status','=',1)->get();
+        // /dd($document_types);
+        $str = "";
+        foreach ($document_types as $value) {
+           if($id==$value['id']){ 
+              $selected='selected';
+              $str.= '<option value="'.$value['id'].'" selected="'.$selected.'">'.$value['city_name'].'</option>';
+            }else{
+              $str.= '<option value="'.$value['id'].'">'.$value['city_name'].'</option>';
+            }
+        }
+        return $str;
+    }
+
+
+
+
 
     /**
      * Get the Wallet Payment Id of the user
@@ -861,7 +902,103 @@ class Helper {
 
 
 
+    
 
+     /**
+     * @return string
+     */
+    public static function getDocumentTypeOptionsList($type=null){
+        $document_types = DocumentType::where('status','=',1)->get();
+
+        $str = "";
+        foreach ($document_types as $value) {
+           if($type==$value['id']){ 
+              $selected='selected';
+              $str.= '<option value="'.$value['id'].'" selected="'.$selected.'">'.$value['type_name'].'</option>';
+            }else{
+              $str.= '<option value="'.$value['id'].'">'.$value['type_name'].'</option>';
+            }
+        }
+        return $str;
+    }
+
+
+       /**
+     * @return string
+     */
+    public static function getCompanyOptionsTypeList($type=1){
+
+        $paymentMode = array(
+            '1'=>'Comapny Type-1',
+            '2'=>'Comapny Type-2',
+            '3'=>'Comapny Type-3',
+        );
+
+         $str = "";
+        foreach ($paymentMode as $key=>$value) {
+           if($type==$key){ 
+              $selected='selected';
+              $str.= '<option value="'.$key.'" selected="'.$selected.'">'.$value.'</option>';
+            }else{
+              $str.= '<option value="'.$key.'">'.$value.'</option>';
+            }
+        }
+        return $str;
+
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public static function getIdentificationTypeOptionList($type=1){
+        $paymentMode = array(
+            '1'=>'Identification Type-1',
+            '2'=>'Identification Type-2',
+            '3'=>'Identification Type-3',
+        );
+
+           $str = "";
+        foreach ($paymentMode as $key=>$value) {
+           if($type==$key){ 
+              $selected='selected';
+              $str.= '<option value="'.$key.'" selected="'.$selected.'">'.$value.'</option>';
+            }else{
+              $str.= '<option value="'.$key.'">'.$value.'</option>';
+            }
+        }
+        return $str;
+        
+    }
+
+
+
+
+
+    
+    /**
+     * @return string
+     */
+    public static function getServiceTypeOptionList($type=1){
+        $paymentMode = array(
+            '1'=>'Servcice Type-1',
+            '2'=>'Servcice Type-2',
+            '3'=>'Servcice Type-3',
+        );
+
+           $str = "";
+        foreach ($paymentMode as $key=>$value) {
+           if($type==$key){ 
+              $selected='selected';
+              $str.= '<option value="'.$key.'" selected="'.$selected.'">'.$value.'</option>';
+            }else{
+              $str.= '<option value="'.$key.'">'.$value.'</option>';
+            }
+        }
+        return $str;
+        
+    }
 
     
 

@@ -18,7 +18,28 @@ class UserDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'address_line_1', 'user_id','state_id','city_id','country_id'
+            'address_line_1', 
+            'date_of_birth', 
+            'company_type', 
+            'company_name', 
+            'address_line_2', 
+            'district', 
+            'pincode', 
+            'service_by', 
+            'zone', 
+            'identification_type', 
+            'is_name_on_pan_card', 
+            'pan_card_number', 
+            'id_proof_type_id', 
+            'id_proof_document', 
+            'address_proof_type_id', 
+            'address_proof', 
+            'business_proof_type_id', 
+            'business_proof', 
+            'user_id',
+            'state_id',
+            'city_id',
+            'country_id'
     ];
 
 

@@ -27,7 +27,7 @@ Route::post('logout', 'LoginController@logout')->name('admin.logout');
 Route::get('password/reset', 'ForgotPasswordController@showLinkRequestForm')->name('admin.password.request');
 Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');
 Route::get('password/reset/{token}', 'ResetPasswordController@showResetForm')->name('admin.password.reset');
-Route::post('password/reset', 'ResetPasswordController@reset')->name('admin.password.update');
+//Route::post('password/reset', 'ResetPasswordController@reset')->name('admin.password.update');
 
 
 Route::get('password/confirm', 'Auth\ConfirmPasswordController@showConfirmForm')->name('admin.password.confirm');
@@ -61,7 +61,7 @@ Route::post('logout', 'LoginController@logout')->name('ro.logout');
 Route::get('password/reset', 'ForgotPasswordController@showLinkRequestForm')->name('ro.password.request');
 Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail')->name('ro.password.email');
 Route::get('password/reset/{token}', 'ResetPasswordController@showResetForm')->name('ro.password.reset');
-Route::post('password/reset', 'ResetPasswordController@reset')->name('ro.password.update');
+//Route::post('password/reset', 'ResetPasswordController@reset')->name('ro.password.update');
 
 
 Route::get('password/confirm', 'Auth\ConfirmPasswordController@showConfirmForm')->name('ro.password.confirm');
@@ -181,8 +181,8 @@ Route::post('verifyotp', 				'Auth\User\LoginController@verifyOTPAndLogin')->nam
 
 Route::get('register', 					'Auth\User\RegisterController@showRegistrationForm')->name('register');
 Route::post('register', 				'Auth\User\RegisterController@register')->name('register');
+Route::any('addressreqired/{id}'	, 'Auth\User\RegisterController@addressReqired')->name('addressreqired');
 Route::any('uploaddocument/{id}', 'Auth\User\RegisterController@registerUploadDocument')->name('uploaddocument');
-
 Route::get('login', 					'Auth\User\LoginController@showLoginForm')->name('login');
 Route::post('login', 					'Auth\User\LoginController@login');
 Route::post('logout', 					'Auth\User\LoginController@logout')->name('logout');
