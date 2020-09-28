@@ -1,4 +1,18 @@
- <div id="horizontalTab" class="resp-htabs">
+<p>
+  @if(Session::has('message'))
+  <p class="alert alert-success">Retailer Details Save Successfully.</p>
+  @endif
+  @if(Session::has('error'))
+  <p class="alert alert-danger"><small>
+  @foreach(Session::get('error') as $err)
+  <b>Error:</b> {{ $err }}</br>
+  @endforeach
+  </small>
+  </p>
+  @endif
+
+</p>
+  <div id="horizontalTab" class="resp-htabs">
           <ul class="resp-tabs-list">
             <li>{{ __('Personal Details') }}</li>
             <li>{{ __('Address Details') }}</li>

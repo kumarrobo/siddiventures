@@ -1,4 +1,18 @@
- <div id="horizontalTab" class="resp-htabs">
+<p>
+  <?php if(Session::has('message')): ?>
+  <p class="alert alert-success">Retailer Details Save Successfully.</p>
+  <?php endif; ?>
+  <?php if(Session::has('error')): ?>
+  <p class="alert alert-danger"><small>
+  <?php $__currentLoopData = Session::get('error'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $err): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+  <b>Error:</b> <?php echo e($err); ?></br>
+  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+  </small>
+  </p>
+  <?php endif; ?>
+
+</p>
+  <div id="horizontalTab" class="resp-htabs">
           <ul class="resp-tabs-list">
             <li><?php echo e(__('Personal Details')); ?></li>
             <li><?php echo e(__('Address Details')); ?></li>

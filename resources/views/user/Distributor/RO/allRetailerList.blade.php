@@ -4,6 +4,7 @@
           <!-- Orders History
           ============================================= -->
           <div class="row">
+
           <div class="col-md-6" style="padding-bottom: 0px">
             <h6 style="padding: 0px; margin:0px; ">All RO List</h6>
           </div>
@@ -14,6 +15,20 @@
             </h6>
           </div>
           </div>
+           <p>
+                    @if(Session::has('message'))
+                    <p class="alert alert-success">Retailer Details Save Successfully.</p>
+                    @endif
+                    @if(Session::has('error'))
+                    <p class="alert alert-danger"><small>
+                    @foreach(Session::get('error') as $err)
+                    <b>Error:</b> {{ $err }}</br>
+                    @endforeach
+                    </small>
+                    </p>
+                    @endif
+
+                  </p>
 
           <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
             <li class="nav-item"> <a class="nav-link active" id="first-tab" data-toggle="tab" href="#first" role="tab" aria-controls="first" aria-selected="true">All RO</a> </li>

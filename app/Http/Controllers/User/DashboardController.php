@@ -234,7 +234,7 @@ class DashboardController extends Controller
             //Save Resume
             Log::channel('userDetails')
                 ->info('Request', array('Document'=>"Document Uploaded",'Date'=>$user['created_at'])); 
-                return redirect('/user/roprofile/'.$user['id'])
+                return redirect('/user/roprofile/'.$id)
                 ->with('message', 'Retailer Details Saved !!');
             
            
@@ -274,7 +274,7 @@ class DashboardController extends Controller
             $fileName                           =   $file->getClientOriginalName();
             $fileName                           =   str_replace(" ","_",strtolower($fileName));
             $userDetails['id_proof_document']   =   $fileName;
-            $destinationPath                    =   'storage/uploads/RO';
+            $destinationPath                    =   'public/storage/uploads/RO';
             $file->move($destinationPath,$fileName);
         }
 
@@ -284,7 +284,7 @@ class DashboardController extends Controller
             $fileName                           =   $file->getClientOriginalName();
             $fileName                           =   str_replace(" ","_",strtolower($fileName));
             $userDetails['address_proof']       =   $fileName;
-            $destinationPath                    =   'storage/uploads/RO';
+            $destinationPath                    =   'public/storage/uploads/RO';
             $file->move($destinationPath,$fileName);
         }
 
@@ -294,7 +294,7 @@ class DashboardController extends Controller
             $fileName                           =   $file->getClientOriginalName();
             $fileName                           =   str_replace(" ","_",strtolower($fileName));
             $userDetails['business_proof']      =   $fileName;
-            $destinationPath                    =   'storage/uploads/RO';
+            $destinationPath                    =   'public/storage/uploads/RO';
             $file->move($destinationPath,$fileName);
         }
 
