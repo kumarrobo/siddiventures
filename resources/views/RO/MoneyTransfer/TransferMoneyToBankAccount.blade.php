@@ -8,7 +8,7 @@
             </div>
               <div class="col-lg-2 col-sm-12"></div>
                 <div class="col-lg-8 col-sm-12">
-              
+              <?php //dd($result);?>
               <div class="card  mb-3"  style=" 
               -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
               -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
@@ -137,6 +137,7 @@
                           <input type="submit" name="submit" id="verifyAccountBtn"   class="btn btn-success" style="font-size: 14px; text-decoration: none" value="Transfer Now">
                           <input type="hidden" name="beneficiaries_bank_account_id" value="{{$result['id']}}">
                           <input type="hidden" name="verify_mobile_number_id" value="{{$result['verify_mobile_number_id']}}">
+                          <input type="hidden" name="verify_mobile_beneficiaries_bank_account_id" value="{{$result['id']}}">
                         </div>
                       </div>
                     </div>
@@ -144,7 +145,7 @@
                   </div>
               </div>
               </div> 
-                            <div class="col-lg-2 col-sm-12"></div>
+              <div class="col-lg-2 col-sm-12"></div>
    
               
           <!-- Orders History end --> 

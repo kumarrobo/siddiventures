@@ -31,7 +31,7 @@ class MoneyTransferController extends Controller
     //
     public $SMSController;
     public $WireAPI;
-
+    public $verify_mobile_beneficiaries_bank_account_id;
     /**
      * Create a new controller instance.
      *
@@ -201,7 +201,18 @@ class MoneyTransferController extends Controller
                 $mobile = $strArr[0];
                 $tday   = $strArr[1];
                 if($tday == date('Ymd')){
-                    $VerifyMobileNumber =VerifyMobileNumber::where('user_id','=',$this->getUserId())->where('mobile','=',$mobile)->first();
+                    $VerifyMobileNumber =VerifyMobileNumber::with('VerifyMobileBeneficiariesBankAccount')->where('user_id','=',$this->getUserId())
+                    ->where('mobile','=',$mobile)
+                    ->first();
+                    $VerifyMobileBeneficiariesBankAccountIdArr = [];
+                    if(!empty($VerifyMobileNumber)){
+                        if(!empty($VerifyMobileNumber['VerifyMobileBeneficiariesBankAccount'])){
+                            foreach($VerifyMobileNumber['VerifyMobileBeneficiariesBankAccount'] as $item){
+                                $VerifyMobileBeneficiariesBankAccountIdArr[] = $item['verify_beneficiaries_bank_account_id'];           
+                            }
+                        }
+                    }
+
                     $senderName         =  $VerifyMobileNumber['sender_name'];
                     $address            =  $VerifyMobileNumber['address'];
                     $verifyMID          =  $VerifyMobileNumber['id'];
@@ -209,16 +220,28 @@ class MoneyTransferController extends Controller
                     ->where('verify_mobile_number_id','=',$verifyMID)
                     ->get();
 
+
                     $bankAccountList = VerifyMobileBeneficiariesBankAccount::with('VerifyBeneficiariesBankAccount')
                     ->where('user_id','=',$this->getUserId())
                     ->where('verify_mobile_number_id','=',$verifyMID)
                     ->paginate($this->getPageItem());
                     $bankList   =  $bankAccountList;
                     //dd($bankList);
+                    
                     $mobileTransactionBalanceAmount = Helper::getMonthlyBalanceAmount($verifyMID);
                     $monthlyLimit   = Helper::getUserMonthlyBalance();
                     $utilized       = $monthlyLimit -  $mobileTransactionBalanceAmount;
 
+
+                    //Get All Transaction List Of this Mobile
+                    $payment_wallet_id = $this->getPaymentWalletID($this->getUserId());
+                    $mobileTxn = PaymentWalletTransaction::with('VerifyBeneficiariesBankAccount')
+                                ->where('payment_wallet_id', '=', $payment_wallet_id)
+                                ->where('user_id','=',$this->getUserId())
+                                ->whereIn('verify_mobile_beneficiaries_bank_account_id', $VerifyMobileBeneficiariesBankAccountIdArr)
+                                ->orderBy('id','DESC')
+                                ->paginate($this->getPageItem());
+                    //dd($mobileTxn);
                     //dd($mobileTransactionBalance);
                 }else{
                      Session::flash('error', ["No Records Found"]);
@@ -229,6 +252,9 @@ class MoneyTransferController extends Controller
             Session::flash('error', ["No Records Found"]);
             return redirect('RO/moneytransfer/')->with(['error'=>['Sorry ! Invalid Url.']]);
         }
+
+        //List Of Charges Of Money Transfer
+        $MoneyTransferCharge  = $this->getMoneyTransferCharge();
         return view('RO.bankAccountList',array(
             'mobileNumber'=> $mobile,
             'senderName'  => $senderName,
@@ -237,7 +263,9 @@ class MoneyTransferController extends Controller
             'utilized'    => $utilized,
             'balance'     => $mobileTransactionBalanceAmount,
             'bankList'    => $bankList,
-            'id'          => Crypt::encryptString($verifyMID)
+            'id'          => Crypt::encryptString($verifyMID),
+            'MoneyTransferCharge' =>$MoneyTransferCharge,
+            'AllMobileTxn'=>$mobileTxn
         ));
     }
 
@@ -548,7 +576,7 @@ class MoneyTransferController extends Controller
             if($bankTxnObj->save()){
 
                 //Update Payment Wallet Transactions For User
-                $this->pushDebitRequestedBalanceAmount($user_id, $amount, $narration);
+                $this->pushDebitRequestedBalanceAmount($user_id, $amount, $narration, $verify_mobile_beneficiaries_bank_account_id);
                 $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
                 
             }
@@ -587,7 +615,7 @@ class MoneyTransferController extends Controller
     * @param user_id, requested_amount
     * Distributor and RO as user_id.
     **/
-    private function pushDebitRequestedBalanceAmount($user_id,$amount,$requestData){
+    private function pushDebitRequestedBalanceAmount($user_id,$amount,$requestData, $verify_mobile_beneficiaries_bank_account_id){
             $userId         = $user_id;
             $creditAmount   = "0.00";
             $debitAmount    = $amount;
@@ -611,7 +639,7 @@ class MoneyTransferController extends Controller
                         $status             = 'Success';
                         $remarks            = $remarks;
                         $created_at         = $this->getTodayDate();
-                        
+                        $transferAmt        = $this->getTransferCharge($amount);
                         $debitWalletTransaction = PaymentWalletTransaction::create( 
                             [
                                 
@@ -620,16 +648,21 @@ class MoneyTransferController extends Controller
                                 'credit_amount'             => $credit_amount,
                                 'transaction_number'        => $transaction_number,
                                 'transaction_date'          => $transaction_date,
+                                'transfer_charge'           => $this->getTransferCharge($amount),
                                 'user_id'                   => $debitByUserId,
                                 'status'                    => $status,
                                 'remarks'                   => $remarks,
+                                'verify_mobile_beneficiaries_bank_account_id' => $verify_mobile_beneficiaries_bank_account_id,
                                 'created_at'                => $created_at
 
                             ] );
+
+                        //
                         if($debitWalletTransaction!=null){
                             $lastPaymentWalletTransactionId = $debitWalletTransaction['id']; 
                             //Deduct the balance from the Wallet  from the user
-                            $this->debitFromPaymentWallet($debit_amount,$lastPaymentWalletTransactionId);
+                            $debiteAmountWithTransferAmt = $debit_amount + $transferAmt;
+                            $this->debitFromPaymentWallet($debiteAmountWithTransferAmt,$lastPaymentWalletTransactionId);
 
                         }
                    
@@ -766,6 +799,7 @@ class MoneyTransferController extends Controller
             $payment_mode            = $request->get('payment_mode');
             $verifyBeneficiariesId   = $request->get('beneficiaries_bank_account_id');
             $verify_mobile_number_id = $request->get('verify_mobile_number_id');
+            $verify_mobile_beneficiaries_bank_account_id = $request->get('verify_mobile_beneficiaries_bank_account_id');
 
             $result     =   VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
             
@@ -784,7 +818,7 @@ class MoneyTransferController extends Controller
                     //Update Payment Wallet Transactions For User
                     $user_id    = $this->getUserId();
                     $verifyMobileResult = VerifyMobileNumber::find($verify_mobile_number_id);
-                    $this->pushDebitRequestedBalanceAmount($user_id, $amount, $remarks);
+                    $this->pushDebitRequestedBalanceAmount($user_id, $amount, $remarks, $verify_mobile_beneficiaries_bank_account_id);
                     $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
                     $midStr    = $verifyMobileResult['mobile'].'|'.date('Ymd'); 
                     $enMidStr  = Crypt::encryptString($midStr);

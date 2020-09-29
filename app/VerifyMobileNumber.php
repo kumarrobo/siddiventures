@@ -38,5 +38,10 @@ class VerifyMobileNumber extends Model
          return $this->hasMany('App\AgentCommission', 'transaction_type_id', 'id' );
     }
 
+
+    public function VerifyMobileBeneficiariesBankAccount() {
+         return $this->hasMany('App\VerifyMobileBeneficiariesBankAccount', 'verify_mobile_number_id', 'id' );
+    }
+
    
 }

@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 use App\PaymentWalletTransaction;
 use App\WalletRechargePayment;
 use App\Helpers\Helper;
+use App\MoneyTransferCharge;
 
 class Controller extends BaseController
 {
@@ -154,6 +155,27 @@ class Controller extends BaseController
         if($user_id>0){
             $paymentWalletDetails = PaymentWallet::where('status','=',1)->where('user_id','=',$user_id)->first();
             return $paymentWalletDetails;
+        }else{
+            return $paymentWalletDetails;
+        }
+    }
+
+
+
+
+
+    /**
+     * Get the Wallet Payment Id of the user
+     * Pramas as user Id of the Distributor OR RO
+     * @param integer
+     * @return integer
+     */
+    public  function getPaymentWalletID($user_id){
+        $paymentWalletDetails = array();
+
+        if($user_id>0){
+            $paymentWalletDetails = PaymentWallet::where('status','=',1)->where('user_id','=',$user_id)->first();
+            return $paymentWalletDetails['id'];
         }else{
             return $paymentWalletDetails;
         }
@@ -325,7 +347,33 @@ class Controller extends BaseController
 
 
 
-    
+    public function getMoneyTransferCharge(){
+            $MoneyTransferCharge = MoneyTransferCharge::with('AmountType')
+                                    ->where('user_id','=',$this->getUserId())
+                                    ->where('status','=',1)
+                                    ->get();
+            return  $MoneyTransferCharge;       
+    }
+
+
+
+    public function getTransferCharge($amount){
+            if($amount<=1000){
+                $id = 1;
+            }else if($amount>1000 && $amount<=25000){
+                $id = 2; 
+            }else{
+                $id = 3;
+            }
+            $res = MoneyTransferCharge::with('AmountType')
+                    ->where('user_id','=',$this->getUserId())
+                    ->where('amount_type','=',$id)
+                    ->where('status','=',1)
+                    ->first();
+            if(!empty($res)){
+                return $res['value'];
+            }            
+    }
 
 
 

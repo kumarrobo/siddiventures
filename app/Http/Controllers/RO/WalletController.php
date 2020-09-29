@@ -842,12 +842,17 @@ class WalletController extends Controller
     ->where('status','=',1)
     ->get();
     //dd($AgentCommission);
+
+    //Get Money Transfer Charge
+    $MoneyTransferCharge = $this->getMoneyTransferCharge();
+    
     return view('RO.TatkalWalletRechargeEaseBuzz',array(
         'TransactionType'       =>  $TransactionType,
         'AgentCommission'       =>  $AgentCommission,
         'userDetails'           =>  $userDetails,
         'transaction_number'    =>  $transaction_number,
-        'credit_amount'         =>  $credit_amount
+        'credit_amount'         =>  $credit_amount,
+        'MoneyTransferCharge'   =>  $MoneyTransferCharge
     ));
    }
 

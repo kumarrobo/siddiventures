@@ -27,6 +27,8 @@ class PaymentWalletTransaction extends Model
         'status',
         'remarks',
         'updated_wallet_balance',
+        'transfer_charge',
+        'verify_mobile_beneficiaries_bank_account_id',
         'created_at'
     ];
 
@@ -44,6 +46,10 @@ class PaymentWalletTransaction extends Model
 
     public function WalletRechargePayment() {
          return $this->belongsTo('App\WalletRechargePayment', 'wallet_recharge_payment_id', 'id' );
+    }
+
+    public function VerifyBeneficiariesBankAccount() {
+         return $this->belongsTo('App\VerifyBeneficiariesBankAccount', 'verify_mobile_beneficiaries_bank_account_id', 'id' );
     }
 
 

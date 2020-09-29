@@ -186,16 +186,123 @@
               </div>
             </div>
           </div>
-           <?php } ?>
+           <?php }else{ ?>
+            <div class="alert alert-danger">No Beneficiries Found</div>
+           <?php }?>
                   </div>
                 </div>
               </div>
               <div class="card">
                 <div class="card-header" id="headingTwo">
-                  <h5 class="mb-0"> <a href="#" class="collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">All Transaction History</a> </h5>
+                  <h5 class="mb-0"> <a href="#" class="collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" >All Transaction History On - {{$mobileNumber}}</a> </h5>
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionDefault" style="">
-                  <div class="card-body"> Transaction History Goes Here</div>
+                  <div class="card-body" style="padding:5px;"> 
+                  
+                    <div class=" bg-default table-responsive mb-3">
+                         <table class="card-text table table-striped" width="100%" style="font-size: 12px; color: #000">
+                          
+                            <?php if($AllMobileTxn->total()>0){ ?>
+                                <tr>
+                                    <td nowrap="nowrap">Date</td>
+                                    <td nowrap="nowrap">Debit</td>
+                                    <td nowrap="nowrap ">Credit</td>
+                                    <td nowrap="nowrap">Txn No</td>
+                                    <td nowrap="nowrap">Remarks</td>
+                                    <td nowrap="nowrap">Charge</td>
+                                    <td nowrap="nowrap">Status</td>
+                                    <td nowrap="nowrap">Balance</td>
+                                    <td nowrap="nowrap">A/C Name</td>
+                                    <td nowrap="nowrap">Bank</td>
+                                    <td nowrap="nowrap">A/C No</td>
+                              </tr>
+
+                              <?php  foreach($AllMobileTxn as $itemList){ ?>
+                              <tr>
+                                <td nowrap="nowrap">{{$itemList['transaction_date']}}</td>
+                                <td nowrap="nowrap">
+                                <?php if($itemList['debit_amount']>0){ ?>  
+                                <font color="red" style="font-weight:500">
+                                  {{GeneralHelper::getAmount($itemList['debit_amount'])}}
+                                </font>
+                                <?php }else{ ?>
+                                  {{GeneralHelper::getAmount($itemList['debit_amount'])}}
+                                <?php } ?>
+
+                                
+                                </td>
+                                <td nowrap="nowrap">
+                                <?php if($itemList['credit_amount']>0){ ?>  
+                                <font color="green" style="font-weight:500">
+                                  {{GeneralHelper::getAmount($itemList['credit_amount'])}}
+                                </font>
+                                <?php }else{ ?>
+                                  {{GeneralHelper::getAmount($itemList['credit_amount'])}}
+                                <?php } ?>
+                                </td>
+                                <td nowrap="nowrap">{{$itemList['transaction_number']}}</td>
+                                <td title="{{$itemList['remarks']}}">{{Str::limit($itemList['remarks'], 20)}}</td>
+
+                                <td nowrap="nowrap">
+                                
+                                <?php if($itemList['transfer_charge']>0){ ?>  
+                                <font color="red" style="font-weight:500">
+                                  {{GeneralHelper::getAmount($itemList['transfer_charge'])}}
+                                </font>
+                                <?php }else{ ?>
+                                  {{GeneralHelper::getAmount($itemList['transfer_charge'])}}
+                                <?php } ?>
+
+
+                                </td>
+                                <td>{{$itemList['status']}}</td>
+                                <td nowrap="nowrap">
+                                <?php if($itemList['credit_amount']>0){ ?>
+                                  <font color="red" style="font-weight:500"><i class="fas fa-arrow-up"></i>&nbsp;</font><?php } ?>
+                                <?php if($itemList['debit_amount']>0){ ?>
+                                   <font color="red" style="font-weight:500"><i class="fas fa-arrow-down"></i></font>&nbsp;
+                                <?php } ?>
+                                {{GeneralHelper::getAmount($itemList['updated_wallet_balance'])}}</td>
+                                <td>{{$itemList['VerifyBeneficiariesBankAccount']['account_name']}}</td>
+                                <td title="{{$itemList['VerifyBeneficiariesBankAccount']['bank_name']}}">{{Str::limit($itemList['VerifyBeneficiariesBankAccount']['bank_name'],10)}}</td>
+                                <td>{{$itemList['VerifyBeneficiariesBankAccount']['account_number']}}</td>
+                              </tr>
+                            <?php }}else{ ?>
+                              <tr style="background-color: #FFF">
+                                  <td nowrap="nowrap" colspan="12">
+                                    <div class="alert alert-danger">No Transaction Found</div>
+                                    </td>
+                              </tr>
+
+                            <?php } ?> 
+
+                            </table>
+                            {{$AllMobileTxn->links()}}
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header" id="headingThree">
+                  <h5 class="mb-0"> <a href="#" class="collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Transaction Charges</a> </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionDefault" style="">
+                  <div class="card-body" style="padding:5px;"> 
+                      <div class=" bg-default table-responsive mb-3">
+                         <table class="card-text table table-striped" width="100%" style="font-size: 13px; color: #000">
+                            <?php if(!empty($MoneyTransferCharge)){ 
+                                  foreach($MoneyTransferCharge as $itemList){ ?>
+                              <tr>
+                                <td width="30%">{{$itemList['AmountType']['transaction_amount']}}</td>
+                                <td width="10%">:</td>
+                                <td width="30%">{{number_format($itemList['value'],2)}}{{'@'}}{{$itemList['AmountType']['type']}}</td>
+                              </tr>
+                            <?php }} ?>
+
+                            </table>
+                      </div>
+                  </div>
                 </div>
               </div>
            

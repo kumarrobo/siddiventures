@@ -69,7 +69,15 @@
                            <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Yes"></i>
                       <?php } ?>
                       </td>
-                      <td class="align-middle"><?php echo e(GeneralHelper::getAmount($value['updated_wallet_balance'])); ?></td>
+                      <td class="align-middle">
+                      <?php if($value['credit_amount']>0){ ?>
+                        <font color="green" style="font-weight:500"><i class="fas fa-arrow-up"></i>&nbsp;</font><?php } ?>
+                      <?php if($value['debit_amount']>0){ ?>
+                         <font color="red" style="font-weight:500"><i class="fas fa-arrow-down"></i></font>&nbsp;
+                      <?php } ?>
+                      <?php echo e(GeneralHelper::getAmount($value['updated_wallet_balance'])); ?>
+
+                      </td>
                     </tr>
                     <?php $count++;} ?>
                      

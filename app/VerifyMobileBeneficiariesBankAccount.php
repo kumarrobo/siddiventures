@@ -50,6 +50,11 @@ class VerifyMobileBeneficiariesBankAccount extends Model
     public function VerifyMobileNumber() {
          return $this->belongsTo('App\VerifyMobileNumber', 'verify_mobile_number_id', 'id');
     }
+   
+
+    public function PaymentWalletTransaction() {
+         return $this->belongsTo('App\PaymentWalletTransaction', 'verify_mobile_beneficiaries_bank_account_id', 'id');
+    }
     
    
 }
