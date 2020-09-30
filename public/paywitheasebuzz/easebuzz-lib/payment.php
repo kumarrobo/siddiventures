@@ -670,14 +670,14 @@
         
         if ($result->status === 1) {
             //first way
-            header('Location:' . $result->data);
+            //header('Location:' . $result->data);
 
             // second wayre
-            // echo "
-            //    <script type='text/javascript'>
-            //           window.location ='".$result->data."'
-            //    </script>
-            // ";
+            echo "
+                <script type='text/javascript'>
+                       window.location ='".$result->data."'
+                </script>
+             ";
 
             exit();
         } else {

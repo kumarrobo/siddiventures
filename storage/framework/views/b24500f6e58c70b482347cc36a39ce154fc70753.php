@@ -54,6 +54,29 @@
                     </table>
                 </div>
               </div>
+
+
+
+              <div class="card  bg-default mb-3">
+                <div class="card-header">Charges Details</div>
+                <div class="card-body">
+                 <table class="card-text" width="100%" style="font-size: 12px; color: #000">
+                    <?php if(!empty($MoneyTransferCharge)){ 
+                          foreach($MoneyTransferCharge as $itemList){ ?>
+                      <tr>
+                        <td width="60%"><b><?php echo e($itemList['AmountType']['transaction_amount']); ?></b></td>
+                        <td width="10%">:</td>
+                        <td width="30%"><?php echo e(number_format($itemList['value'],2)); ?><?php echo e('@'); ?><?php echo e($itemList['AmountType']['type']); ?></td>
+                      </tr>
+                    <?php }} ?>
+
+                    </table>
+                </div>
+              </div>
+
+
+
+              
               </div>
                <div class="col-lg-1" style="border: solid 0px #eee;padding: 20px;"></div>
                 <div class="col-lg-7" style="border: solid 0px #eee;padding:5px; font-size: 12px;">
