@@ -1,4 +1,5 @@
-<?php $__env->startSection('content'); ?>
+@extends('layouts.defaultDashboard')
+@section('content')
 <section class="containers">
 <div class="bg-light shadow-md rounded p-4">
   <div class="row"> 
@@ -33,28 +34,26 @@
                   <tbody>
                     <?php $count=1;foreach ($payment_wallet_transactions as $key => $value) { //dd($value); ?>
                     <tr>
-                      <td class="align-middle"><?php echo e($count); ?></td>
-                      <td class="align-middle" nowrap="nowrap"><?php echo e(GeneralHelper::getDateFormate($value['transaction_date'])); ?></td>
+                      <td class="align-middle">{{$count}}</td>
+                      <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getDateFormate($value['transaction_date'])}}</td>
                       <td class="align-middle">
                         <?php if($value['credit_amount']>0){ ?>
-                        <font color="green" style="font-weight:500"><?php echo e(GeneralHelper::getAmount($value['credit_amount'])); ?></font>
+                        <font color="green" style="font-weight:500">{{GeneralHelper::getAmount($value['credit_amount'])}}</font>
                         <?php }else{ ?>
-                          <?php echo e(GeneralHelper::getAmount($value['credit_amount'])); ?>
-
+                          {{GeneralHelper::getAmount($value['credit_amount'])}}
                         <?php } ?>  
                       </td>
                       <td class="align-middle">
                       <?php if($value['debit_amount']>0){ ?>
-                        <font color="red" style="font-weight:500"><?php echo e(GeneralHelper::getAmount($value['debit_amount'])); ?></font>
+                        <font color="red" style="font-weight:500">{{GeneralHelper::getAmount($value['debit_amount'])}}</font>
                         <?php }else{ ?>
-                          <?php echo e(GeneralHelper::getAmount($value['debit_amount'])); ?>
-
+                          {{GeneralHelper::getAmount($value['debit_amount'])}}
                         <?php } ?> 
                       </td>
-                      <td class="align-middle" nowrap="nowrap"><?php echo e($value['transaction_number']); ?></td>
-                      <td class="align-middle" nowrap="nowrap"><?php echo e(GeneralHelper::getTransactionTypeName($value['WalletRechargePayment']['payment_mode'])); ?></td>
-                      <td class="align-middle"><?php echo e($value['status']); ?></td>
-                      <td class="align-middle"><?php echo e($value['remarks']); ?></td>
+                      <td class="align-middle" nowrap="nowrap">{{$value['transaction_number']}}</td>
+                      <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getTransactionTypeName($value['WalletRechargePayment']['payment_mode'])}}</td>
+                      <td class="align-middle">{{$value['status']}}</td>
+                      <td class="align-middle">{{$value['remarks']}}</td>
                       <td class="align-middle">
                        <?php if($value['wallet_recharge_payment_id']==null){ ?>
                           <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Yes"></i>
@@ -75,8 +74,7 @@
                       <?php if($value['debit_amount']>0){ ?>
                          <font color="red" style="font-weight:500"><i class="fas fa-arrow-down"></i></font>&nbsp;
                       <?php } ?>
-                      <?php echo e(GeneralHelper::getAmount($value['updated_wallet_balance'])); ?>
-
+                      {{GeneralHelper::getAmount($value['updated_wallet_balance'])}}
                       </td>
                     </tr>
                     <?php $count++;} ?>
@@ -86,7 +84,7 @@
                   
                   </tbody>
                 </table>
-                <p class="pull-right" style="float: right;"><?php echo e($payment_wallet_transactions->onEachSide(5)->links()); ?></p>
+                <p class="pull-right" style="float: right;">{{ $payment_wallet_transactions->onEachSide(5)->links() }}</p>
 
               </div>
 
@@ -103,7 +101,5 @@
 </div>
 </section>
 <!-- Document Wrapper end --> 
-<?php $__env->stopSection(); ?>
+@endsection
 
-
-<?php echo $__env->make('layouts.defaultRODashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/siddiventures/resources/views/RO/Report/MyReport.blade.php ENDPATH**/ ?>

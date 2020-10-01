@@ -60,7 +60,7 @@ class ReportController extends Controller
         ->orderBy('id','DESC')
         ->paginate($this->getPageItem());
        //dd($payment_wallet_transactions);
-        return view('RO.Report.MyReport',array(
+        return view('user.Report.MyReport',array(
             'payment_wallet_transactions'=>$payment_wallet_transactions
         ));
     }

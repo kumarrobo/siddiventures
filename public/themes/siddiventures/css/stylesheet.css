@@ -1018,12 +1018,12 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.8125rem;
   margin: 0 10px;
   padding: .6rem 15px;
-  color: #8298af;
+  color: #FFF;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
 .secondary-nav.nav .nav-link:hover {
-  color: #a6bcd3;
+  color: #FFF;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }

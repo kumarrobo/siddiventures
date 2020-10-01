@@ -2,11 +2,15 @@
             <!-- Personal Information
           ============================================= -->
             <div class="row">
-              
-       
-              <div class="col-lg-6" style="padding: 20px;">
+              <div class="col-lg-6">
+              <h5 style="padding-bottom: 1px; margin-bottom: 1px;">{{ __('Welcome Back,') }}&nbsp;{{ Auth::user()->name }}</h5>
+              <small>You have logged from ip address:: {{$_SERVER['REMOTE_ADDR']}}</small>
+              </div>
+              <div class="col-lg-6">
+              <h5>{{ __('Total Earn Commission') }}:&nbsp;{{ GeneralHelper::getAllCommission() }}</h5>
+              </div>
+              <div class="col-lg-6" style="padding: 20px;background-color: cadetblue;">
 
-                <h4 class="mb-4">{{ __('Welcome Back,') }}&nbsp;{{ Auth::user()->name }}</h4>
                 
                
                   <div class="form-group ">
@@ -58,10 +62,6 @@
                   </div>
               </div>
                <div class="col-lg-6" style="border: solid 1px #eee;padding: 20px;">
-
-                <h4 class="mb-4">{{ __('Report') }}</h4>
-                
-               
                   <div class="form-group ">
                     <div class="row">
                       <div class="col-md-12">

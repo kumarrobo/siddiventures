@@ -31,10 +31,6 @@
               <span><i class="fas fa-rupee-sign"></i></span>Money Transfer</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('addbankaccount')); ?>" href="<?php echo e(route('addbankaccount')); ?>">
-              <span><i class="fas fa-university"></i></span>Add Bank A/C</a>
-          </li>
-          <li class="nav-item"> 
             <a class="nav-link 
             <?php echo e(GeneralHelper::isActiveMenu('ropushbalance')); ?>
 

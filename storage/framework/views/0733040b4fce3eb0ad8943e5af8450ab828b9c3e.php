@@ -6,13 +6,18 @@
 
             <!-- Personal Information
           ============================================= -->
-            <div class="row">
-              
-       
-              <div class="col-lg-6" style="padding: 20px;">
+             <div class="row">
+              <div class="col-lg-6">
+              <h5 style="padding-bottom: 1px; margin-bottom: 1px;"><?php echo e(__('Welcome Back,')); ?>&nbsp;<?php echo e(Auth::user()->name); ?></h5>
+              <small>You have logged from ip address:: <?php echo e($_SERVER['REMOTE_ADDR']); ?></small>
+              </div>
+              <div class="col-lg-6">
+              <h5><?php echo e(__('Total Earn Commission')); ?>:&nbsp;<?php echo e(GeneralHelper::getAllCommission()); ?></h5>
+              </div>
+              <div class="col-lg-6" style="padding: 20px;background-color: cadetblue;">
 
-                <h4 class="mb-4"><?php echo e(__('Welcome Back,')); ?>&nbsp;<?php echo e(Auth::user()->name); ?></h4>
                 
+
                
                   <div class="form-group ">
                     <div class="row">
@@ -28,10 +33,7 @@
                           " href="<?php echo e(route('romoneytransfer')); ?>">
                             <span><i class="fas fa-rupee-sign"></i></span>Money Transfer</a>
                         </li>
-                        <li class="nav-item"> 
-                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('wallet')); ?>" href="<?php echo e(route('robalancerequest')); ?>">
-                            <span><i class="fas fa-university"></i></span> Add Bank A/C</a> 
-                        </li>
+                     
                         
                       
                         <li class="nav-item"> 
@@ -44,29 +46,31 @@
                           <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('tatrechargeesybuz')); ?>" href="<?php echo e(route('rotatrechargeesybuz')); ?>">
                             <span><i class="fas fa-wallet"></i></span> Tatkal Recharge</a>
                         </li>
+                           <li class="nav-item"> 
+                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('myreport')); ?>" href="<?php echo e(route('myreport')); ?>">
+                            <span><i class="fas fa-chart-line"></i></span>My Report</a>
+                        </li>
+
                     
                         </ul>
                            <ul class="nav secondary-nav">
-                         <li class="nav-item"> 
-                            <a class="nav-link"  href="<?php echo e(route('allbalancerequest')); ?>">
-                              <span><i class="fas fa-gavel"></i></span>Balance Request</a> 
-                          </li>
+                        
                          <li class="nav-item"> 
                           <a class="nav-link 
                           <?php echo e(GeneralHelper::isActiveMenu('myreport')); ?>
 
-                          " href="recharge-bill-datacard.html">
+                          " href="#">
                             <span><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>Commission</a>
                         </li>
                         <li class="nav-item"> 
                           <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('rorechargesreport')); ?>" href="<?php echo e(route('rorechargesreport')); ?>">
-                            <span><i class="fas fa-unlink"></i></span>Recharge Status</a>
+                            <span><i class="fas fa-unlink"></i></span>All Transaction Report</a>
                         </li>
-                        <li class="nav-item"> 
-                          <a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('myreport')); ?>" href="recharge-bill-datacard.html">
-                            <span><i class="fas fa-chart-line"></i></span>My Report</a>
-                        </li>
-
+                     
+                         <li class="nav-item"> 
+                            <a class="nav-link"  href="#">
+                              <span><i class="fas fa-gavel"></i></span>Raise Ticket</a> 
+                          </li>
                     
                         </ul>
 
@@ -102,7 +106,7 @@
   <div class="row"> 
     <div class="col-lg-12">
 
-        <h2 class="text-9 font-weight-600 text-center">Welcome to the world of SiddiVenture Pvt Ltd!</h2>
+        <h2 class="text-9 font-weight-600 text-center">Welcome to the world of SiddhiVenture Pvt Ltd!</h2>
         <p class="lead mb-5 text-center">Best Recharge , Topup and Bill Payment Appication!</p>
         <div class="row">
           <div class="col-md-4">
@@ -156,4 +160,4 @@
 <?php $__env->stopSection(); ?>
 
 
-<?php echo $__env->make('layouts.defaultDashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/siddiventures/resources/views/RO/dashboard.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.defaultRODashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/siddiventures/resources/views/RO/dashboard.blade.php ENDPATH**/ ?>

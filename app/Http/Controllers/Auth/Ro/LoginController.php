@@ -84,6 +84,7 @@ class LoginController extends Controller
     protected function saveOTP(array $data)
     {   
         //dd($data);
+
         return LoginOtp::create([
                 'user_id'   => $data['user_id'],
                 'OTP'       => $data['otp'],
@@ -113,6 +114,7 @@ class LoginController extends Controller
                 $data['otp']        = $this->getOTP($mobile);
                 $data['mobile']     = $mobile;
                 $mobile             = substr($mobile,0,1).'XXXXXX'.substr($mobile,-2);
+                LoginOtp::where('user_id','=',$data['user_id'])->delete();
                 if($this->saveOTP($data)){
                     return view('RO.otpLoginForm',['mobile'=>$mobile,'pass'=>$password,'userId'=>$id]);
                 }

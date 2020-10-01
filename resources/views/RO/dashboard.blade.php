@@ -1,5 +1,5 @@
 
-@extends('layouts.defaultDashboard')
+@extends('layouts.defaultRODashboard')
 
 @section('content')
 
@@ -9,13 +9,18 @@
 
             <!-- Personal Information
           ============================================= -->
-            <div class="row">
-              
-       
-              <div class="col-lg-6" style="padding: 20px;">
+             <div class="row">
+              <div class="col-lg-6">
+              <h5 style="padding-bottom: 1px; margin-bottom: 1px;">{{ __('Welcome Back,') }}&nbsp;{{ Auth::user()->name }}</h5>
+              <small>You have logged from ip address:: {{$_SERVER['REMOTE_ADDR']}}</small>
+              </div>
+              <div class="col-lg-6">
+              <h5>{{ __('Total Earn Commission') }}:&nbsp;{{ GeneralHelper::getAllCommission() }}</h5>
+              </div>
+              <div class="col-lg-6" style="padding: 20px;background-color: cadetblue;">
 
-                <h4 class="mb-4">{{ __('Welcome Back,') }}&nbsp;{{ Auth::user()->name }}</h4>
                 
+
                
                   <div class="form-group ">
                     <div class="row">
@@ -29,10 +34,7 @@
                           " href="{{route('romoneytransfer')}}">
                             <span><i class="fas fa-rupee-sign"></i></span>Money Transfer</a>
                         </li>
-                        <li class="nav-item"> 
-                          <a class="nav-link {{GeneralHelper::isActiveMenu('wallet')}}" href="{{route('robalancerequest')}}">
-                            <span><i class="fas fa-university"></i></span> Add Bank A/C</a> 
-                        </li>
+                     
                         
                       
                         <li class="nav-item"> 
@@ -45,28 +47,30 @@
                           <a class="nav-link {{GeneralHelper::isActiveMenu('tatrechargeesybuz')}}" href="{{route('rotatrechargeesybuz')}}">
                             <span><i class="fas fa-wallet"></i></span> Tatkal Recharge</a>
                         </li>
+                           <li class="nav-item"> 
+                          <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="{{route('myreport')}}">
+                            <span><i class="fas fa-chart-line"></i></span>My Report</a>
+                        </li>
+
                     
                         </ul>
                            <ul class="nav secondary-nav">
-                         <li class="nav-item"> 
-                            <a class="nav-link"  href="{{route('allbalancerequest')}}">
-                              <span><i class="fas fa-gavel"></i></span>Balance Request</a> 
-                          </li>
+                        
                          <li class="nav-item"> 
                           <a class="nav-link 
                           {{GeneralHelper::isActiveMenu('myreport')}}
-                          " href="recharge-bill-datacard.html">
+                          " href="#">
                             <span><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>Commission</a>
                         </li>
                         <li class="nav-item"> 
                           <a class="nav-link {{GeneralHelper::isActiveMenu('rorechargesreport')}}" href="{{route('rorechargesreport')}}">
-                            <span><i class="fas fa-unlink"></i></span>Recharge Status</a>
+                            <span><i class="fas fa-unlink"></i></span>All Transaction Report</a>
                         </li>
-                        <li class="nav-item"> 
-                          <a class="nav-link {{GeneralHelper::isActiveMenu('myreport')}}" href="recharge-bill-datacard.html">
-                            <span><i class="fas fa-chart-line"></i></span>My Report</a>
-                        </li>
-
+                     
+                         <li class="nav-item"> 
+                            <a class="nav-link"  href="#">
+                              <span><i class="fas fa-gavel"></i></span>Raise Ticket</a> 
+                          </li>
                     
                         </ul>
 
@@ -102,7 +106,7 @@
   <div class="row"> 
     <div class="col-lg-12">
 
-        <h2 class="text-9 font-weight-600 text-center">Welcome to the world of SiddiVenture Pvt Ltd!</h2>
+        <h2 class="text-9 font-weight-600 text-center">Welcome to the world of SiddhiVenture Pvt Ltd!</h2>
         <p class="lead mb-5 text-center">Best Recharge , Topup and Bill Payment Appication!</p>
         <div class="row">
           <div class="col-md-4">

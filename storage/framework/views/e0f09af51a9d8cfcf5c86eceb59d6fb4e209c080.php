@@ -4,7 +4,7 @@
 <div class="bg-light shadow-md rounded p-4">
   <div class="row"> 
     <div class="col-lg-12">
-    <div class="bg-light shadow-md rounded p-4"> 
+    <div class="bg-light shadow-md rounded p-4" style="background-color: cadetblue;"> 
       <!--User Profile Section
       ============================================= -->
       <?php echo $__env->make('user.Distributor.Dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>

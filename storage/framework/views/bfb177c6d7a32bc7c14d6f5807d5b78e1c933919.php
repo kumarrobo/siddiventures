@@ -7,7 +7,7 @@
 <link href="images/favicon.png" rel="icon" />
 <title><?php echo e(env('APP_NAME')); ?> - Recharge & Bill Payment, Booking App</title>
 <meta name="description" content="<?php echo e(env('APP_NAME')); ?> - Recharge & Bill Payment">
-<meta name="author" content="Pradeep Kumar|go4shoponline@gmail.com">
+<meta name="author" content="Pradeep Kumar|go4shoponline@gmail.com|www.go4shop.online">
 
 <!-- Web Fonts
 ============================================= -->
@@ -43,7 +43,7 @@
 ============================================= -->
 <div id="content"> 
 
- <?php echo $__env->make('dashboardMenu', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+ <?php echo $__env->make('distributorDashboardMenu', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
   
 <!-- Preloader End --> 

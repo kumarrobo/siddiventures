@@ -23,6 +23,18 @@ class Helper {
      * 
      * @return value
      */
+    public static function getAllCommission() {
+        return self::getAmount('0.00');
+    }
+
+
+
+
+     /**
+     * @param AgetnCommission Arr and TransactionType Id
+     * 
+     * @return value
+     */
     public static function getCommissionValue($AgentCommission,$TransactionTypeId) {
         //echo $TransactionTypeId."<pre>"; 
         //print_r($AgentCommission);

@@ -1,5 +1,5 @@
 
-@extends('layouts.defaultDashboard')
+@extends('layouts.defaultRODashboard')
 
 @section('content')
 

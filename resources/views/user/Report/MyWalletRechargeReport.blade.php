@@ -1,4 +1,4 @@
-@extends('layouts.defaultRODashboard')
+@extends('layouts.defaultDashboard')
 @section('content')
 <section class="containers">
 <div class="bg-light shadow-md rounded p-4">

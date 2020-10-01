@@ -26,10 +26,6 @@
               <span><i class="fas fa-rupee-sign"></i></span>Money Transfer</a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link {{GeneralHelper::isActiveMenu('addbankaccount')}}" href="{{route('addbankaccount')}}">
-              <span><i class="fas fa-university"></i></span>Add Bank A/C</a>
-          </li>
-          <li class="nav-item"> 
             <a class="nav-link 
             {{GeneralHelper::isActiveMenu('ropushbalance')}}
             {{GeneralHelper::isActiveMenu('rotxncreditsuccess')}}
