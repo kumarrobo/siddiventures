@@ -32,7 +32,7 @@
       <li><a class="dropdown-item" href="{{route('tatrechargeesybuz')}}">Tatkal Money Transfer</a></li>
       <li><a class="dropdown-item" href="{{route('transactionstatus')}}">Account Statement</a></li>
       <li><a class="dropdown-item" href="{{route('transactionstatus')}}">Check Transaction Status</a></li>
-       <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">Support</a>
+     <!--   <li class="dropdown"><a class="dropdown-item dropdown-toggle" href="#">Support</a>
       <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="profile.html">Topup Request</a></li>
           <li><a class="dropdown-item" href="profile-favourites.html">Topup History</a></li>
@@ -41,8 +41,8 @@
           <li><a class="dropdown-item" href="profile-favourites.html">Raise Complain</a></li>
           <li><a class="dropdown-item" href="profile-favourites.html">PG Statment</a></li>
         </ul>
-      </li>
-      <li><a class="dropdown-item" href="contact-us.html">Write Us</a></li>
+      </li> -->
+      <li><a class="dropdown-item" href="{{route('transactionstatus')}}">Write Us</a></li>
       <li>
           <a class="dropdown-item" href="{{ route('logout') }}"
              onclick="event.preventDefault();
