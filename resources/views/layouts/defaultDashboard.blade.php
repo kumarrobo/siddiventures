@@ -7,7 +7,7 @@
 <link href="images/favicon.png" rel="icon" />
 <title>{{env('APP_NAME')}} - Recharge & Bill Payment, Booking App</title>
 <meta name="description" content="{{env('APP_NAME')}} - Recharge & Bill Payment">
-<meta name="author" content="Pradeep Kumar|go4shoponline@gmail.com">
+<meta name="author" content="Pradeep Kumar|go4shoponline@gmail.com|www.go4shop.online">
 
 <!-- Web Fonts
 ============================================= -->

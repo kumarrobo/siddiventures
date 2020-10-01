@@ -5,9 +5,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
 <link href="images/favicon.png" rel="icon" />
-<title>{{env('APP_NAME')}} - Recharge & Bill Payment, Booking App</title>
+<title>{{env('APP_NAME')}} - Recharge & Bill Payment</title>
 <meta name="description" content="{{env('APP_NAME')}} - Recharge & Bill Payment">
-<meta name="author" content="Pradeep Kumar|go4shoponline@gmail.com">
+<meta name="author" content="Pradeep Kumar|go4shoponline@gmail.com|www.go4shop.online">
 
 <!-- Web Fonts
 ============================================= -->
