@@ -92,6 +92,19 @@
                    </div>
                   </div>
               </div>
+                <div class="col-lg-6" style="border: solid 1px #eee;padding: 20px;">
+
+                <h4 class="mb-4">{{ __('Monthly') }}</h4>
+                
+               
+                  <div class="form-group ">
+                    <div class="row">
+                      <div class="col-md-12">
+                       @include('user.Distributor.ReportBarChart')
+                      </div>
+                   </div>
+                  </div>
+              </div>
 
 
             </div>

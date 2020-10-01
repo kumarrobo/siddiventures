@@ -61,11 +61,40 @@
                    </div>
                   </div>
               </div>
+              <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
                <div class="col-lg-6" style="border: solid 1px #eee;padding: 20px;">
                   <div class="form-group ">
                     <div class="row">
                       <div class="col-md-12">
                        @include('user.Distributor.ReportChart')
+                      </div>
+                   </div>
+                  </div>
+              </div>
+              <div class="col-lg-6" style="border-right: solid 1px #eee;padding: 20px;">
+                  <div class="form-group ">
+                    <div class="row">
+                      <div class="col-md-12">
+                       @include('user.Distributor.ReportDonutChart')
+                      </div>
+                   </div>
+                  </div>
+              </div>
+              <div class="col-lg-6" style="border: thin 1px #eee;padding: 20px;">
+                  <div class="form-group ">
+                    <div class="row">
+                      <div class="col-md-12">
+                       @include('user.Distributor.ReportDonutMonthlyChart')
+                      </div>
+                   </div>
+                  </div>
+              </div>
+
+               <div class="col-lg-12" style="border-top: solid 1px #eee;padding: 20px;">
+                  <div class="form-group ">
+                    <div class="row">
+                      <div class="col-md-12">
+                       @include('user.Distributor.ReportBarChart')
                       </div>
                    </div>
                   </div>
