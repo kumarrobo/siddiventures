@@ -13,10 +13,10 @@
           <!-- Nav Link
           ============================================= -->
           <ul class="nav nav-pills alternate flex-lg-column sticky-top">
-            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('personaldetails')); ?>" href="<?php echo e(route('personaldetails',['id'=>$id])); ?>"><i class="fas fa-user"></i><?php echo e(__('Personal Details')); ?></a></li>
-            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('retaileraddress')); ?>" href="<?php echo e(route('retaileraddress',['id'=>$id])); ?>" ><i class="fas fa-bookmark"></i><?php echo e(__('Address Details')); ?></a></li>
-            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('retailercompany')); ?>" href="<?php echo e(route('retailercompany',['id'=>$id])); ?>" ><i class="fas fa-bookmark"></i><?php echo e(__('Company Proof')); ?></a></li>
-            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('documentproof')); ?>" href="<?php echo e(route('documentproof',['id'=>$id])); ?>" ><i class="fas fa-bookmark"></i><?php echo e(__('Document Proof')); ?></a></li>
+            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('personaldetails')); ?>" href="<?php echo e(route('personaldetails',['id'=>$id])); ?>"><i class="fas fa-user"></i><?php echo e(__('Retailer Personal Details')); ?></a></li>
+            <li class="nav-item"><a class="nav-link <?php echo e(GeneralHelper::isActiveMenu('retaileraddress')); ?>" href="<?php echo e(route('retaileraddress',['id'=>$id])); ?>" ><i class="fas fa-map-marker"></i><?php echo e(__('Retailer Address Details')); ?></a></li>
+            <li class="nav-item"><a class="nav-link" href="javascript:void(0)" ><i class="fas fa-bookmark"></i><?php echo e(__('Retailer Company Proof')); ?></a></li>
+            <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i class="fas fa-file"></i><?php echo e(__('Retailer Document Proof')); ?></a></li>
             
           </ul>
           <!-- Nav Link end --> 
@@ -29,7 +29,10 @@
                 </div> -->
         </div>
        
-              <div class="col-lg-6">
+              <div class="col-lg-6"  style="border: solid 1px #eee;padding:20px; 
+              -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
+              -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
+              box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75); ">
 
                 <h4 class="mb-4"><?php echo e(__('Retailer Address Detail')); ?></h4>
                  <p>
@@ -70,21 +73,16 @@
                     <div class="form-group">
                     <label for="emailID"><?php echo e(__('Choose State')); ?></label>
                     <select class="form-control" name="state_id">
-                        <option value="">Choose State</option>
-                        <?php foreach($cityList as $item){ ?>
-                        <option value="<?php echo e($item['id']); ?>"><?php echo e($item['state_name']); ?></option>
-                        <?php } ?>
+                        <?php echo GeneralHelper::getStateOptionListName($userDetails['state_id']); ?>
+
                       </select>
                   </div>
 
                     <div class="form-group">
                     <label for="emailID"><?php echo e(__('Choose City')); ?></label>
                     <select class="form-control" name="city_id">
-                        <option value="">Choose City</option>
-                        <?php foreach($cityList as $item){ ?>
-                        <option value="<?php echo e($item['id']); ?>"><?php echo e($item['city_name']); ?></option>
-                        <?php } ?>
-                        
+                        <?php echo GeneralHelper::getCityOptionListName($userDetails['city_id']); ?>
+
                       </select>
                   </div>
                   
@@ -110,9 +108,12 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     
                   </div>
-                 
-                  
-                  <button class="btn btn-primary" type="submit">Save</button>
+                <div class="form-group row">
+                  <div class="col-md-12 offset-3">
+                    <button class="btn btn-danger" type="button" onclick="history.go('-1')">Back</button>
+                    <button class="btn btn-primary" type="submit">Save & Continue</button>
+                   </div>
+                </div>
                 </form>
               </div>
              

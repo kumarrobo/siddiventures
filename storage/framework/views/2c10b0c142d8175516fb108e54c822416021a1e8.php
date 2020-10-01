@@ -1,4 +1,18 @@
- <div id="horizontalTab" class="resp-htabs">
+<p>
+  <?php if(Session::has('message')): ?>
+  <p class="alert alert-success">Retailer Details Save Successfully.</p>
+  <?php endif; ?>
+  <?php if(Session::has('error')): ?>
+  <p class="alert alert-danger"><small>
+  <?php $__currentLoopData = Session::get('error'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $err): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+  <b>Error:</b> <?php echo e($err); ?></br>
+  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+  </small>
+  </p>
+  <?php endif; ?>
+
+</p>
+  <div id="horizontalTab" class="resp-htabs">
           <ul class="resp-tabs-list">
             <li><?php echo e(__('Personal Details')); ?></li>
             <li><?php echo e(__('Address Details')); ?></li>
@@ -79,6 +93,24 @@
                       <div class="col-md-4">
                         <?php echo e($RODetails['UserDetail']['date_of_birth']); ?>
 
+                      </div>
+                      </div>
+                  </div>
+                  <div class="form-group ">
+                     <div class="row">
+                      <div class="col-md-2">
+                      <label for="fullName" style="font-weight: bold;"><?php echo e(__('Account Status')); ?></label>
+                      </div>
+                       <div class="col-1">
+                        <p style="font-weight: bold;"><?php echo e(__(':')); ?></p>
+                      </div>
+                      <div class="col-md-4">
+                         <?php if($RODetails['status']==0){ ?>
+                          <font color="red"><b>In Active</b></font>
+                        <?php } ?>
+                        <?php if($RODetails['status']==1){ ?>
+                          <font color="green"><b>Active</b></font>
+                        <?php } ?>
                       </div>
                       </div>
                   </div>

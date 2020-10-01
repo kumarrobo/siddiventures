@@ -5,6 +5,7 @@
  <!-- Personal Information
           ============================================= -->
             <div class="row">
+
               <div class="col-lg-4 col-sm-12">
               <div class="card  mb-3"  style=" 
               -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
@@ -123,12 +124,24 @@
           <!-- Orders History end --> 
             </div>
 
-            <?php if(count($bankList)){ ?>
+        
 
-            <div class="tab-content my-3" id="myTabContent">
+
+           <div class="row">
+            <div class="col-md-12">
+            <h5 class="mb-4"></h5>
+            <div class="accordion" id="accordionDefault">
+              <div class="card">
+                <div class="card-header" id="headingOne">
+                  <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="">All Beneficiries List</a> </h5>
+                </div>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionDefault"   style="border:solid 1px #CCC; padding: 1px;">
+                  <div class="card-body" style="padding:5px;"> 
+            <?php if(count($bankList)){ ?>
+            <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="first" role="tabpanel" aria-labelledby="first-tab">
-              <div class="table-responsive-md" style=" width:1240px; overflow: auto">
-                <table class="table table-hover border" style="font-size: 12px;">
+              <div class="table-responsive-md" style="overflow: auto">
+                <table class="table table-hover border" style="font-size: 13px;">
                   <thead class="thead-light">
                     <tr>
                       <th>SN</th>
@@ -167,19 +180,143 @@
                      
                     </tr>
                     <?php $count++;} ?>
-                     
-                   
-
-                  
                   </tbody>
                 </table>
                 <?php echo e($bankList->links()); ?>
 
               </div>
+            </div>
+          </div>
+           <?php }else{ ?>
+            <div class="alert alert-danger">No Beneficiries Found</div>
+           <?php }?>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="headingTwo">
+                  <h5 class="mb-0"> <a href="#" class="collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" >All Transaction History On - <?php echo e($mobileNumber); ?></a> </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionDefault" style="">
+                  <div class="card-body" style="padding:5px;"> 
+                  
+                    <div class=" bg-default table-responsive mb-3">
+                         <table class="card-text table table-striped" width="100%" style="font-size: 12px; color: #000">
+                          
+                            <?php if($AllMobileTxn->total()>0){ ?>
+                                <tr>
+                                    <td nowrap="nowrap">Date</td>
+                                    <td nowrap="nowrap">Debit</td>
+                                    <td nowrap="nowrap ">Credit</td>
+                                    <td nowrap="nowrap">Txn No</td>
+                                    <td nowrap="nowrap">Remarks</td>
+                                    <td nowrap="nowrap">Charge</td>
+                                    <td nowrap="nowrap">Status</td>
+                                    <td nowrap="nowrap">Balance</td>
+                                    <td nowrap="nowrap">A/C Name</td>
+                                    <td nowrap="nowrap">Bank</td>
+                                    <td nowrap="nowrap">A/C No</td>
+                              </tr>
+
+                              <?php  foreach($AllMobileTxn as $itemList){ ?>
+                              <tr>
+                                <td nowrap="nowrap"><?php echo e($itemList['transaction_date']); ?></td>
+                                <td nowrap="nowrap">
+                                <?php if($itemList['debit_amount']>0){ ?>  
+                                <font color="red" style="font-weight:500">
+                                  <?php echo e(GeneralHelper::getAmount($itemList['debit_amount'])); ?>
+
+                                </font>
+                                <?php }else{ ?>
+                                  <?php echo e(GeneralHelper::getAmount($itemList['debit_amount'])); ?>
+
+                                <?php } ?>
+
+                                
+                                </td>
+                                <td nowrap="nowrap">
+                                <?php if($itemList['credit_amount']>0){ ?>  
+                                <font color="green" style="font-weight:500">
+                                  <?php echo e(GeneralHelper::getAmount($itemList['credit_amount'])); ?>
+
+                                </font>
+                                <?php }else{ ?>
+                                  <?php echo e(GeneralHelper::getAmount($itemList['credit_amount'])); ?>
+
+                                <?php } ?>
+                                </td>
+                                <td nowrap="nowrap"><?php echo e($itemList['transaction_number']); ?></td>
+                                <td title="<?php echo e($itemList['remarks']); ?>"><?php echo e(Str::limit($itemList['remarks'], 20)); ?></td>
+
+                                <td nowrap="nowrap">
+                                
+                                <?php if($itemList['transfer_charge']>0){ ?>  
+                                <font color="red" style="font-weight:500">
+                                  <?php echo e(GeneralHelper::getAmount($itemList['transfer_charge'])); ?>
+
+                                </font>
+                                <?php }else{ ?>
+                                  <?php echo e(GeneralHelper::getAmount($itemList['transfer_charge'])); ?>
+
+                                <?php } ?>
+
+
+                                </td>
+                                <td><?php echo e($itemList['status']); ?></td>
+                                <td nowrap="nowrap">
+                                <?php if($itemList['credit_amount']>0){ ?>
+                                  <font color="red" style="font-weight:500"><i class="fas fa-arrow-up"></i>&nbsp;</font><?php } ?>
+                                <?php if($itemList['debit_amount']>0){ ?>
+                                   <font color="red" style="font-weight:500"><i class="fas fa-arrow-down"></i></font>&nbsp;
+                                <?php } ?>
+                                <?php echo e(GeneralHelper::getAmount($itemList['updated_wallet_balance'])); ?></td>
+                                <td><?php echo e($itemList['VerifyBeneficiariesBankAccount']['account_name']); ?></td>
+                                <td title="<?php echo e($itemList['VerifyBeneficiariesBankAccount']['bank_name']); ?>"><?php echo e(Str::limit($itemList['VerifyBeneficiariesBankAccount']['bank_name'],10)); ?></td>
+                                <td><?php echo e($itemList['VerifyBeneficiariesBankAccount']['account_number']); ?></td>
+                              </tr>
+                            <?php }}else{ ?>
+                              <tr style="background-color: #FFF">
+                                  <td nowrap="nowrap" colspan="12">
+                                    <div class="alert alert-danger">No Transaction Found</div>
+                                    </td>
+                              </tr>
+
+                            <?php } ?> 
+
+                            </table>
+                            <?php echo e($AllMobileTxn->links()); ?>
+
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header" id="headingThree">
+                  <h5 class="mb-0"> <a href="#" class="collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Transaction Charges</a> </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionDefault" style="">
+                  <div class="card-body" style="padding:5px;"> 
+                      <div class=" bg-default table-responsive mb-3">
+                         <table class="card-text table table-striped" width="100%" style="font-size: 13px; color: #000">
+                            <?php if(!empty($MoneyTransferCharge)){ 
+                                  foreach($MoneyTransferCharge as $itemList){ ?>
+                              <tr>
+                                <td width="30%"><?php echo e($itemList['AmountType']['transaction_amount']); ?></td>
+                                <td width="10%">:</td>
+                                <td width="30%"><?php echo e(number_format($itemList['value'],2)); ?><?php echo e('@'); ?><?php echo e($itemList['AmountType']['type']); ?></td>
+                              </tr>
+                            <?php }} ?>
+
+                            </table>
+                      </div>
+                  </div>
+                </div>
+              </div>
            
             </div>
-           
           </div>
-           <?php } ?>
+             
+           </div>
           
 <?php /**PATH /home/childftn/public_html/siddhiventures.com/resources/views/RO/MoneyTransfer/BankAccountList.blade.php ENDPATH**/ ?>

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', 'Auth\User\LoginController@showLoginForm')->name('home');
 
 
