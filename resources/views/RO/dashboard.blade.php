@@ -80,7 +80,7 @@
                   </div>
               </div>
                <div class="col-lg-6" style="border: solid 1px #eee;padding: 20px;">
-
+                <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
                 <h4 class="mb-4">{{ __('Report') }}</h4>
                 
                
