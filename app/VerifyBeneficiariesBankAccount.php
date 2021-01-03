@@ -30,6 +30,7 @@ class VerifyBeneficiariesBankAccount extends Model
         'contact_id',
         'beneficiary_id',
         'beneficiary_type',
+        'recipient_number',
         'bank_name',
         'account_name',
         'account_number',

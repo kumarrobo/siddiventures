@@ -51,12 +51,20 @@
 
                     <div class="form-group ">
                      <div class="row">
+                      <?php if($isvalidVerification == true){ ?>
                         <div class="col-md-2">&nbsp;</div>
                         <div class="col-md-8">
+                          
                           <button type="button" name="cancel" class="btn btn-danger" style="font-size: 14px; text-decoration: none">Cancel</button>
                           
                           <input type="submit" name="submit" id="verifyAccountBtn"   class="btn btn-success" style="font-size: 14px; text-decoration: none" value="Verify Now">
+                        
                         </div>
+                        <?php }else{ ?>
+                        <div class="col-md-12">
+                          <p class="alert alert-danger">You dont' have sufficent balance in wallet.</p>
+                        </div>
+                        <?php } ?>
                       </div>
                     </div>
                   </div>

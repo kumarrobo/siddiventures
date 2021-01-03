@@ -25,6 +25,7 @@ use App\PaymentWalletTransaction;
 use App\DsWalletBalanceRequest;
 use App\PaymentWallet;
 use App\VerifiedMobileMonthlyTransaction;
+use App\BankTransferResult;
 
 class MoneyTransferController extends Controller
 {
@@ -80,7 +81,8 @@ class MoneyTransferController extends Controller
             if($this->isMobileVerified($request)){
                 //Session::flash('message', "Mobile Number is Verified Now !!");
                 $mobileDateStr = Crypt::encryptString($mobile.'|'.date('Ymd'));
-                return redirect('RO/bankaccountlist/'.$mobileDateStr)->with(['message'=>"OTP Verify Sucessfully."]);
+                return redirect('RO/bankaccountlist/'.$mobileDateStr);
+                //->with(['message'=>"OTP Verify Sucessfully."]);
             }
             if($mobile_otp){
                  if($this->isValidOTP($request)){
@@ -124,10 +126,17 @@ class MoneyTransferController extends Controller
     * @throws \Illuminate\Validation\ValidationException
     */
     public function deleteBankAccount(Request $request,$id){
+        $details        = VerifyMobileBeneficiariesBankAccount::with('VerifyBeneficiariesBankAccount')->find($id);
+        $bank_name      = $details['VerifyBeneficiariesBankAccount']['bank_name'];
+        $account_number = $details['VerifyBeneficiariesBankAccount']['account_number'];
+        $account_name = $details['VerifyBeneficiariesBankAccount']['account_name'];
+
+        //dd($details);
         $verifyMobileNumberObj = VerifyMobileBeneficiariesBankAccount::where('user_id','=',$this->getUserId())
                 ->where('id','=',$id)->delete();
+                //dd($verifyMobileNumberObj);
         if($verifyMobileNumberObj){
-            Session::flash('message', "Bank Account deleted !!");
+            Session::flash('message', "Benificiery <b>".$account_name."</b> Bank <b>".$bank_name."</b> with Account No <b>".$account_number."</b>  deleted !!");
             return redirect()->back()->withInput();
         }else{
             Session::flash('message', "Bank Account not deleted !!");
@@ -204,6 +213,7 @@ class MoneyTransferController extends Controller
                     $VerifyMobileNumber =VerifyMobileNumber::with('VerifyMobileBeneficiariesBankAccount')->where('user_id','=',$this->getUserId())
                     ->where('mobile','=',$mobile)
                     ->first();
+                    //dd($VerifyMobileNumber);
                     $VerifyMobileBeneficiariesBankAccountIdArr = [];
                     if(!empty($VerifyMobileNumber)){
                         if(!empty($VerifyMobileNumber['VerifyMobileBeneficiariesBankAccount'])){
@@ -252,6 +262,7 @@ class MoneyTransferController extends Controller
             Session::flash('error', ["No Records Found"]);
             return redirect('RO/moneytransfer/')->with(['error'=>['Sorry ! Invalid Url.']]);
         }
+        $bankMasterList = MasterBank::where('status','=',1)->get();
 
         //List Of Charges Of Money Transfer
         $MoneyTransferCharge  = $this->getMoneyTransferCharge();
@@ -265,7 +276,8 @@ class MoneyTransferController extends Controller
             'bankList'    => $bankList,
             'id'          => Crypt::encryptString($verifyMID),
             'MoneyTransferCharge' =>$MoneyTransferCharge,
-            'AllMobileTxn'=>$mobileTxn
+            'AllMobileTxn'=>$mobileTxn,
+            'bankMasterList'=>$bankMasterList
         ));
     }
 
@@ -275,7 +287,14 @@ class MoneyTransferController extends Controller
 
     public function addAccountNumber(Request $request,$id){
         try{
-             $ids  = Crypt::decryptString($id);
+             $walletBalance         = Helper::getWalletBalance();
+             $verificationCharge    = Helper::getBankAccountVerificationCharge();
+             $isvalid               = false;
+             if($walletBalance > $verificationCharge){
+                $isvalid            = true;
+             }
+             //dd($isvalid);
+             $ids  = Crypt::decryptString($id); 
              $VerifyMobileNumber =VerifyMobileNumber::find($ids);
              $bankList = MasterBank::where('status','=',1)->get();
              if ($request->isMethod('post')) {
@@ -316,7 +335,8 @@ class MoneyTransferController extends Controller
         return view('RO.addBankAccount',array(
             'id'          => $id,
             'bankList'    => $bankList,
-            'VerifyMobileNumber'=>$VerifyMobileNumber
+            'VerifyMobileNumber'=>$VerifyMobileNumber,
+            'isvalidVerification'=>$isvalid
         ));
     }
 
@@ -746,8 +766,11 @@ class MoneyTransferController extends Controller
 
     public function transferMoney(Request $request,$id){
         try {
+            //dd('dasd');
+            //$chargesArr             = $this->getTransferChargeWithamount();
+            //dd($chargesArr);
             //$verify_mobile_beneficiaries_bank_account_id 
-            $verifyBeneficiariesId = Crypt::decryptString($id);
+            $verifyBeneficiariesId = Crypt::decryptString($id); 
             $result     =   VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
             //dd($result);
             $verify_mobile_number_id = $result['verify_mobile_number_id'];
@@ -756,7 +779,7 @@ class MoneyTransferController extends Controller
             $mobileTransactionBalanceAmount = Helper::getMonthlyBalanceAmount($verify_mobile_number_id);
             $monthlyLimit   = Helper::getUserMonthlyBalance();
             $utilized       = $monthlyLimit -  $mobileTransactionBalanceAmount;
-            //dd($verifyMobile);
+
         } catch (DecryptException $e) {
             Session::flash('error', ["Somthing Went Wring, Please try again later"]);
             
@@ -775,7 +798,126 @@ class MoneyTransferController extends Controller
     }
 
 
+    public function confirmTransferMoney(Request $request,$id){
+       // dd($request->all());
+        if($request->method() == 'GET'){
+            return redirect('RO/transfermoney/'.$id)->with('message', "Somthing Went Wrong.!!");
+        }
+        if($request->method() == 'POST'){
 
+            $amount         = $request->get('amount');
+            $remarks        = $request->get('remarks');
+            $payment_mode   = $request->get('payment_mode');
+
+            //Check Wallet Balance 
+            $walletBalance = Helper::getWalletBalance();
+            if($walletBalance < $amount){
+                $message = LOW_WALLET_BALANCE_MESASGE;
+                return redirect('RO/transfermoney/'.$id)->with('message', $message);
+            }
+            //Check is PG is Active or not
+            // Money Transfer Charge is enabled
+            $charges = $this->getTransferCharge($amount);
+            if($charges == 0){
+                $message = MONEY_TRANSFER_NOT_ENABLED;
+                return redirect('RO/transfermoney/'.$id)->with('message', $message);
+            }
+
+            try {
+                //Get Charges Details
+                $chargesArr             = $this->getTransferChargeWithamount($amount);
+
+                //$verify_mobile_beneficiaries_bank_account_id 
+                $verifyBeneficiariesId  = Crypt::decryptString($id);
+                $result                 = VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
+                //dd($result);
+                $verify_mobile_number_id        = $result['verify_mobile_number_id'];
+                $verifyMobile                   = VerifyMobileNumber::find($verify_mobile_number_id);
+
+                $mobileTransactionBalanceAmount = Helper::getMonthlyBalanceAmount($verify_mobile_number_id);
+                $monthlyLimit                   = Helper::getUserMonthlyBalance();
+                $utilized                       = $monthlyLimit -  $mobileTransactionBalanceAmount;
+                //dd($verifyMobile);
+
+                //Encrypt the post string
+                $postStr = array(
+                                    'mobile'        =>  $verifyMobile,
+                                    'balance'       =>  $mobileTransactionBalanceAmount,
+                                    'r_mobile'      =>  $verifyMobile['mobile'],
+                                    'account_name'  =>  $result['VerifybeneficiariesBankAccount']['account_name'],
+                                    'account_number'=>  $result['VerifybeneficiariesBankAccount']['account_number'],
+                                    'bank_name'     =>  $result['VerifybeneficiariesBankAccount']['bank_name'],
+                                    'account_ifsc'  =>  $result['VerifybeneficiariesBankAccount']['account_ifsc'],
+                                    'amount'        =>  $amount,
+                                    'fee'           =>  $chargesArr['charge'],
+                                    'type'          =>  $chargesArr['type'],
+                                    'remarks'       =>  $remarks,
+                                    'payment_mode'  =>  $payment_mode,
+                                    'beneficiaries_bank_account_id'=>$result['id'],
+                                    'verify_mobile_number_id'=>$result['verify_mobile_number_id'],
+                                    'verify_mobile_beneficiaries_bank_account_id'=>$result['id'],
+                                    'utilized'      => $utilized,
+                                    'monthlyLimit'  => $monthlyLimit,
+                );
+                $enPostStr =  Crypt::encryptString(json_encode($postStr));
+            } catch (DecryptException $e) {
+                Session::flash('error', ["Somthing Went Wring, Please try again later"]);
+            }
+        }
+        //dd($chargesArr);
+
+        return view('RO.ConfiromTransferMoneyToBankAccount',array(
+            'id'                            => $id,
+            'result'                        => $result,
+            'verifyMobile'                  => $verifyMobile,
+            'mobileTransactionBalanceAmount'=> $mobileTransactionBalanceAmount,
+            'monthlyLimit'                  => $monthlyLimit,
+            'utilized'                      => $utilized,
+            'verify_mobile_number_id'       => $verify_mobile_number_id,
+            'payment_mode'                  => $payment_mode,
+            'remarks'                       => $remarks,
+            'amount'                        => $amount,
+            'chargeAmount'                  => $chargesArr['charge'],
+            'chargeType'                    => $chargesArr['type'],
+            'enPostStr'                     => $enPostStr
+        ));
+
+    }
+
+
+    /**
+     * Split Large amount into small amount
+     * Default Amount Per Transaction For Transfer
+     * @return Array
+     * First Index Of Array is count for Transaction
+     * Second Index Of Array is used for calculating Amount
+     * e.g Amount is Rs. 12, and Default amount 5, then 12/5=2.4
+     * Fraction Array will wil array('2','4');
+     */
+    public function getAmountFractionArray($amount){
+            $defaultAmountPerTransaction    = $this->getAmountTransferPerTransaction();
+            $fraction    = (float) ($amount / $defaultAmountPerTransaction);
+            //dd($fraction);
+            $fractionArr = explode('.', $fraction);
+            //dd($fractionArr);
+            $amountArr   = array();
+            if(is_array($fractionArr)){
+                if(isset($fractionArr[0])){
+                    if($fractionArr[0] > 0){
+                        for($i=1;$i<=$fractionArr[0];$i++){
+                            $amountArr[] = $defaultAmountPerTransaction;
+                        }
+                     }
+                }
+                //Calculate Amount Less than  Default amount
+                if(isset($fractionArr[1])){
+                    $amountArr[] = ($fractionArr[1]/10) * $defaultAmountPerTransaction;
+                }
+
+            }
+
+            return $amountArr;
+    } 
 
 
     /**
@@ -786,6 +928,7 @@ class MoneyTransferController extends Controller
     */
     public function transferMoneyAPIAction(Request $request){
             $validator               = array();
+            $walletBalance           = Helper::getWalletBalance(); 
             $mobile                  = $request->get('mobile');
             $balance                 = $request->get('balance');
             $r_mobile                = $request->get('r_mobile');
@@ -800,33 +943,327 @@ class MoneyTransferController extends Controller
             $verifyBeneficiariesId   = $request->get('beneficiaries_bank_account_id');
             $verify_mobile_number_id = $request->get('verify_mobile_number_id');
             $verify_mobile_beneficiaries_bank_account_id = $request->get('verify_mobile_beneficiaries_bank_account_id');
+            //dd($request->all());
+             //Check Wallet Balance 
+            $walletBalance = Helper::getWalletBalance();
+            $moneytransferCharge = $this->getTransferChargeWithamount($amount);
+            if($walletBalance < ($amount + $moneytransferCharge['charge'])){
+                $message = LOW_WALLET_BALANCE_MESASGE;
+                Session::flash('message', $message);
+                return redirect()->back()->withInput();
+            }
+            //Check is PG is Active or not
+            // Money Transfer Charge is enabled
+            $charges = $this->getTransferCharge($amount);
+            if($charges == 0){
+                $message = MONEY_TRANSFER_NOT_ENABLED;
+                Session::flash('message', $message);
+                return redirect()->back()->withInput();
+            }
 
+            $transfermoneyArr = $this->getAmountFractionArray($amount);
+            //dd($transfermoneyArr);
+            //Verify Balance
+            if($walletBalance >= $amount){ 
             $result     =   VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
-            
-            $verify_beneficiaries_bank_account_id =$result['VerifybeneficiariesBankAccount']['id']; 
-            // $contact_id             =   $result['VerifybeneficiariesBankAccount']['contact_id'];
-            // $beneficiary_id         =   $result['VerifybeneficiariesBankAccount']['beneficiary_id'];
-            // $verifyMobile           =   VerifyMobileNumber::find($verify_mobile_number_id);
-            
-            $paymentTransfer        = $this->WireAPI->moneyTransferInitiateAPI($request, $verify_beneficiaries_bank_account_id);
-            $paymentTransferArr     = json_decode($paymentTransfer,true);
-            if($paymentTransferArr['success']){
-                $verify_mobile_number_id    = $verify_mobile_number_id;
-                $verify_mobile_beneficiaries_bank_account_id = $verify_beneficiaries_bank_account_id;
-                $res =$this->paymentTransfered($paymentTransferArr, $verify_mobile_number_id,$verify_mobile_beneficiaries_bank_account_id);
-                if($res){
-                    //Update Payment Wallet Transactions For User
-                    $user_id    = $this->getUserId();
-                    $verifyMobileResult = VerifyMobileNumber::find($verify_mobile_number_id);
-                    $this->pushDebitRequestedBalanceAmount($user_id, $amount, $remarks, $verify_mobile_beneficiaries_bank_account_id);
-                    $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
-                    $midStr    = $verifyMobileResult['mobile'].'|'.date('Ymd'); 
-                    $enMidStr  = Crypt::encryptString($midStr);
-                    return redirect('RO/bankaccountlist/'.$enMidStr)->with('message', "Money Transffred Successfully!!");
+            if(!empty($result)){
+                $verify_beneficiaries_bank_account_id =$result['VerifybeneficiariesBankAccount']['id']; 
+                //dd($transfermoneyArr);
+                //Call Api for Transfer Amount From Wallet to Bank Account
+                foreach($transfermoneyArr as $amountItem){
+                    $walletBalance  = Helper::getWalletBalance(); 
+                    //dd($walletBalance);
+                    //Add Money Transfer Charge Amount with Tramsfer Amount
+                    $moneytransferCharge = $this->getTransferChargeWithamount($amountItem);
+                    if($walletBalance >= ($amountItem + $moneytransferCharge['charge'])){
+                    $charges = $moneytransferCharge['charge'];
+                    $request->merge(['amount'=>$amountItem]); 
+                    //dd($transfermoneyArr);
+                
+                    $paymentTransfer        = $this->WireAPI->moneyTransferInitiateAPI($request, $verify_beneficiaries_bank_account_id);
+                    $paymentTransferArr     = json_decode($paymentTransfer,true);
+                    //dd($paymentTransferArr);
+                    if($paymentTransferArr['success']){
+                        $verify_mobile_number_id    = $verify_mobile_number_id;
+                        $verify_mobile_beneficiaries_bank_account_id = $verify_beneficiaries_bank_account_id;
+                        $res    =$this->paymentTransfered($paymentTransferArr, $verify_mobile_number_id,$verify_mobile_beneficiaries_bank_account_id);
+                        if($res){
+                                //Update Payment Wallet Transactions For User
+                                $user_id    = $this->getUserId();
+                                $verifyMobileResult = VerifyMobileNumber::find($verify_mobile_number_id);
+                                $this->pushDebitRequestedBalanceAmount($user_id, $amountItem, $remarks, $verify_mobile_beneficiaries_bank_account_id);
+                               // $this->pushDebitRequestedBalanceAmount($user_id, $charges, $remarks, $verify_mobile_beneficiaries_bank_account_id);
+
+                                $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
+                                //$this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$charges);
+                                $midStr    = $verifyMobileResult['mobile'].'|'.date('Ymd'); 
+                                $enMidStr  = Crypt::encryptString($midStr);
+                                    $transferResponseArr[] = array(
+                                                                'success'   =>  'True',
+                                                                'Code'      =>   200,
+                                                                'status'    =>  'Success',
+                                                                'amount'    =>  $amountItem,
+                                                                'ref_no'    =>  NULL,
+                                                                'message'   =>  'Transfer Successfull.',
+                                                                'remarks'   =>  $remarks,
+                                                                'response'  =>  $paymentTransferArr
+                                );
+                                //return redirect('RO/bankaccountlist/'.$enMidStr)->with('message', "Money Transffred Successfully!!");
+                            }else{
+                                    $transferResponseArr[] = array(
+                                                                'success'       =>  'False',
+                                                                'Code'          =>   201,
+                                                                'status'        =>  'Failed',
+                                                                'amount'        =>  $amountItem,
+                                                                'reference_no'  =>  NULL,
+                                                                'remarks'       =>  $remarks,
+                                                                'message'       =>  LOW_WALLET_BALANCE_MESASGE
+                                                            );
+                            }
+
+                        }else{
+                                    $transferResponseArr[]  = array(
+                                                                'success'       =>  'False',
+                                                                'Code'          =>   202,
+                                                                'status'        =>  'Failed',
+                                                                'amount'        =>  $amountItem,
+                                                                'reference_no'  =>  NULL,
+                                                                'remarks'       =>  $remarks,
+                                                                'message'       =>  LOW_WALLET_BALANCE_MESASGE
+                                                            );
+
+                            }
+
+                    }else{
+                                    $transferResponseArr[]  = array(
+                                                                'success'       =>  'False',
+                                                                'Code'          =>   203,
+                                                                'status'        =>  'Failed',
+                                                                'amount'        =>  $amountItem,
+                                                                'reference_no'  =>  NULL,
+                                                                'remarks'       =>  $remarks,
+                                                                'message'       =>  LOW_WALLET_BALANCE_MESASGE
+                                                            );
+
+                        }
+                    }
+                    //dd($transferResponseArr);
+                    
+                    $id   = $this->saveBankTransferResult($transferResponseArr);
+                    $enid = Crypt::encryptString($id);
+                    return redirect('RO/transfermoneyresult/'.$enid);
+
                 }
             }
+
+        
     }
 
+
+    //Save Bank Transfer Result
+    public function saveBankTransferResult($transferResponseArr){
+        $resultJson = json_encode($transferResponseArr);
+        $resultJsonStr  = Crypt::encryptString($resultJson);
+        $data['user_id']        = $this->getUserId();
+        $data['result_json']    = $resultJson;
+        $data['result_encrypt'] = $resultJsonStr;
+        $data['created_at']     = $this->getNow();
+        return BankTransferResult::create($data)->id;
+    } 
+
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * Request parameters with Bank Account Number, IFSC Code, 
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+    public function transferedMoneyResult(Request $request,$result){
+        //echo $result; die;
+        //$enMidStr  = Session::get('postStr');
+        $enMidStrJson  = Crypt::decryptString($result);
+
+        $res        = BankTransferResult::find($enMidStrJson);
+        $resultText = $res['result_json'];
+        $enMidStr   = json_decode($resultText,true);
+        //echo "<pre>";
+        //print_r($enMidStr); die;
+        //Get Sender and Reciver Details
+        $recipentDetails = [];
+        $totalAmount     = [];
+        foreach($enMidStr as $item){
+            if($item['status'] == 'Success'){
+                $recipentDetails = array(
+                    'unique_request_number'=>$item['response']['data']['transfer_request']['unique_request_number'],
+                    'BankName'=>$item['response']['data']['transfer_request']['beneficiary_bank_name'],
+                    'IFSCCode'=>$item['response']['data']['transfer_request']['beneficiary_account_ifsc'],
+                    'Name'=>$item['response']['data']['transfer_request']['beneficiary_account_name'],
+                    'AccountNumber'=>$item['response']['data']['transfer_request']['beneficiary_account_number'],
+                );
+                $totalAmount[] = $item['amount'];
+            }
+        }
+
+        //Get Details Of Sender
+        if(!empty($recipentDetails)){
+        $senderRes = BankAccountTransaction::with('VerifyMobileNumber')
+        ->where('unique_request_number','=',$recipentDetails['unique_request_number'])
+        ->first();
+            $senderData = $senderRes['VerifyMobileNumber'];
+            $sender_name = $senderData['sender_name'];
+            $sender_mobile = $senderData['mobile'];
+        }else{
+            $senderData      = '';
+            $sender_name     = '';
+            $sender_mobile   = '';
+        }
+        return view('RO.TransferedMoneySuccess',array(
+            'responseArr'    => $enMidStr,
+            'recipentDetails'=> $recipentDetails,
+            'totalAmount'    => number_format(array_sum($totalAmount),2),
+            'sender_name'    => $sender_name,
+            'sender_mobile'  => $sender_mobile
+        ));
+        //dd($enMidStr);
+    }
+
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * Request parameters with Bank Account Number, IFSC Code, 
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+    public function old_transferMoneyAPIAction(Request $request){
+            if($request->method() == 'POST'){
+                 $id = $request->get('id'); 
+                 try{
+                    $enPostStr      = $request->get('enPostStr');
+                    $decyrptPostStr = Crypt::decryptString($enPostStr);
+                    $postArr        = json_decode($decyrptPostStr,true);
+
+                    $amount           = $postArr['amount']; 
+                    $request->merge(['amount'=>$amount]); 
+                    $transfermoneyArr = $this->getAmountFractionArray($amount);
+
+                    //Set All Variable Of Request
+                    $validator               = array();
+                    $walletBalance           = Helper::getWalletBalance(); 
+                    $mobile                  = $request->get('mobile');
+                    $balance                 = $request->get('balance');
+                    $r_mobile                = $request->get('r_mobile');
+                    $account_name            = $request->get('account_name');
+                    $account_number          = $request->get('account_number');
+                    $bank_name               = $request->get('bank_name');
+                    $account_ifsc            = $request->get('account_ifsc');
+                    $amount                  = $request->get('amount');
+                    $fee                     = $request->get('fee');
+                    $remarks                 = $request->get('remarks');
+                    $payment_mode            = $request->get('payment_mode');
+                    $verifyBeneficiariesId   = $request->get('beneficiaries_bank_account_id');
+                    $verify_mobile_number_id = $request->get('verify_mobile_number_id');
+                    $verify_mobile_beneficiaries_bank_account_id = $request->get('verify_mobile_beneficiaries_bank_account_id');
+                    $errorArr = array();
+                    $transferResponseArr = array();
+
+                    $result = VerifyMobileBeneficiariesBankAccount::with('VerifybeneficiariesBankAccount')->find($verifyBeneficiariesId);
+                    $verify_beneficiaries_bank_account_id =$result['VerifybeneficiariesBankAccount']['id']; 
+                    
+                    //dd($request->all());
+                    //dd($transfermoneyArr);
+                    //dd($postArr);
+                    //Verify Balance
+                    if($walletBalance > $amount){ 
+                    
+                    // $contact_id             =   $result['VerifybeneficiariesBankAccount']['contact_id'];
+                    // $beneficiary_id         =   $result['VerifybeneficiariesBankAccount']['beneficiary_id'];
+                    // $verifyMobile           =   VerifyMobileNumber::find($verify_mobile_number_id);
+                    //dd($request->all());
+                    $paymentTransfer        = $this->WireAPI->moneyTransferInitiateAPI($request, $verify_beneficiaries_bank_account_id);
+                    //dd($paymentTransfer);
+                    $paymentTransferArr     = json_decode($paymentTransfer,true);
+                    if($paymentTransferArr['success']){
+                        $verify_mobile_number_id    = $verify_mobile_number_id;
+                        $verify_mobile_beneficiaries_bank_account_id = $verify_beneficiaries_bank_account_id;
+                        $res =$this->paymentTransfered($paymentTransferArr, $verify_mobile_number_id,$verify_mobile_beneficiaries_bank_account_id);
+                        if($res){
+                            //Update Payment Wallet Transactions For User
+                            $user_id    = $this->getUserId();
+                            $verifyMobileResult = VerifyMobileNumber::find($verify_mobile_number_id);
+                            $this->pushDebitRequestedBalanceAmount($user_id, $amount, $remarks, $verify_mobile_beneficiaries_bank_account_id);
+                            $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
+                            $midStr    = $verifyMobileResult['mobile'].'|'.date('Ymd'); 
+                            $enMidStr  = Crypt::encryptString($midStr);
+                            return redirect('RO/bankaccountlist/'.$enMidStr)->with('message', "Money Transffred Successfully!!");
+                        }
+                    }
+                }else{
+                    Session::flash('message', "You don't have sufficent balance !!");
+                    return redirect()->back()->withInput();
+                }
+                }catch (DecryptException $e) {
+                    $message = "Somthing Went Wring, Please try again later";
+                    return redirect('RO/confirmtransfermoney/'.$id)->with('message', $message);
+                }
+            }
+
+            
+           
+            
+          
+    }
+
+
+    /*
+    if(!empty($result)){
+                            //Call Api for Transfer Amount From Wallet to Bank Account
+                            foreach($transfermoneyArr as $amountItem){
+                                $walletBalance  = Helper::getWalletBalance(); 
+                                //Add Money Transfer Charge Amount with Tramsfer Amount
+                                $moneytransferCharge = $this->getTransferChargeWithamount($amountItem);
+                                if($walletBalance > ($amountItem + $moneytransferCharge['charge'])){
+                                    $request->merge(['amount'=>$amountItem]); 
+                                    $paymentTransfer    = $this->WireAPI->moneyTransferInitiateAPI($request, $verify_beneficiaries_bank_account_id);
+                                    //dd($paymentTransfer);
+                                    $paymentTransferArr = json_decode($paymentTransfer,true);
+                                    $res   = $this->paymentTransfered($paymentTransferArr, $verify_mobile_number_id,$verify_mobile_beneficiaries_bank_account_id);
+                                    if($res == true){ 
+                                        $user_id    = $this->getUserId();
+                                        $verifyMobileResult = VerifyMobileNumber::find($verify_mobile_number_id);
+                                        $this->pushDebitRequestedBalanceAmount($user_id, $amount, $remarks, $verify_mobile_beneficiaries_bank_account_id);
+                                        $this->pushDebitIntoVerifiedMobileMonthlyTransactions($verify_mobile_number_id,$amount);
+                                        $midStr    = $verifyMobileResult['mobile'].'|'.date('Ymd'); 
+                                        $enMidStr  = Crypt::encryptString($midStr);
+                                        $transferResponseArr[] = array(
+                                                                        'success'   =>  true,
+                                                                        'status'    =>  'Success',
+                                                                        'amount'    =>  $amountItem,
+                                                                        'ref_no'    =>  NULL,
+                                                                        'message'   =>  'Transfer Successfull.',
+                                                                        'response'  =>  $paymentTransferArr
+                                        );
+                                    }
+
+                                }else{
+                                        $transferResponseArr[] = array(
+                                                                    'success'       =>  false,
+                                                                    'status'        =>  'Failed',
+                                                                    'amount'        =>  $amountItem,
+                                                                    'reference_no'  =>  NULL,
+                                                                    'message'       =>  LOW_WALLET_BALANCE_MESASGE
+                                                                );
+                                }
+                            }
+                            //dd($transferResponseArr);
+                            //dd($transfermoneyArr);
+                            //dd($postArr);
+
+                        }else{
+                            dd("Benificiery Account Validation Failed");
+                        }
+                        */
 
 
     //First Payment Initiated After Adding New Account
@@ -876,5 +1313,101 @@ class MoneyTransferController extends Controller
     }
     
 
+
+
+
+
+
+
+    /**
+    * @param  \Illuminate\Http\Request  $request
+    * Request parameters with Bank Account Number, IFSC Code, 
+    * @return void
+    * @throws \Illuminate\Validation\ValidationException
+    */
+     public function addNewRecipenetForMobile(Request $request){
+         $result =array("success"=>false,"message"=>"Error.");
+
+         if ($request->isMethod('post')) {
+            $name               = $request->get('name');
+            $mobile             = $request->get('mobile');            
+            $typeBtn            = $request->get('typeBtn');
+            
+            //addonly = verify
+            $account_no         = $request->get('account_no');
+            $master_bank_id     = $request->get('master_bank_id');
+            $IFSCCode           = $request->get('ifsccodeStr');
+            $hiddenid           = $request->get('verify_mobile_id');
+            $beneficiary_mob_no = $request->get('mobileNumber');
+            $user_id            = Auth::user()->id;
+
+            //Find Is this Account Number Added Previously into Esebuzz
+            $isPresent = VerifyBeneficiariesBankAccount::where('account_number','=',$account_no)
+            ->where('account_ifsc','=',$IFSCCode)
+            ->where('contact_id','!=',NULL)
+            ->where('beneficiary_id','!=',NULL)
+            ->first();
+            if(!empty($isPresent)){
+                 $VerifyMobileNumber = Crypt::decryptString($hiddenid);
+                 //Check this Account Number is already present into his account
+                 $isPresentAccount = VerifyMobileBeneficiariesBankAccount::where('verify_beneficiaries_bank_account_id','=',$isPresent['id'])
+                 ->where('verify_mobile_number_id','=',$VerifyMobileNumber)
+                 ->where('user_id','=',$this->getUserId())
+                 ->first();
+                 if(empty($isPresentAccount)){
+                    $VMBBAObj = new VerifyMobileBeneficiariesBankAccount();
+                    $VMBBAObj['verify_beneficiaries_bank_account_id']   = $isPresent['id'];
+                    $VMBBAObj['user_id']                                = $this->getUserId();
+                    $VMBBAObj['verify_mobile_number_id']                = $VerifyMobileNumber;
+                    $VMBBAObj['status']                                 = 1;
+                    $VMBBAObj['recipient_number']                       = $beneficiary_mob_no;
+                    $VMBBAObj['created_at']                             = $this->getNow();
+                    if($VMBBAObj->save()){
+                        $result =array("success"=>true,"message"=>"Recipent Added Successfully.");
+                    }else{
+                        $result =array("success"=>false,"message"=>"Recipent Not Added Successfully.");
+                    }
+                }else{
+                    $result =array("success"=>false,"message"=>"Recipent Bank Account Already present.");
+                }
+            }else{
+
+                $verifyRecipient = array(
+                        'contact_id'        =>  NULL,
+                        'beneficiary_id'    =>  NULL,
+                        'beneficiary_type'  =>  'bank_account',
+                        'recipient_number'  =>  $mobile,
+                        'bank_name'         =>  $master_bank_id,
+                        'account_name'      =>  $name,
+                        'account_number'    =>  $account_no,
+                        'account_ifsc'      =>  $IFSCCode,
+                        'upi_handle'        =>  '',
+                        'is_active'         =>  0,
+                        'is_primary'        =>  0,
+                        'status'            =>  0,
+                        'created_at'        =>  $this->getNow()
+                );
+                $lastId = VerifyBeneficiariesBankAccount::create($verifyRecipient)->id;
+                if($lastId){
+                    $VerifyMobileNumber = Crypt::decryptString($hiddenid);
+                    $VMBBAObj = new VerifyMobileBeneficiariesBankAccount();
+                    $VMBBAObj['verify_beneficiaries_bank_account_id']   = $lastId;
+                    $VMBBAObj['user_id']                                = $this->getUserId();
+                    $VMBBAObj['verify_mobile_number_id']                = $VerifyMobileNumber;
+                    $VMBBAObj['status']                                 = 1;
+                    $VMBBAObj['recipient_number']                       = $beneficiary_mob_no;
+                    $VMBBAObj['created_at']                             = $this->getNow();
+                    if($VMBBAObj->save()){
+                        $result =array("success"=>true,"message"=>"Recipent Added Successfully.");
+                    }else{
+                        $result =array("success"=>false,"message"=>"Recipent Not Added Successfully.");
+                    }
+                }else{
+                    $result =array("success"=>false,"message"=>"Somthing went wrong.","redirect"=>false);
+                }
+            }
+            return response()->json($result);
+         }
+    }
 
 }

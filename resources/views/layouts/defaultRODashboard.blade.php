@@ -199,6 +199,7 @@
       var account_no      = $("#account_no").val();
       if(account_no.length==0){
         $("#account_no").addClass('alert-danger');
+
         return false;
       }else{
         $("#account_no").removeClass('alert-danger');
@@ -329,6 +330,202 @@
               }
            }
         });
+   });
+
+
+   $('.recipentRow').click(function(){
+    var accountData = $(this).attr('data-account');
+    var strArr = accountData.split('|');
+    $("#rname").val(strArr[0]);
+    $("#rmobile").val(strArr[1]);
+    $("#rmaster_bank_id").val(strArr[2]);
+    $("#raccount_no").val(strArr[3]);
+    $("#rIFSCCode").val(strArr[4]);
+    //alert(strArr);
+   });
+
+   //Add New Recipent and Add Benificiery
+   $(".btn-block").click(function(e){
+      var id            = $(this).attr('id');
+      var mobileNumber  = $("#mobileNumber").val();
+
+      // Hidden Contact number
+      var hiddenid      = $("#hiddenid").val();
+      var name          = $("#name").val();
+      if(name.length==0){
+        $("#name").addClass('alert-danger');
+        $("#spanname").html('Please enter full name of recipient');
+        return false;
+      }else{
+        $("#name").removeClass('alert-danger');
+        $("#spanname").html('')
+      }
+
+
+      var mobile      = $("#mobile").val();
+      //alert(mobile);
+      if(( mobile.length != 10 )){
+        $("#mobile").addClass('alert-danger');
+        $("#spanmobile").html('Please enter valid 10 digit mobile number');
+        return false;
+      }else{
+        $("#mobile").removeClass('alert-danger');
+        $("#spanmobile").html('');
+      }
+
+
+
+
+    
+      var account_no      = $("#account_no").val();
+      if(account_no.length==0){
+        $("#account_no").addClass('alert-danger');
+        $("#spanaccount_no").html('Please enter account number');
+        return false;
+      }else{
+        $("#account_no").removeClass('alert-danger');
+        $("#spanaccount_no").html('');
+      }
+
+      var confirm_account_no      = $("#confirm_account_no").val();
+      if(confirm_account_no.length==0){
+        $("#confirm_account_no").addClass('alert-danger');
+        $("#spanconfirm_account_no").html('Please enter confirm account number');
+        return false;
+      }else{
+        $("#confirm_account_no").removeClass('alert-danger');
+        $("#spanconfirm_account_no").html('');
+      }
+      
+      if(account_no != confirm_account_no){
+        $("#confirm_account_no").addClass('alert-danger');
+        $("#spanconfirm_account_no").html('Confirm account number did not matched');
+        return false;
+      }else{
+        $("#confirm_account_no").removeClass('alert-danger');
+        $("#spanconfirm_account_no").html('');
+      }
+
+      var master_bank_id  = $("#master_bank_id").val();
+      if(master_bank_id.length==0){
+        $("#master_bank_id").addClass('alert-danger');
+        $("#spanmaster_bank_id").html('Please choose bank name');
+        return false;
+      }else{
+        $("#master_bank_id").removeClass('alert-danger');
+        $("#spanmaster_bank_id").html('');
+      }
+
+
+      var ifsccodeStr     = $("#IFSCCode").val();
+      if(ifsccodeStr.length==0){
+        $("#IFSCCode").addClass('alert-danger');
+        $("#spanIFSCCode").html('Enter IFSC code of bank');
+        return false;
+      }else{
+        $("#IFSCCode").removeClass('alert-danger');
+        $("#spanIFSCCode").html('');
+      }
+
+      //r//eturn false;
+
+      var hiddenid            = $("#verify_mobile_id").val();
+      //alert(hiddenid);
+      //var beneficiary_mob_no  = $("#beneficiary_mob_no").val();
+      e.preventDefault();
+      $.ajax({
+           type:'POST',
+           url:"{{ route('roaddrecipient') }}",
+           data:{
+                name:name,
+                mobile:mobile,
+                master_bank_id:master_bank_id,
+                account_no:account_no,
+                ifsccodeStr:ifsccodeStr,
+                mobileNumber:mobileNumber,
+                verify_mobile_id:hiddenid,
+                typeBtn:id
+          },
+           beforeSend: function(){
+            // Statement
+            $('#overlay').show();
+           },
+           success:function(data){
+            console.log(data);
+              if(data.success === true){
+                    var str = "<div class='alert alert-success'>Recipent Added Succssfully!!</div>";
+                    $("#msg").html(str);
+                    $('#overlay').hide();
+                    //window.location.href = $('#url').val();
+                    window.location.reload();
+              }else{
+                var str = "<div class='alert alert-danger'>"+data.message+"</div>";
+                $("#msg").html(str);
+                $('#overlay').hide();
+              }
+           }
+        });
+   });
+
+
+
+   //Verify Account Number from Recipent
+   //Add Bank Account
+   $("#btn-success").click(function(e){
+      var account_no      = $("#raccount_no").val();
+      if(raccount_no.length==0){
+        $("#raccount_no").addClass('alert-danger');
+        return false;
+      }else{
+        $("#raccount_no").removeClass('alert-danger');
+      }
+      var rmaster_bank_id  = $("#rmaster_bank_id").val();
+      if(rmaster_bank_id.length==0){
+        $("#rmaster_bank_id").addClass('alert-danger');
+        return false;
+      }else{
+        $("#rmaster_bank_id").removeClass('alert-danger');
+      }
+
+      var rifsccodeStr     = $("#rIFSCCode").val();
+      if(rifsccodeStr.length==0){
+        $("#rIFSCCode").addClass('alert-danger');
+        return false;
+      }else{
+        $("#rIFSCCode").removeClass('alert-danger');
+      }
+      var hiddenid            = $("#hiddenid").val();
+      var beneficiary_mob_no  = $("#rmobileNumber").val();
+      e.preventDefault();
+      $.ajax({
+           type:'POST',
+           url:"{{ route('roverifybankaccount') }}",
+           data:{account_no:raccount_no,master_bank_id:rmaster_bank_id,IFSCCode:rifsccodeStr,id:hiddenid,beneficiary_mob_no:beneficiary_mob_no},
+           beforeSend: function(){
+            // Statement
+            $('#overlay').show();
+           },
+           success:function(data){
+            console.log(data);
+              if(data.success === true){
+                    if(data.is_api == false){
+                   
+                      $("#RecipientDetails").html(str);
+                      $("#account_number").val(account_number);
+                      $('#overlay').hide();
+                      var str = "<div class='alert alert-success'>Account Varified !!</div>";
+                      $("#msg").html(str);
+                       
+                   
+                
+              }else{
+                var str = "<div class='alert alert-danger'>"+data.message+"</div>";
+                $("#msg").html(str);
+                $('#overlay').hide();
+              }
+           }
+        }
+      });
    });
 </script>
 </body>

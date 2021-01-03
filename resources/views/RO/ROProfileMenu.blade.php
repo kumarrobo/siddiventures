@@ -8,9 +8,12 @@
         </ul>
       </li> --> 
      <li><a class="dropdown-item" href="{{route('rotatrechargeesybuz')}}">Tatkal Wallet Topup</a></li>
+     <li><a class="dropdown-item" href="{{route('rotatrechargepayu')}}">Other Wallet Topup </a></li>
+      <?php if(Auth::user()->DMT==1){ ?>
      <!-- <li><a class="dropdown-item" href="profile.html">Wallet To Wallet Topup</a></li> -->
      <li><a class="dropdown-item" href="{{route('romoneytransfer')}}">Money Transfer</a></li>
      <li><a class="dropdown-item" href="{{route('ropushbalance')}}">Wallet To Wallet Transfer</a></li>
+     <?php } ?>
      <!-- <li><a class="dropdown-item" href="payment-2.html">Tatkal Money Transfer</a></li> -->
      <li><a class="dropdown-item" href="{{route('myreport')}}">Account Statement</a></li>
      <li><a class="dropdown-item" href="{{route('writeus')}}">Check Transaction Status</a></li>

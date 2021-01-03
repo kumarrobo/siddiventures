@@ -26,7 +26,7 @@
                     <div class="row">
                       <div class="col-md-12">
                         <ul class="nav secondary-nav">
-
+                        <?php if(Auth::user()->DMT==1){ ?>
                             <li class="nav-item"> 
                           <a class="nav-link 
                           {{GeneralHelper::isActiveMenu('romoneytransfer')}}
@@ -41,7 +41,7 @@
                           <a class="nav-link {{GeneralHelper::isActiveMenu('moneytransfer')}}" href="{{route('ropushbalance')}}">
                             <span><i class="fas fa-retweet"></i></span>Push Balance</a>
                         </li>
-
+                        <?php } ?>
                       
                          <li class="nav-item"> 
                           <a class="nav-link {{GeneralHelper::isActiveMenu('tatrechargeesybuz')}}" href="{{route('rotatrechargeesybuz')}}">

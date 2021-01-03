@@ -127,7 +127,7 @@ class SMSController extends Controller
 
 
     /**
-     * Send SMS when user got deducted balance.
+     * Send SMS when user got Credied Balance.
      */
     public  function sendCreditSMS($mobile,$amount,$user_id,$lastPaymentWalletTransactionId)
     {

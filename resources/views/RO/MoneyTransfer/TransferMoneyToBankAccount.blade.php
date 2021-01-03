@@ -9,13 +9,16 @@
               <div class="col-lg-2 col-sm-12"></div>
                 <div class="col-lg-8 col-sm-12">
               <?php //dd($result);?>
+               @if(Session::has('message'))
+                    <p class="alert alert-danger">{{Session::get('message')}}</p>
+                    @endif
               <div class="card  mb-3"  style=" 
               -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
               -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
               box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75); ">
                   <div class="card-header"><b class="mb-4">{{ __('Transfer Money To Bank Account') }}</b></div>
                   <div class="card-body">
-                    <form action="{{route('rotransferaction')}}" method="POST">
+                    <form action="{{route('rotransferaction',['id'=>$id])}}" method="POST">
                       @csrf
                     <div class="form-group ">
                      <div class="row">
@@ -90,11 +93,11 @@
                         <div class="col-md-4">TRANSFER FEE</div>
                         <div class="col-md-1">&nbsp;:</div>
                         <div class="col-md-7">
-                        <input type="number" name="fee" id="fee" class="form-control" required="required" placeholder="0.00" value="0.00" readonly="readonly">
+                        <input type="text" name="fee" id="fee" class="form-control" required="required" readonly="readonly" value="{{'Rs.'}} {{DEFAULT_MONEY_TRANSFER_CHARGE}} {{'Flat'}}">
                         </div>
                       </div>
                     </div>
-                   
+                  <!--  
                      <div class="form-group ">
                      <div class="row">
                         <div class="col-md-4">TOTAL TRANSFER AMOUNT</div>
@@ -103,7 +106,7 @@
                         <input type="number" name="fee" id="fee" class="form-control" required="required" placeholder="0.00" value="0.00" readonly="readonly">
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                      <div class="form-group ">
                      <div class="row">
                         <div class="col-md-4">REMARKS</div>

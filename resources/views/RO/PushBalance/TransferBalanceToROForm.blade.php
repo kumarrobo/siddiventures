@@ -24,6 +24,7 @@
                     @endif
 
                   </p>
+                <?php if(Auth::user()->DMT==1){ ?>
                 <form id="personalInformation" method="post" action="{{route('roverifytransfer',['id'=>$id,'tday'=>$tday])}}" method="POST">
                   @csrf
                   <div class="form-group ">
@@ -67,6 +68,12 @@
                       </div>
                   </div>
                 </form>
+              <?php }else{ ?>
+                 <p class="alert alert-danger">You Domestic Money Transfer Facilities is not Active.<br/>
+                  <small>{{Auth::user()->notification}}</small>
+                  </p>
+                
+              <?php } ?>
               </div>
           <!-- Orders History end --> 
             </div> 

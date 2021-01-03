@@ -6,7 +6,12 @@
           ============================================= -->
             <div class="row">
 
-              <div class="col-lg-4 col-sm-12">
+              <div class="col-lg-12 col-sm-12">
+                <?php if(Session::has('message')){ ?>
+                  <div class="alert alert-danger">{!!Session::get('message')!!}</div>
+                <?php } ?>
+              </div>
+               <div class="col-lg-4 col-sm-12">
               <div class="card  mb-3"  style=" 
               -webkit-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
               -moz-box-shadow: -5px 8px 24px -17px rgba(0,0,0,0.75);
@@ -99,7 +104,7 @@
                      <div class="row">
                         <div class="col-md-1"></div>
                         <div class="col-md-10">
-                          <a href="#" class="btn btn-info" style="font-size: 14px;  width: 100%; text-decoration: none">Add Recipient</a>
+                          <a href="#" class="btn btn-info" data-target="#view-plans" data-toggle="modal" style="font-size: 14px;  width: 100%; text-decoration: none">Add Recipient</a>
                         </div>
                         <div class="col-md-1"></div>
                       </div>
@@ -145,34 +150,36 @@
                   <thead class="thead-light">
                     <tr>
                       <th>SN</th>
-                      <th>Sender Name</th>
+                      <th>Recipient Name</th>
+                      <th>Mobile</th>
                       <th>Bank Name</th>
-                      <th>IFSC Code</th>
                       <th>Account No</th>
+                      <th>IFSC Code</th>
                       <th class="text-center">Status</th>
                       <th>Pay By IFSC</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <?php $count=1;foreach ($bankList as $key => $value) {  ?>
+                    <?php $count=1;foreach ($bankList as $key => $value) {   ?>
                     <tr>
                       <td class="align-middle">{{$count}}</td>
                       <td class="align-middle" nowrap="nowrap">{{$value['VerifyBeneficiariesBankAccount']['account_name']}}</td>
+                      <td class="align-middle" nowrap="nowrap">{{$value['VerifyBeneficiariesBankAccount']['recipient_number']}}</td>
                       <td class="align-middle">{{$value['VerifyBeneficiariesBankAccount']['bank_name']}}</td>
                       <td class="align-middle">{{$value['VerifyBeneficiariesBankAccount']['account_number']}}</td>
                       <td class="align-middle">{{$value['VerifyBeneficiariesBankAccount']['account_ifsc']}}</td>
                       <td class="align-middle text-center">
-                        <?php if($value['status']=='1'){ ?>
+                        <?php if($value['VerifyBeneficiariesBankAccount']['is_active']=='1'){ ?>
                           <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Active"></i>
                         <?php }else{ ?>
                            <i class="fas fa-times-circle text-4 text-danger" data-toggle="tooltip" data-original-title="InActive"></i>
                         <?php } ?>
                       </td>
                       <td class="pull-right" align="text-right" style="width: 15%">
-                        <?php if($value['status']=='1'){ ?>
-                         <a href="{{route('rotransfermoney',['id'=>Crypt::encryptString($value['id'])])}}" class="btn btn-success " style="padding:10px;font-size: 12px;">Pay Now</a>
+                        <?php if($value['VerifyBeneficiariesBankAccount']['is_active']=='1'){ ?>
+                         <a href="{{route('rotransfermoney',['id'=>Crypt::encryptString($value['id'])])}}" class="btn btn-success " style="padding:10px;font-size: 12px;">&nbsp;&nbsp;Pay Now&nbsp;&nbsp;</a>
                         <?php }else{ ?>
-                           <p class="btn btn-default"  style="padding:10px;font-size: 12px; background-color: #CCC">Pay Now</p>
+                           <a  href="#" class="btn btn-primary recipentRow" data-target="#verify-account" data-account="{{$value['VerifyBeneficiariesBankAccount']['account_name']}}|{{$value['VerifyBeneficiariesBankAccount']['recipient_number']}}|{{$value['VerifyBeneficiariesBankAccount']['bank_name']}}|{{$value['VerifyBeneficiariesBankAccount']['account_number']}}|{{$value['VerifyBeneficiariesBankAccount']['account_ifsc']}}" data-toggle="modal" style="padding:10px;font-size: 12px;">Verify Now</a>
                         <?php } ?>
                         &nbsp;
                         <a href="{{route('rodeleteaccount',['id'=>$value['id']])}}" class="btn btn-danger" style="padding:10px;font-size: 12px;" onclick="return confirm('Are you sure you want to delete?')">Delete</a>
@@ -310,4 +317,141 @@
           </div>
              
            </div>
+
+<!--Popup Start Here-->
+<div id="view-plans" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Recipient </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row mb-4 mb-sm-2" >
+          <div  class="col-sm-12 form-group">
+            <small class="alert alert-info mt-4"> <span class="badge badge-danger" style="padding: 5px;">IMPORTANT NOTE:</span> &nbsp;Sender as <b>"{{$senderName}}"</b> From  Mobile No. <b>"{{$mobileNumber}}"</b> , SMS confirmation will sent to recipient mobile number.</small>
+          </div>
+        <!--https://docs.easebuzz.in/wire/contacts-->
+         <div class="col-sm-6 form-group">
+             <label for="subject"><b>Recipent Name <font color="red">*</font></b></label>
+            <input class="form-control" id="name" required="" placeholder="Enter Full Name" type="text" required="required">
+            <small><span id="spanname" class="errorSpan"></span></small>
+          </div>
+       
+          <div class="col-sm-6 form-group">
+            <label for="subject"><b>Recipent Mobile <font color="red">*</font></b></label>
+            <input class="form-control"  id="mobile" required="" placeholder="e.g: 9015446567" type="number" autocomplete="off">
+            {!!GeneralHelper::getErrorSpan('mobile')!!}
+          </div>
           
+           <div class="col-sm-6 form-group">
+            <label for="subject"><b>Account Number <font color="red">*</font></b></label>
+            <input class="form-control"  id="account_no" required="" placeholder="Enter Account Number" type="number" autocomplete="off">
+            {!!GeneralHelper::getErrorSpan('account_no')!!}
+          </div>
+          <div class="col-sm-6 form-group">
+            <label for="subject"><b>Confirm Account Number <font color="red">*</font></b></label>
+            <input class="form-control"  id="confirm_account_no" required="" placeholder="Enter Confirm Account Number" type="number" autocomplete="off">
+            {!!GeneralHelper::getErrorSpan('confirm_account_no')!!}
+          </div>
+          <div class="col-sm-6 form-group">
+            <label for="subject"><b>Choose Bank <font color="red">*</font></b></label>
+            <select name="master_bank_id" class="form-control" id="master_bank_id">
+                <option value="">Select Bank</option>
+                <?php foreach($bankMasterList as $item){ ?>
+                <option value="{{$item['title']}}">{{$item['title']}}</option>
+                <?php } ?>
+            </select>
+            {!!GeneralHelper::getErrorSpan('master_bank_id')!!}
+          </div>
+          <div class="col-sm-6 form-group">
+            <label for="subject"><b>IFSC Code <font color="red">*</font></b></label>
+            <input class="form-control"  id="IFSCCode" required="" placeholder="Enter IFSC Code" type="text" autocomplete="off">
+            {!!GeneralHelper::getErrorSpan('IFSCCode')!!}
+          </div>
+          
+          <div class="col-sm-6" id="msg">
+             <!-- <button class="btn btn-success btn-block" id="verify" type="submit">ADD AND VERIFY RECIPIENT</button> -->
+          </div>
+          <div class="col-sm-6">
+             <button class="btn btn-primary btn-block" id="addonly" type="submit">ADD RECIPIENT</button>
+          </div>
+         <input type="hidden" id="mobileNumber" value="{{$mobileNumber}}">
+         <input type="hidden" id="verify_mobile_id" value="{{$id}}">
+         <input type="hidden" id="url" value="{{route('bankaccountlist',['mdstr'=>$id])}}">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Popup Ends Hrer-->
+
+<!--Popup Start Here-->
+<div id="verify-account" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Verify Recipient Bank Account</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row mb-4 mb-sm-2" >
+          <div  class="col-sm-12 form-group">
+            <small class="alert alert-info mt-4"> <span class="badge badge-danger" style="padding: 5px;">IMPORTANT NOTE:</span> &nbsp;Sender as <b>"{{$senderName}}"</b> From  Mobile No. <b>"{{$mobileNumber}}"</b> , SMS confirmation will sent to recipient mobile number.</small>
+          </div>
+        <!--https://docs.easebuzz.in/wire/contacts-->
+         <div class="col-sm-6 form-group">
+             <label for="subject"><b>Recipent Name <font color="red">*</font></b></label>
+            <input class="form-control" id="rname" required="" placeholder="Enter Full Name" type="text" required="required" readonly="readonly">
+            <small><span id="spanname" class="errorSpan"></span></small>
+          </div>
+       
+          <div class="col-sm-6 form-group">
+            <label for="subject"><b>Recipent Mobile <font color="red">*</font></b></label>
+            <input class="form-control"  id="rmobile" required="" placeholder="e.g: 9015446567" type="number" autocomplete="off" readonly="readonly">
+            {!!GeneralHelper::getErrorSpan('mobile')!!}
+          </div>
+            <div class="col-sm-6 form-group">
+            <label for="subject"><b>Choose Bank <font color="red">*</font></b></label>
+            <select name="rmaster_bank_id" class="form-control" id="rmaster_bank_id" disabled="disabled">
+                <option value="">Select Bank</option>
+                <?php foreach($bankMasterList as $item){ ?>
+                <option value="{{$item['title']}}">{{$item['title']}}</option>
+                <?php } ?>
+            </select>
+            {!!GeneralHelper::getErrorSpan('master_bank_id')!!}
+          </div>
+          
+           <div class="col-sm-6 form-group">
+            <label for="subject"><b>Account Number <font color="red">*</font></b></label>
+            <input class="form-control"  id="raccount_no" required="" placeholder="Enter Account Number" type="number" autocomplete="off" readonly="readonly">
+            {!!GeneralHelper::getErrorSpan('account_no')!!}
+          </div>
+         
+        
+          <div class="col-sm-6 form-group">
+            <label for="subject"><b>IFSC Code <font color="red">*</font></b></label>
+            <input class="form-control"  id="rIFSCCode" required="" placeholder="Enter IFSC Code" type="text" autocomplete="off" readonly="readonly">
+            {!!GeneralHelper::getErrorSpan('IFSCCode')!!}
+          </div>
+            <div class="col-sm-6">
+              <label>&nbsp;</label>
+             <button class="btn btn-success btn-block" id="btn-success" type="submit">Verify Bank Account</button>
+          </div>
+          
+          <div class="col-sm-12" id="rmsg">
+             <p class="alert alert-warning"><i>
+              <small>Make sure above information is valid before verifacition bank account details, it will be charge from your wallet. </small></i>
+              </p>
+             <!-- <button class="btn btn-success btn-block" id="verify" type="submit">ADD AND VERIFY RECIPIENT</button> -->
+          </div>
+        
+         <input type="hidden" id="rmobileNumber" value="{{$mobileNumber}}">
+         <input type="hidden" id="rverify_mobile_id" value="{{$id}}">
+         <input type="hidden" id="rurl" value="{{route('bankaccountlist',['mdstr'=>$id])}}">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Popup Ends Hrer-->

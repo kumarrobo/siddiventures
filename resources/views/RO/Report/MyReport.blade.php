@@ -20,12 +20,12 @@
                     <tr>
                       <th>SN</th>
                       <th>Date</th>
-                      <th>Credit</th>
-                      <th>Debit</th>
-                      <th>Txn No</th>
-                      <th>Payment Mode</th>
+                      <th>Credit/Debit</th>
+                      <th>Ref No</th>
+                      <th>Payment</th>
                       <th>Status</th>
                       <th>Remarks</th>
+                      <th>Charge</th>
                       <th>Transfer</th>
                       <th>Recharge</th>
                       <th>Balance</th>
@@ -35,25 +35,30 @@
                     <?php $count=1;foreach ($payment_wallet_transactions as $key => $value) { //dd($value); ?>
                     <tr>
                       <td class="align-middle">{{$count}}</td>
-                      <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getDateFormate($value['transaction_date'])}}</td>
-                      <td class="align-middle">
+                      <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getFullDateFormate($value['transaction_date'])}}</td>
+                      <td class="align-middle" nowrap="nowrap">
                         <?php if($value['credit_amount']>0){ ?>
                         <font color="green" style="font-weight:500">{{GeneralHelper::getAmount($value['credit_amount'])}}</font>
-                        <?php }else{ ?>
-                          {{GeneralHelper::getAmount($value['credit_amount'])}}
                         <?php } ?>  
-                      </td>
-                      <td class="align-middle">
-                      <?php if($value['debit_amount']>0){ ?>
+                         <?php if($value['debit_amount']>0){ ?>
                         <font color="red" style="font-weight:500">{{GeneralHelper::getAmount($value['debit_amount'])}}</font>
-                        <?php }else{ ?>
-                          {{GeneralHelper::getAmount($value['debit_amount'])}}
                         <?php } ?> 
                       </td>
-                      <td class="align-middle" nowrap="nowrap">{{$value['transaction_number']}}</td>
-                      <td class="align-middle" nowrap="nowrap">{{GeneralHelper::getTransactionTypeName($value['WalletRechargePayment']['payment_mode'])}}</td>
-                      <td class="align-middle">{{$value['status']}}</td>
-                      <td class="align-middle">{{$value['remarks']}}</td>
+                      <td class="align-middle" nowrap="nowrap">
+                        <?php if(isset($value['WalletRechargePayment']['payment_ref_key'])){ 
+                                     echo $value['WalletRechargePayment']['payment_ref_key'];
+                              }else{ echo $value['transaction_number']; }
+                        ?>
+                    </td>
+                      <td class="align-middle" nowrap="nowrap"> <?php if(isset($value['WalletRechargePayment'])){ ?>{{GeneralHelper::getTransactionTypeName($value['WalletRechargePayment']['payment_mode'])}}
+                        <?php }else{ ?> Wallet Transfer<?php } ?></td>
+                      <td class="align-middle"><?php if($value['status']=='Success'){ ?>
+                                              <font color="green"><b>{{$value['status']}}</b></font>
+                      <?php }else{ ?>
+                        <font color="black"><b>{{$value['status']}}</b></font>
+                        <?php } ?></td>
+                      <td class="align-middle" title="{{$value['remarks']}}">{{Str::limit($value['remarks'],10)}}</td>
+                      <td class="align-middle">{{GeneralHelper::getAmount($value['transfer_charge'])}}</td>
                       <td class="align-middle">
                        <?php if($value['wallet_recharge_payment_id']==null){ ?>
                           <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Yes"></i>
@@ -68,7 +73,7 @@
                            <i class="fas fa-check-circle text-4 text-success" data-toggle="tooltip" data-original-title="Yes"></i>
                       <?php } ?>
                       </td>
-                      <td class="align-middle">
+                      <td class="align-middle" nowrap="nowrap">
                       <?php if($value['credit_amount']>0){ ?>
                         <font color="green" style="font-weight:500"><i class="fas fa-arrow-up"></i>&nbsp;</font><?php } ?>
                       <?php if($value['debit_amount']>0){ ?>

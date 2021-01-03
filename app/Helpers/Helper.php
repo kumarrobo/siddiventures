@@ -13,8 +13,39 @@ use App\TransactionType;
 use App\AgentCommission;
 use App\VerifiedMobileMonthlyTransaction;
 use App\PaymentWalletTransaction;
+use App\MoneyTransferCharge;
 
 class Helper {
+
+
+
+     /**
+     * @param Span Error HTML
+     * 
+     * @return String as HTML
+     */
+    public static function getErrorSpan($type) {
+        return "<small><span id='span".$type."' style=' font-weight: bold;color: red;font-size: 12px;' class='errorSpan'></span></small>";
+    }
+
+
+    /**
+     * @param AgetnCommission Arr and TransactionType Id
+     * 
+     * @return value
+     */
+    public static function getBankAccountVerificationCharge() {
+        if(Auth::guard('ro')->check()){
+            $user_id = Auth::user()->id;
+            $moneyCharge = MoneyTransferCharge::where('user_id','=',$user_id)->where('amount_type','=',4)->first();
+            if(!empty($moneyCharge)){
+              return $moneyCharge['value'];
+            }else{
+              $moneyCharge = AmountType::find(4);
+              return $moneyCharge['bank_transfer_amount'];
+            }
+        }
+    }
 
 
 
@@ -456,6 +487,17 @@ class Helper {
      * @param Id of the Company Bank Name
      * Get Payment Mode Type name
      */
+    public static function getFullDateFormate($date){
+         return date('d M, Y H:i:s A',strtotime($date));
+    }
+
+
+
+
+    /**
+     * @param Id of the Company Bank Name
+     * Get Payment Mode Type name
+     */
     public static function getDateFormate($date){
          return date('d M, Y',strtotime($date));
     }
@@ -662,6 +704,26 @@ class Helper {
         }
     }
 
+
+
+
+    /**
+     * Get the Commission Value
+     * @param integer
+     * @return integer
+     */
+    public static function getAgentCommissionValueByUserID($id){
+        $paymentMethod = '';
+        if($id>0){
+            $TransactionType = AgentCommission::where('user_id','=',$id)
+            ->where('transaction_type_id','=',$id)
+            ->where('status','=',1)
+            ->first();
+            if(!empty($TransactionType)){
+                return $TransactionType['commission'];
+            }
+        }
+    }
 
 
 

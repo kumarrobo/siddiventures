@@ -16,6 +16,7 @@
             " href="{{route('myreport')}}">
               <span><i class="fas fa-chart-line"></i></span>My Report</a>
           </li>
+          <?php if(Auth::user()->DMT==1){ ?>
           <li class="nav-item"> 
             <a class="nav-link 
             {{GeneralHelper::isActiveMenu('robankaccountlist')}}
@@ -25,6 +26,8 @@
             " href="{{route('romoneytransfer')}}">
               <span><i class="fas fa-rupee-sign"></i></span>Money Transfer</a>
           </li>
+         <?php } ?>
+         <?php if(Auth::user()->DMT==1){ ?>
           <li class="nav-item"> 
             <a class="nav-link 
             {{GeneralHelper::isActiveMenu('ropushbalance')}}
@@ -32,6 +35,7 @@
             " href="{{route('ropushbalance')}}">
               <span><i class="fas fa-retweet"></i></span>Push Balance</a> 
           </li>
+        <?php } ?>
           <li class="nav-item"> 
             <a class="nav-link 
             {{GeneralHelper::isActiveMenu('wallet')}}

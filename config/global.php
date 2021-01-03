@@ -9,6 +9,12 @@ define('THEME_NAME','siddiventures');
 define('THEME_PATH','themes/'.THEME_NAME);
 define('WIRE_API_URL','https://wire.easebuzz.in');
 
+define('DEFAULT_MONEY_TRANSFER_CHARGE',9);
+define('DEFAUT_TRANSFER_AMOUNT',5);
+//Define All the Error Message
+define('MONEY_TRANSFER_NOT_ENABLED','Your money transfer facilites not active, Please contact your area distributor.');
+define('LOW_WALLET_BALANCE_MESASGE',"You don't have sufficient wallet balance.");
+
 return [
 
     /*
@@ -25,6 +31,11 @@ return [
 
     'MONEY_MERCHANT_KEY'=>  "BA082604EB",
     'MONEY_SALT' 		=>  "1A50A23589",
+
+    'PAYU_MONEY_KEY'    =>  "RuMjw2eu",
+    'PAYU_MONEY_SALT'   =>  "vmFPUw4BBC",
+    'PAYU_URL'          =>  "https://sandboxsecure.payu.in",
+    //'PAYU_URL'          =>  "https://secure.payu.in",
     
     'ADD_CONTACT_API'	      =>  WIRE_API_URL."/api/v1/contacts/",
     'ADD_BENEFICIARIES_API'   =>  WIRE_API_URL."/api/v1/beneficiaries/",

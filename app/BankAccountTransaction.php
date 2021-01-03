@@ -68,6 +68,10 @@ class BankAccountTransaction extends Model
     public function MasterBank() {
          return $this->belongsTo('App\MasterBank', 'master_bank_id', 'id' );
     }
+
+    public function VerifyMobileNumber() {
+         return $this->belongsTo('App\VerifyMobileNumber', 'verify_mobile_number_id', 'id' );
+    }
     
    
 }

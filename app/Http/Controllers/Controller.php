@@ -44,6 +44,36 @@ class Controller extends BaseController
      * @param  string
      * @return string
      */
+    public  function getAmountTransferPerTransaction() {
+
+        if(Auth::guard('user')->check()){
+            $limit_per_transaction =  Auth::user()->limit_per_transaction;
+            if($limit_per_transaction!=''){
+                return $limit_per_transaction;
+            }else{
+                return DEFAUT_TRANSFER_AMOUNT;
+            }
+        }
+
+        if(Auth::guard('ro')->check()){
+            $limit_per_transaction =  Auth::user()->limit_per_transaction;
+            if($limit_per_transaction!=''){
+                return $limit_per_transaction;
+            }else{
+                return DEFAUT_TRANSFER_AMOUNT;
+            }
+        }
+    
+              
+    }
+
+
+
+
+    /**
+     * @param  string
+     * @return string
+     */
     public  function getWalletBalance() {
 
         if(Auth::guard('user')->check()){
@@ -75,7 +105,7 @@ class Controller extends BaseController
         $username       = "Siddhient";
         $key            = "2f67b0dccfXX";
         $mobileNumber   = $mobile;
-        $message        = "New OTP for login for Siddi Venture is ".$randomid. ". Please do not share it with anyone.";
+        $message        = "New OTP for login for ".env('APP_NAME')." is ".$randomid. ". Please do not share it with anyone.";
         $senderId       = "INFOTP";
         //return $randomid; 
         $url ="http://mobicomm.dove-sms.com//submitsms.jsp?user=".$username."&key=".$key."&mobile=+91".$mobileNumber."&message=".$message."&senderid=".$senderId."&accusage=1"; 
@@ -259,7 +289,7 @@ class Controller extends BaseController
     * @return boolean , True on sucess, False of Failed
     */
     public function getCreditedAmount($payment_mode, $net_amount_credit){
-           echo  $deduction_percentage   = $this->getCommissionValue($payment_mode); die;
+            $deduction_percentage   = $this->getCommissionValue($payment_mode);
             $totalAmount            = $net_amount_credit;
             $deduction_percentage   = $deduction_percentage;
             $balanceAmt = $net_amount_credit - (($net_amount_credit*$deduction_percentage)/100);
@@ -337,7 +367,7 @@ class Controller extends BaseController
             $payAWTObj['wallet_recharge_payment_id'] = $last_payment_id;
             $payAWTObj['updated_wallet_balance']     = $newBalance;
 
-            dd($payAWTObj);
+            //dd($payAWTObj);
             if($payAWTObj->save()){
                     return true;
             }
@@ -358,6 +388,7 @@ class Controller extends BaseController
 
 
     public function getTransferCharge($amount){
+            //echo $amount; 
             if($amount<=1000){
                 $id = 1;
             }else if($amount>1000 && $amount<=25000){
@@ -365,14 +396,66 @@ class Controller extends BaseController
             }else{
                 $id = 3;
             }
+
+            $res = MoneyTransferCharge::with('AmountType')
+                    ->where('user_id','=',$this->getUserId())
+                    ->where('amount_type','=',$id)
+                    ->where('status','=',1)
+                    ->first();
+            //echo "<pre>";
+            //print_r($res);
+            //die;
+
+            if(!empty($res)){
+                return $res['value'];
+            }else{
+                return 0;
+            }            
+    }
+
+
+
+
+
+    /**
+    * Method Define for calculating Transfer Charge and Amunt
+    * after deduction
+    * Return Array with Charge and Amount After Deduction
+    * @return Array
+    */
+    public function getTransferChargeWithamount($amount){
+            $requestAmount = $amount;
+            $finalAmount = $amount - DEFAULT_MONEY_TRANSFER_CHARGE;
+            $chargeArr = array('charge'=>DEFAULT_MONEY_TRANSFER_CHARGE,'amount'=>'0.00','final_amount'=>$finalAmount,'type'=>'Flat');
+            if($amount<=1000){
+                $id = 1;
+            }else if($amount>1000 && $amount<=25000){
+                $id = 2; 
+            }else{
+                $id = 3;
+            }
+
             $res = MoneyTransferCharge::with('AmountType')
                     ->where('user_id','=',$this->getUserId())
                     ->where('amount_type','=',$id)
                     ->where('status','=',1)
                     ->first();
             if(!empty($res)){
-                return $res['value'];
-            }            
+                $charge             = $res['value'];
+                $is_flat_percentage = $res['is_flat_percentage'];
+                if($charge > 0){
+                    if($is_flat_percentage == 'Flat'){
+                        $amount = $amount - $charge;
+                    }else if($is_flat_percentage == 'Percentage'){
+                        $amount = $amount - (($amount * $charge)/100);
+                    }else{
+                        $amount = $amount - DEFAULT_MONEY_TRANSFER_CHARGE ; 
+                    }
+                    $chargeArr = array('amount' => $requestAmount,'charge' => $charge,'type'=>$is_flat_percentage,'final_amount'=>$amount);
+                }
+            }
+            return  $chargeArr;
+
     }
 
 

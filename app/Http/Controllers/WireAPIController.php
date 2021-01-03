@@ -215,7 +215,7 @@ class WireAPIController extends Controller
             $salt           = $this->getMerchentSalt();
 
             $beneficiary_code       = $result['VerifybeneficiariesBankAccount']['beneficiary_id'];
-            $unique_request_number  = md5(time());
+            $unique_request_number  = date('Ymd').time();
             $payment_mode           = $payment_mode;
             $amount                 = "$amount".".00";
             $narration              = $remarks;
@@ -231,8 +231,9 @@ class WireAPIController extends Controller
                 'amount'                => (float) $amount,
                 'narration'             => $narration
             );
-            // dd($data);
+            //dd($data);
             $result = $this->postCurlData($data,$url,$AuthorizationKey);
+            //dd($result);
             return $result;
          }
     }
@@ -261,12 +262,13 @@ class WireAPIController extends Controller
             $keyStr             = $merchentKey.'|'.$sender_name.'|'.$email.'|'.$mobile.'|'.$salt; 
             $AuthorizationKey   = hash('sha512', $keyStr);
             $url                = $this->getAddContctAPIURL();
-             $data = array(
+            $data = array(
                 'key'        => $merchentKey,
                 'name'       => $sender_name,
                 'email'      => $email,
                 'phone'      => $mobile
             );
+            //dd($data);
             $result = $this->postCurlData($data,$url,$AuthorizationKey);
             return $result;
          }
@@ -276,6 +278,7 @@ class WireAPIController extends Controller
 
      private function postCurlData($data,$url,$AuthorizationKey){
         $payload = json_encode($data); 
+        //dd($payload);
         $ch = curl_init($url);
         $headr = array();
         $headr[] = 'Content-type: application/json';
@@ -287,6 +290,7 @@ class WireAPIController extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
         $result = curl_exec($ch);
+        //dd($result);
         if ($result === false)
         {
             // throw new Exception('Curl error: ' . curl_error($crl));

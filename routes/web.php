@@ -88,6 +88,7 @@ Route::prefix('RO')->namespace('RO')->group(function(){
 	Route::any('txncreditsuccess/{id}/{lastid}','WalletController@balanceTransferSuccessfully')->name('rotxncreditsuccess');
 
 
+
 	Route::any('tatrechargeesybuz/{id}','WalletController@tatkalWalletRechargeEaseBuzz')->name('rotatrechargeesybuz');
 	Route::any('tatrechargeesybuz','WalletController@tatkalWalletRechargeEaseBuzz')->name('rotatrechargeesybuz');
 	Route::any('confirmrecharge','WalletController@confirmRechargeTatkalWalletRechargeEaseBuzz')->name('roconfirmrecharge');
@@ -95,6 +96,14 @@ Route::prefix('RO')->namespace('RO')->group(function(){
 	Route::any('rechargesuccess','WalletController@walletRechargeSuccess')->name('rorechargesuccess');
 	Route::any('rechargefailed','WalletController@walletRechargeFailed')->name('rorechargefailed');
 	Route::any('walletcredited/{id}','WalletController@walletCredited')->name('rowalletcredited');
+
+	Route::any('tatrechargepayu','WalletController@tatkalWalletRechargePAYU')->name('rotatrechargepayu');
+	Route::any('confirmrechargepayu','WalletController@confirmRechargeTatkalWalletRechargePAYU')->name('ropayuconfirmrecharge');
+	Route::post('confirmationorderpayu','WalletController@confirmationPAYUOrderPage')->name('ropayuconfirmationorder');
+	Route::any('payurechargesuccess','WalletController@walletPAYURechargeSuccess')->name('ropayurechargesuccess');
+	//Route::any('rechargefailed','WalletController@walletRechargeFailed')->name('rorechargefailed');
+	
+
 	
 	//Report
 	Route::any('myreport'				,	'ReportController@myReport')->name('myreport');
@@ -114,8 +123,11 @@ Route::prefix('RO')->namespace('RO')->group(function(){
 	Route::any('paymentinitiate'		,	'MoneyTransferController@paymentinitiate')->name('ropaymentinitiate');
 
 	//Send Money To Bank Account, Param is Verified Mobile Id
+	Route::any('confirmtransfermoney/{id}'	, 'MoneyTransferController@confirmTransferMoney')->name('roconfirmtransfermoney');
 	Route::any('transfermoney/{id}'		,	'MoneyTransferController@transferMoney')->name('rotransfermoney');
 	Route::any('transferaction'			,	'MoneyTransferController@transferMoneyAPIAction')->name('rotransferaction');
+	Route::any('addrecipient'			,	'MoneyTransferController@addNewRecipenetForMobile')->name('roaddrecipient');
+	Route::any('transfermoneyresult/{result}'	,	'MoneyTransferController@transferedMoneyResult')->name('rotransfermoneyresult');
 });
 
 

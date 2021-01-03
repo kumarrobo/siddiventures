@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\User;
+use Hash;
 use Session;
 use App\LoginOtp;
 class LoginController extends Controller
@@ -151,23 +152,27 @@ class LoginController extends Controller
             $password    = Crypt::decryptString($pass);
             $userDetails = User::find($userId);
             $mobile      = $userDetails['mobile'];
-            
+            //dd($userDetails);
             //Verify OTP
             $loginDetails = LoginOtp::where('user_id','=',$userId)->where('mobile','=',$mobile)->where('OTP','=',$otp)->orderBy('id','DESC')->first();
             //dd($loginDetails);
             if($loginDetails!=null){
                 LoginOtp::where('user_id','=',$userId)->delete();
-                $request->merge(['mobile'=>$mobile,'password'=>$password]);
+                //dd($password);
+                $request->merge(['mobile'=>$mobile,'password'=>$password,'role_id'=>3]);
+                //dd($loginDetails);
                 // If the class is using the ThrottlesLogins trait, we can automatically throttle
                 // the login attempts for this application. We'll key this by the username and
                 // the IP address of the client making these requests into this application.
                 if (method_exists($this, 'hasTooManyLoginAttempts') &&
                     $this->hasTooManyLoginAttempts($request)) {
+                	
+                	//dd('sdasd');
                     $this->fireLockoutEvent($request);
-
                     return $this->sendLockoutResponse($request);
                 }
 
+               
                 if ($this->attemptLogin($request)) {
                     return $this->sendLoginResponse($request);
                 }
@@ -181,12 +186,15 @@ class LoginController extends Controller
 
                  
             }else{
+            	//dd('dasd');
                 return redirect('RO/verifyOTP/'.$user_id.'/'.$pass)->with(['status'=>'Invalid OTP!!']);
             }
             
 
 
         } catch (DecryptException $e) {
+        	            	//dd('dasdsdasd');
+
             return redirect('RO/verifyOTP/'.$user_id.'/'.$pass)->with(['status'=>'Sorry ! Invalid Url, try again']);
         }
 
@@ -225,21 +233,30 @@ class LoginController extends Controller
                 }
                 return redirect('/RO/login')->with(['status'=>'Sorry ! Invalid Input.']);
         }
-        //dd($validation);
-        $user = User::where($this->username(),$request->get('mobile'))->where('status','=',1)->first();
-        // dd($user);
-        if($user AND $user->role_id != 3){
-            //dd("ok");
-            return redirect('RO/login')->with(['status'=>'Sorry ! Invalid Credentials.']);
-        }
 
-        if($user AND $user->role_id == 3){
-            $id =  Crypt::encryptString($user['id']);
-            $password =  Crypt::encryptString($request->get('password'));
-            return redirect('RO/verifyOTP/'.$id.'/'.$password)->with(['status'=>'Verify OTP Now.']);
-        }
 
-        
+        //Set Login With OTP
+        if(env('OTP_LOGIN')){
+            //echo $this->username();
+            //dd(Hash::make($request->get('password')));
+            $user = User::where($this->username(),$request->get('mobile'))
+            ->where('password','=',Hash::make($request->get('password')))
+            ->where('status','=',1)
+            ->get();
+            //dd($user);
+            if($user AND $user->role_id != 3){
+                //dd("ok");
+                return redirect('RO/login')->with(['status'=>'Sorry ! Invalid Credentials.']);
+            }
+
+            
+                if($user AND $user->role_id == 3){
+                    $id =  Crypt::encryptString($user['id']);
+                    $password =  Crypt::encryptString($request->get('password'));
+                    return redirect('RO/verifyOTP/'.$id.'/'.$password)->with(['status'=>'Verify OTP Now.']);
+                }
+        }
+        $request->merge(['role_id'=>3]);
 
         
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
@@ -302,7 +319,7 @@ class LoginController extends Controller
      */
     protected function credentials(Request $request)
     {
-        return $request->only($this->username(), 'password');
+        return $request->only($this->username(), 'password','role_id');
     }
 
     /**
